@@ -1,7 +1,16 @@
+# lmao.tcl - channel management for eggdrop, built for UnderNet's ircu and X
 # https://lmao-tcl.github.io/  -  source: https://github.com/lmao-tcl/lmao-tcl.github.io
-# Enhanced version 6.5 - COMPLETE with help system, topic system, module framework,
-# ActiveVoice and the access level system (!addvoice !addmod !addop !addmaster)
-# For UnderNet ircu with proper flag protection
+# by Seb (DooubleTap) - GPLv3
+#
+# Thanks to the people whose scripts showed the way. The code below is
+# written fresh for lmao.tcl, but these ideas are theirs:
+#   eafs.tcl     ^The_law^, for #Ayuda on UnderNet - +Dm with tiered voicing
+#   Dm.tcl       xplorer (#mircscripting), updated by OUTsider - +Dm voicing
+#   zapdnsbl.tcl Stefan Wold (Ratler) - DNS blacklist checks, web client IPs
+#                https://github.com/Ratler/zapdnsbl
+#   badchan.tcl  Bass of UnderNet's #eggdrop - the bad channel list
+# and to UnderNet's coder-com (ircu, gnuworld), the Eggheads (eggdrop),
+# DroneBL and EFnet RBL.
 
 ###########################################################################
 # CONFIGURATION SECTION - EDIT THESE VALUES
@@ -68,6 +77,40 @@ set cc(guard_ban_minutes) 10
 set cc(guard_lock_modes) "Dm"
 set cc(guard_lock_minutes) 5
 
+# Delayjoin - keeps a channel +Dm (ircu delayed join + moderated) and lets
+# people in by voicing them, per channel (!enable/!disable delayjoin, off by
+# default). Joins stay hidden; the bot finds the hidden ones with NAMES -d
+# every dj_scan_seconds and voices them: people logged in to X after
+# dj_voice_authed seconds, everyone else after dj_voice_unauthed seconds and
+# only once the DNSBL and bad-channel checks (when those modules are on) say
+# they are clean. %chan% and %secs% work in dj_welcome; "" sends nothing.
+set cc(dj_modes) "Dm"
+set cc(dj_scan_seconds) 15
+set cc(dj_voice_authed) 0
+set cc(dj_voice_unauthed) 30
+set cc(dj_welcome) "Welcome to %chan%! You will be able to talk in %secs% seconds."
+
+# DNSBL - checks people's IP against drone/proxy blacklists, per channel
+# (!enable/!disable dnsbl, off by default). Hidden +D users are checked
+# before anyone can see them. Each list is {zone name codes site}: a reply of
+# 127.0.0.<code> with a code in "codes" means ban ("*" = any code). Users
+# with a hidden *.users.undernet.org host have no IP to check and are skipped.
+set cc(dnsbl_zones) {
+	{dnsbl.dronebl.org "DroneBL" "3 5 6 7 8 9 10 11 13 14 15 16 17" "dronebl.org"}
+	{rbl.efnetrbl.org "EFnet RBL" "1 5" "rbl.efnetrbl.org"}
+}
+set cc(dnsbl_ban_minutes) 120
+set cc(dnsbl_cache_minutes) 60
+# Web clients that put the user's IP, hex encoded, in the ident
+set cc(dnsbl_webirc_hosts) {\.(mibbit\.com|kiwiirc\.com)$}
+
+# Bad channels - bans people who sit in channels you list, per channel
+# (!enable/!disable badchan, off by default). Lists are kept in badchan_file;
+# "*" holds the masks used on every channel.
+set cc(badchan_file) "lmao-badchan.txt"
+set cc(badchan_ban_minutes) 60
+set cc(badchan_rescan_minutes) 3
+
 # X (UnderNet channel service). Leave x_user empty to keep all of this off.
 # With an X account the bot logs in when it connects, can hide its host
 # (+x, it becomes <account>.users.undernet.org), and asks X for help when it
@@ -79,7 +122,7 @@ set cc(x_hide_host) 1
 set cc(x_rescue) 1
 
 # Version info
-set cc(version_number) "6.7.0"
+set cc(version_number) "6.8.0"
 set cc(version) "\002\[lmao.tcl $cc(version_number)\]\002"
 set cc(www) "https://lmao-tcl.github.io/"
 
@@ -97,6 +140,9 @@ set module_defaults(idledeop) 0
 set module_defaults(idledevoice) 0
 set module_defaults(chanlog) 1
 set module_defaults(guard) 1
+set module_defaults(delayjoin) 0
+set module_defaults(dnsbl) 0
+set module_defaults(badchan) 0
 
 proc init_channel_modules {chan} {
 	global module_defaults module_settings
@@ -249,6 +295,15 @@ bind notc - * guard:notc
 bind ctcp - ACTION guard:action
 bind nick - * guard:nick
 
+# Delayjoin (+Dm), DNSBL and bad channels
+bind raw - 355 dj:raw355
+bind raw - 354 dj:raw354
+bind join - * scan:join
+bind raw - 319 badchan:raw319
+bind raw - 318 badchan:raw318
+bind pub - [string trim $cc(cmdchar)]dnsbl dnsbl:pub
+bind pub - [string trim $cc(cmdchar)]badchan badchan:pub
+
 # X (channel service)
 bind pub n [string trim $cc(cmdchar)]xlogin x:login:pub
 bind evnt - init-server x:on_connect
@@ -368,6 +423,9 @@ array set module_desc {
 	chanlog		{logs access, sanctions and registrations to the ops channel}
 	idledeop	{deops ops who have been idle past the channel limit}
 	guard		{flood protection - kicks flooders, locks the channel (+Dm) under attack}
+	delayjoin	{keeps the channel +Dm and voices hidden newcomers once they check out}
+	dnsbl		{bans IPs listed on drone/proxy blacklists, even before they show up}
+	badchan		{bans people who sit in channels on the bad channel list}
 }
 
 proc module:show {nick chan} {
@@ -539,6 +597,8 @@ array set helpdb {
 	lockdown	{{%C%lockdown [minutes]} {Locks the channel with the guard modes (+Dm by default) for a while: new joins stay hidden and only voiced users can talk. Op+} {%C%lockdown 10} {}}
 	unlock		{{%C%unlock} {Lifts a guard lock early and removes only the modes the guard set. Op+} {%C%unlock} {}}
 	guard		{{%C%guard} {Shows whether the flood guard is on, whether the channel is locked, and the flood limits. Op+} {%C%guard} {}}
+	dnsbl		{{%C%dnsbl <nick|ip|host>} {Checks a person or an address against the drone/proxy blacklists and tells you the answer. Op+} {%C%dnsbl 192.0.2.10} {}}
+	badchan		{{%C%badchan list | add [-global] <mask> [reason] | del [-global] <mask>} {Manages the bad channel list: people sitting in a matching channel are banned when the badchan module is on. -global is Owner only. Op+} {%C%badchan add #*spam* no spammers} {}}
 	xlogin		{{%C%xlogin} {Makes the bot log in to X again with the account from the config (owner only)} {%C%xlogin} {}}
 	join		{{%C%join <#channel>} {Makes the bot join a channel and adds it to the channel list (owner only)} {%C%join #newchan} {}}
 	addchan		{{%C%addchan <#channel>} {Adds a channel, saves it to the chanfile and joins it} {%C%addchan #newchan} {/msg %B% addchan #newchan}}
@@ -582,7 +642,7 @@ proc help:send {nick text} {
 		puthelp "NOTICE $nick :\002Quick Help:\002 Type ${c}help <command> for details - (To prevent spam, you can use /msg $botnick help <command>)"
 		puthelp "NOTICE $nick :\002Common:\002 op deop voice devoice invite kick ban unban bans topic mode verify whois info ops"
 		puthelp "NOTICE $nick :\002Access:\002 ${c}access - ${c}addvoice ${c}addmod ${c}addop ${c}addmaster - ${c}delvoice ${c}delmod ${c}delop ${c}delmaster ${c}delaccess"
-		puthelp "NOTICE $nick :\002Guard:\002 ${c}guard - ${c}lockdown \[minutes\] - ${c}unlock (flood protection, locks the channel +Dm under attack)"
+		puthelp "NOTICE $nick :\002Guard:\002 ${c}guard - ${c}lockdown \[minutes\] - ${c}unlock (flood protection, locks the channel +Dm under attack) - ${c}dnsbl <nick|ip> - ${c}badchan list"
 		puthelp "NOTICE $nick :\002Modules:\002 ${c}module list - ${c}enable <module> - ${c}disable <module> (available: [help:modules])"
 		puthelp "NOTICE $nick :Or try ${c}showcommands for the full list"
 		return
@@ -1314,6 +1374,12 @@ proc activevoice:devoice_idle {min hour day weekday year} {
 		}
 
 		if {![module_enabled $chan "activevoice"]} {
+			continue
+		}
+
+		# Under delayjoin (+m) a voice is what lets people talk at all -
+		# taking it away for idling would silence them
+		if {[dj:on $chan]} {
 			continue
 		}
 
@@ -3706,6 +3772,869 @@ proc guard:status:pub {nick uhost hand chan arg} {
 }
 
 ###########################################################################
+# SHARED HELPERS FOR THE SCAN MODULES
+###########################################################################
+
+# Run a stored command (a Tcl list) if there is one
+proc lmao:run {cmd} {
+	if {[llength $cmd]} {
+		uplevel #0 $cmd
+	}
+}
+
+# Does the server announce this valueless ISUPPORT token (CNOTICE, WALLCHOPS...)?
+proc lmao:has_token {key} {
+	global lmao_isupport
+	if {[info commands isupport] ne ""} {
+		if {![catch {isupport isset $key} set] && $set} {
+			return 1
+		}
+	}
+	if {[info exists lmao_isupport($key)]} {
+		return 1
+	}
+	# UnderNet has them; assume so until the server says otherwise
+	return [expr {[array size lmao_isupport] == 0}]
+}
+
+# A notice to someone who is (perhaps hidden) on our channel. ircu's CNOTICE
+# is not counted against the target-change limit, so welcoming many people
+# never gets the bot throttled.
+proc lmao:chan_notice {nick chan text} {
+	if {[botisop $chan] && [lmao:has_token CNOTICE]} {
+		puthelp "CNOTICE $nick $chan :$text"
+	} else {
+		puthelp "NOTICE $nick :$text"
+	}
+}
+
+###########################################################################
+# DELAYJOIN MODULE - +Dm with tiered voicing
+#
+# Built on the idea of eafs.tcl (by ^The_law^, for #Ayuda on UnderNet) and
+# Dm.tcl (by xplorer, updated by OUTsider): with +D the server hides every
+# new join, with +m nobody without voice can talk, and the bot lets people in
+# by voicing them. Written fresh for lmao.tcl.
+#
+# Hidden members are listed with "NAMES -d #chan" (numeric 355, the bot must
+# be opped) and looked up in batches with WHOX: "WHO a,b,c n%tuhnar,742"
+# answers with numeric 354 "<token> <user> <host> <nick> <account>
+# :<realname>". An account other than 0 means logged in to X.
+#
+# When the channel is +D for another reason (a guard lock, or staff) and the
+# dnsbl or badchan module is on, hidden members are still checked and
+# sanctioned - they are just not voiced unless delayjoin is on.
+###########################################################################
+
+array set dj_added {}
+array set dj_pending {}
+array set dj_whochan {}
+
+proc dj:on {chan} {
+	return [expr {[validchan $chan] && [module_enabled $chan "delayjoin"]}]
+}
+
+# Does anything want this channel's hidden members looked at?
+proc dj:scans {chan} {
+	return [expr {[dj:on $chan] || [dnsbl:on $chan] || [badchan:on $chan]}]
+}
+
+proc dj:timer_check {} {
+	global cc dj_added dj_pending
+
+	foreach chan [channels] {
+		set key [string tolower $chan]
+		if {![botonchan $chan] || ![botisop $chan]} {
+			continue
+		}
+		if {[dj:on $chan]} {
+			dj:apply_modes $chan
+			putserv "NAMES -d $chan"
+		} else {
+			if {[info exists dj_added($key)]} {
+				dj:remove_modes $chan
+			}
+			if {([dnsbl:on $chan] || [badchan:on $chan]) && [lmao:chan_has_mode $chan "D"]} {
+				putserv "NAMES -d $chan"
+			}
+		}
+	}
+
+	# Forget people whose voice never came (they left, or a check never answered)
+	set now [clock seconds]
+	foreach k [array names dj_pending] {
+		if {$now - $dj_pending($k) > 600} {
+			unset dj_pending($k)
+		}
+	}
+	badchan:expire
+	utimer $cc(dj_scan_seconds) dj:timer_check
+}
+
+# Put the delayjoin modes on. +m would silence everyone already talking, so
+# they are voiced first.
+proc dj:apply_modes {chan} {
+	global cc dj_added
+
+	set key [string tolower $chan]
+	if {![info exists dj_added($key)]} {
+		set dj_added($key) ""
+	}
+	set supported [lmao:server_modes]
+	set add ""
+	foreach m [split $cc(dj_modes) ""] {
+		if {[string first $m $supported] >= 0 && ![lmao:chan_has_mode $chan $m]} {
+			append add $m
+		}
+	}
+	if {$add eq ""} {
+		return
+	}
+	if {[string first "m" $add] >= 0} {
+		foreach nick [chanlist $chan] {
+			if {![isbotnick $nick] && ![isop $nick $chan] && ![isvoice $nick $chan]} {
+				pushmode $chan +v $nick
+			}
+		}
+		flushmode $chan
+	}
+	putquick "MODE $chan +$add"
+	foreach m [split $add ""] {
+		if {[string first $m $dj_added($key)] < 0} {
+			append dj_added($key) $m
+		}
+	}
+	chanlog $chan "MODULE" "delayjoin set +$add"
+}
+
+# Module switched off: take back the modes it set. During a guard lock they
+# are handed to the guard instead, which removes them when it unlocks.
+proc dj:remove_modes {chan} {
+	global dj_added guard_added
+
+	set key [string tolower $chan]
+	set ours $dj_added($key)
+	unset dj_added($key)
+
+	if {[guard:locked $chan]} {
+		foreach m [split $ours ""] {
+			if {[string first $m $guard_added($key)] < 0} {
+				append guard_added($key) $m
+			}
+		}
+		return
+	}
+	set remove ""
+	foreach m [split $ours ""] {
+		if {[lmao:chan_has_mode $chan $m]} {
+			append remove $m
+		}
+	}
+	if {$remove ne ""} {
+		putquick "MODE $chan -$remove"
+		chanlog $chan "MODULE" "delayjoin off, removed -$remove"
+	}
+}
+
+# 355: "<us> = #chan :nick nick nick" - the hidden members
+proc dj:raw355 {from keyword text} {
+	global dj_pending dj_whochan
+
+	set parts [split $text]
+	set chan [lindex $parts 2]
+	if {![dj:scans $chan] || ![botisop $chan]} {
+		return 0
+	}
+	set ask {}
+	foreach nick [split [string trim [string trimleft [join [lrange $parts 3 end]] ":"]]] {
+		set nick [string trimleft $nick "@+"]
+		if {$nick eq "" || [isbotnick $nick]} {
+			continue
+		}
+		set k "[string tolower $chan],[string tolower $nick]"
+		if {[info exists dj_pending($k)]} {
+			continue
+		}
+		set dj_pending($k) [clock seconds]
+		set ln [string tolower $nick]
+		if {![info exists dj_whochan($ln)] || [lsearch -exact $dj_whochan($ln) $chan] < 0} {
+			lappend dj_whochan($ln) $chan
+		}
+		lappend ask $nick
+	}
+	# 15 nicks per WHO keeps each line short and well under ircu's reply cap
+	while {[llength $ask]} {
+		putserv "WHO [join [lrange $ask 0 14] ,] n%tuhnar,742"
+		set ask [lrange $ask 15 end]
+	}
+	return 0
+}
+
+# 354 with our token 742: "<us> 742 <user> <host> <nick> <account> :<realname>"
+proc dj:raw354 {from keyword text} {
+	global dj_whochan
+
+	set f [split $text]
+	if {[lindex $f 1] ne "742"} {
+		return 0
+	}
+	set user [lindex $f 2]
+	set host [lindex $f 3]
+	set nick [lindex $f 4]
+	set account [lindex $f 5]
+	set ln [string tolower $nick]
+	if {![info exists dj_whochan($ln)]} {
+		return 0
+	}
+	set chans $dj_whochan($ln)
+	unset dj_whochan($ln)
+	foreach chan $chans {
+		dj:check $chan $nick "$user@$host" $account
+	}
+	return 0
+}
+
+# One hidden member: trusted people straight in, everyone else through the
+# DNSBL and bad channel checks first.
+proc dj:check {chan nick uhost account} {
+	global dj_pending
+
+	set k "[string tolower $chan],[string tolower $nick]"
+	if {![validchan $chan]} {
+		unset -nocomplain dj_pending($k)
+		return
+	}
+
+	set authed [expr {$account ne "" && $account ne "0"}]
+	set hand [finduser "$nick!$uhost"]
+	set trusted [expr {[is_protected_bot $nick] || ($hand ne "*" && [matchattr $hand nmoMv|nmoMv $chan])}]
+
+	# Banned here: leave them hidden and silent (re-checked in 10 minutes)
+	if {[matchban "$nick!$uhost" $chan]} {
+		return
+	}
+
+	# During a guard lock only trusted and X-authed people get in. The rest
+	# are asked about again once the lock lifts.
+	if {!$trusted && !$authed && [guard:locked $chan]} {
+		unset dj_pending($k)
+		return
+	}
+
+	set voice [expr {[dj:on $chan] ? [list dj:schedule $chan $nick $authed] : {}}]
+	if {$trusted} {
+		lmao:run $voice
+		return
+	}
+	dnsbl:check $chan $nick $uhost [list badchan:check $chan $nick $uhost $voice]
+}
+
+proc dj:schedule {chan nick authed} {
+	global cc
+
+	set secs [expr {$authed ? $cc(dj_voice_authed) : $cc(dj_voice_unauthed)}]
+	if {$secs <= 0} {
+		dj:voice $chan $nick
+		return
+	}
+	if {$cc(dj_welcome) ne ""} {
+		lmao:chan_notice $nick $chan [string map [list %chan% $chan %secs% $secs] $cc(dj_welcome)]
+	}
+	utimer $secs [list dj:voice $chan $nick]
+}
+
+proc dj:voice {chan nick} {
+	global dj_pending
+
+	unset -nocomplain dj_pending([string tolower $chan],[string tolower $nick])
+	if {![validchan $chan] || ![botisop $chan] || ![dj:on $chan]} {
+		return
+	}
+	pushmode $chan +v $nick
+}
+
+###########################################################################
+# DNSBL MODULE - drone and proxy blacklists
+#
+# Built on the idea of zapdnsbl.tcl by Stefan Wold (Ratler): reverse the IP,
+# look it up under each blacklist zone, and a 127.0.0.x answer means listed,
+# with x saying why. Written fresh for lmao.tcl, with no tcllib needed and
+# IPv6 as well (nibble format). The web client trick - an IP hidden as hex in
+# the ident on hosts like Mibbit and KiwiIRC - is also his.
+#
+# Uses eggdrop's own non-blocking dnslookup, so the bot never stalls on DNS.
+# Answers are cached for dnsbl_cache_minutes; an IP being looked up is only
+# looked up once however many people share it.
+###########################################################################
+
+array set dnsbl_cache {}
+array set dnsbl_wait {}
+array set dnsbl_left {}
+array set dnsbl_hit {}
+
+array set dnsbl_reasons {
+	dnsbl.dronebl.org,3	"IRC drone"
+	dnsbl.dronebl.org,5	"bottler"
+	dnsbl.dronebl.org,6	"unknown spambot or drone"
+	dnsbl.dronebl.org,7	"DDoS drone"
+	dnsbl.dronebl.org,8	"SOCKS proxy"
+	dnsbl.dronebl.org,9	"HTTP proxy"
+	dnsbl.dronebl.org,10	"proxy chain"
+	dnsbl.dronebl.org,11	"web page proxy"
+	dnsbl.dronebl.org,13	"brute force attacker"
+	dnsbl.dronebl.org,14	"open WinGate proxy"
+	dnsbl.dronebl.org,15	"compromised router"
+	dnsbl.dronebl.org,16	"autorooting worm"
+	dnsbl.dronebl.org,17	"botnet IP"
+	rbl.efnetrbl.org,1	"open proxy"
+	rbl.efnetrbl.org,4	"TOR exit"
+	rbl.efnetrbl.org,5	"drone or flooder"
+}
+
+proc dnsbl:on {chan} {
+	return [expr {[validchan $chan] && [module_enabled $chan "dnsbl"]}]
+}
+
+# Eggdrop needs its dns module for dnslookup
+proc dnsbl:usable {} {
+	return [expr {[info commands dnslookup] ne ""}]
+}
+
+proc dnsbl:is_ipv4 {s} {
+	if {![regexp {^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$} $s -> a b c d]} {
+		return 0
+	}
+	foreach o [list $a $b $c $d] {
+		if {$o > 255} {
+			return 0
+		}
+	}
+	return 1
+}
+
+proc dnsbl:is_ipv6 {s} {
+	return [expr {[string first ":" $s] >= 0 && [dnsbl:ipv6_nibbles $s] ne ""}]
+}
+
+proc dnsbl:is_ip {s} {
+	return [expr {[dnsbl:is_ipv4 $s] || [dnsbl:is_ipv6 $s]}]
+}
+
+# 2001:db8::1 -> "1.0.0.0. ... .8.b.d.0.1.0.0.2" (32 reversed nibbles)
+proc dnsbl:ipv6_nibbles {ip} {
+	set ip [string tolower $ip]
+	if {[string first "." $ip] >= 0} {
+		return ""
+	}
+	if {[string first "::" $ip] >= 0} {
+		set halves [split [string map {"::" "|"} $ip] "|"]
+		if {[llength $halves] != 2} {
+			return ""
+		}
+		lassign $halves left right
+		set l [expr {$left eq "" ? {} : [split $left ":"]}]
+		set r [expr {$right eq "" ? {} : [split $right ":"]}]
+		set fill [expr {8 - [llength $l] - [llength $r]}]
+		if {$fill < 1} {
+			return ""
+		}
+		set groups [concat $l [lrepeat $fill 0] $r]
+	} else {
+		set groups [split $ip ":"]
+	}
+	if {[llength $groups] != 8} {
+		return ""
+	}
+	set hex ""
+	foreach g $groups {
+		if {![regexp {^[0-9a-f]{1,4}$} $g]} {
+			return ""
+		}
+		append hex [string range "0000$g" end-3 end]
+	}
+	return [join [lreverse [split $hex ""]] "."]
+}
+
+proc dnsbl:reverse {ip} {
+	if {[dnsbl:is_ipv4 $ip]} {
+		return [join [lreverse [split $ip "."]] "."]
+	}
+	return [dnsbl:ipv6_nibbles $ip]
+}
+
+proc dnsbl:is_webirc {ident host} {
+	global cc
+	return [expr {$cc(dnsbl_webirc_hosts) ne "" && [regexp -nocase {^[0-9a-f]{8}$} $ident] && [regexp -nocase -- $cc(dnsbl_webirc_hosts) $host]}]
+}
+
+# What to look up for user@host: an IP, a hostname to resolve, or "" when
+# there is nothing to check (a hidden X host)
+proc dnsbl:target_of {uhost} {
+	set at [string last "@" $uhost]
+	set ident [string trimleft [string range $uhost 0 [expr {$at - 1}]] "~"]
+	set host [string tolower [string range $uhost [expr {$at + 1}] end]]
+	if {$host eq "" || [string match "*.users.undernet.org" $host]} {
+		return ""
+	}
+	if {[dnsbl:is_webirc $ident $host]} {
+		scan $ident "%2x%2x%2x%2x" a b c d
+		return "$a.$b.$c.$d"
+	}
+	return $host
+}
+
+proc dnsbl:mask {uhost} {
+	set at [string last "@" $uhost]
+	set ident [string trimleft [string range $uhost 0 [expr {$at - 1}]] "~"]
+	set host [string range $uhost [expr {$at + 1}] end]
+	# A web client's host is shared by everyone using it - ban the ident
+	if {[dnsbl:is_webirc $ident $host]} {
+		return "*!*$ident@$host"
+	}
+	return "*!*@$host"
+}
+
+proc dnsbl:reason {zone code} {
+	global dnsbl_reasons
+	if {[info exists dnsbl_reasons($zone,$code)]} {
+		return $dnsbl_reasons($zone,$code)
+	}
+	return "code $code"
+}
+
+# Gate used by delayjoin and on join: checks, then runs "next" when clean
+proc dnsbl:check {chan nick uhost next} {
+	if {![dnsbl:on $chan] || ![dnsbl:usable]} {
+		lmao:run $next
+		return
+	}
+	set target [dnsbl:target_of $uhost]
+	if {$target eq ""} {
+		lmao:run $next
+		return
+	}
+	dnsbl:lookup $target [list act $chan $nick $uhost $next]
+}
+
+# waiter: {act chan nick uhost next} or {report nick what}
+proc dnsbl:lookup {target waiter} {
+	if {[dnsbl:is_ip $target]} {
+		dnsbl:start $target $waiter
+	} else {
+		dnslookup $target dnsbl:resolved $waiter
+	}
+}
+
+proc dnsbl:resolved {ip host status waiter} {
+	if {!$status || ![dnsbl:is_ip $ip]} {
+		# Cannot resolve it: nothing to hold against them
+		dnsbl:finish "" "" $waiter
+		return
+	}
+	dnsbl:start $ip $waiter
+}
+
+proc dnsbl:start {ip waiter} {
+	global cc dnsbl_cache dnsbl_wait dnsbl_left dnsbl_hit
+
+	if {[info exists dnsbl_cache($ip)]} {
+		lassign $dnsbl_cache($ip) when result
+		if {[clock seconds] - $when < $cc(dnsbl_cache_minutes) * 60} {
+			dnsbl:finish $ip $result $waiter
+			return
+		}
+		unset dnsbl_cache($ip)
+	}
+
+	lappend dnsbl_wait($ip) $waiter
+	if {[info exists dnsbl_left($ip)]} {
+		return
+	}
+	set rev [dnsbl:reverse $ip]
+	if {$rev eq "" || [llength $cc(dnsbl_zones)] == 0} {
+		dnsbl:done $ip ""
+		return
+	}
+	set dnsbl_left($ip) [llength $cc(dnsbl_zones)]
+	set dnsbl_hit($ip) ""
+	foreach zone $cc(dnsbl_zones) {
+		dnslookup "$rev.[lindex $zone 0]" dnsbl:answer $ip $zone
+	}
+}
+
+proc dnsbl:answer {addr host status ip zone} {
+	global dnsbl_left dnsbl_hit
+
+	if {![info exists dnsbl_left($ip)]} {
+		return
+	}
+	if {$status && [regexp {^127\.0\.0\.(\d+)$} $addr -> code]} {
+		lassign $zone zname label codes site
+		if {$codes eq "*" || [lsearch -exact $codes $code] >= 0} {
+			set dnsbl_hit($ip) [list $label [dnsbl:reason $zname $code] $site]
+		}
+	}
+	if {$dnsbl_hit($ip) ne "" || [incr dnsbl_left($ip) -1] <= 0} {
+		dnsbl:done $ip $dnsbl_hit($ip)
+	}
+}
+
+proc dnsbl:done {ip result} {
+	global dnsbl_cache dnsbl_wait dnsbl_left dnsbl_hit
+
+	set dnsbl_cache($ip) [list [clock seconds] $result]
+	set waiters [expr {[info exists dnsbl_wait($ip)] ? $dnsbl_wait($ip) : {}}]
+	unset -nocomplain dnsbl_wait($ip) dnsbl_left($ip) dnsbl_hit($ip)
+	foreach w $waiters {
+		dnsbl:finish $ip $result $w
+	}
+}
+
+proc dnsbl:finish {ip result waiter} {
+	if {[lindex $waiter 0] eq "report"} {
+		dnsbl:report [lindex $waiter 1] [lindex $waiter 2] $ip $result
+		return
+	}
+	lassign $waiter mode chan nick uhost next
+	if {$result eq ""} {
+		lmao:run $next
+	} else {
+		dnsbl:sanction $chan $nick $uhost $ip $result
+	}
+}
+
+proc dnsbl:sanction {chan nick uhost ip result} {
+	global cc botnick
+
+	if {![validchan $chan]} {
+		return
+	}
+	lassign $result label why site
+	set mask [dnsbl:mask $uhost]
+	if {![botisop $chan]} {
+		chanlog $chan "GUARD" "$nick ($mask) is listed by $label ($why), but I am not opped"
+		return
+	}
+	set reason "Your IP is listed by $label ($why). Check it at $site"
+	if {![matchban "$nick!$uhost" $chan]} {
+		newchanban $chan $mask $botnick $reason $cc(dnsbl_ban_minutes)
+	}
+	# A plain KICK reaches people who are still hidden by +D as well
+	putserv "KICK $chan $nick :$reason"
+	chanlog $chan "SANCTION" "dnsbl banned $nick ($mask) for $cc(dnsbl_ban_minutes) min - listed by $label ($why)"
+	putlog "lmao.tcl dnsbl: $nick!$uhost ($ip) on $chan listed by $label ($why)"
+}
+
+proc dnsbl:report {nick what ip result} {
+	if {$ip eq "" || ![dnsbl:is_ip $ip]} {
+		puthelp "NOTICE $nick :DNSBL: could not resolve \002$what\002 to an IP."
+	} elseif {$result eq ""} {
+		puthelp "NOTICE $nick :DNSBL: \002$what\002 ($ip) is not listed."
+	} else {
+		lassign $result label why site
+		puthelp "NOTICE $nick :DNSBL: \002$what\002 ($ip) is listed by $label ($why) - $site"
+	}
+}
+
+proc dnsbl:pub {nick uhost hand chan arg} {
+	global cc
+
+	if {![access:require $nick $hand $chan [access:rank_of op] "check the DNS blacklists"]} {
+		return
+	}
+	set what [lindex [split [string trim $arg]] 0]
+	if {$what eq ""} {
+		putserv "NOTICE $nick :\002Usage:\002 [string trim $cc(cmdchar)]dnsbl <nick | ip | host>"
+		return
+	}
+	if {![dnsbl:usable]} {
+		putserv "NOTICE $nick :This bot has no DNS lookups (eggdrop's dns module is not loaded)."
+		return
+	}
+	if {[onchan $what $chan]} {
+		set target [dnsbl:target_of [getchanhost $what $chan]]
+		if {$target eq ""} {
+			putserv "NOTICE $nick :$what has a hidden X host, so there is no IP to check."
+			return
+		}
+	} else {
+		set target [string tolower $what]
+	}
+	dnsbl:lookup $target [list report $nick $what]
+}
+
+###########################################################################
+# BADCHAN MODULE - bad channel list
+#
+# Built on the idea of badchan.tcl by Bass of UnderNet's #eggdrop: WHOIS a
+# newcomer and ban them if they sit in a listed channel. Written fresh for
+# lmao.tcl. Channels marked secret or private never show in a WHOIS.
+#   !badchan list
+#   !badchan add <mask> [reason]      e.g. !badchan add #*spam* no spammers
+#   !badchan del <mask>
+# Add -global before the mask for the list used on every channel (Owner).
+###########################################################################
+
+array set badchan_list {}
+array set badchan_wait {}
+array set badchan_chans {}
+array set badchan_seen {}
+
+proc badchan:on {chan} {
+	return [expr {[validchan $chan] && [module_enabled $chan "badchan"]}]
+}
+
+proc badchan:load {} {
+	global cc badchan_list
+	array unset badchan_list
+	if {![file exists $cc(badchan_file)] || [catch {open $cc(badchan_file) r} fd]} {
+		return
+	}
+	while {[gets $fd line] >= 0} {
+		set line [string trim $line]
+		if {$line eq "" || [string index $line 0] eq ";"} {
+			continue
+		}
+		set f [split $line]
+		set where [string tolower [lindex $f 0]]
+		set mask [lindex $f 1]
+		if {$mask ne ""} {
+			lappend badchan_list($where) [list $mask [join [lrange $f 2 end]]]
+		}
+	}
+	close $fd
+}
+
+proc badchan:save {} {
+	global cc badchan_list
+	if {[catch {open $cc(badchan_file) w} fd]} {
+		putlog "lmao.tcl badchan: cannot write $cc(badchan_file): $fd"
+		return 0
+	}
+	puts $fd "; lmao.tcl bad channel list: <#channel or *> <mask> <reason>"
+	foreach where [lsort [array names badchan_list]] {
+		foreach entry $badchan_list($where) {
+			puts $fd "$where [lindex $entry 0] [lindex $entry 1]"
+		}
+	}
+	close $fd
+	return 1
+}
+
+proc badchan:masks {chan} {
+	global badchan_list
+	set all {}
+	foreach where [list "*" [string tolower $chan]] {
+		if {[info exists badchan_list($where)]} {
+			set all [concat $all $badchan_list($where)]
+		}
+	}
+	return $all
+}
+
+# Gate used by delayjoin and on join: WHOIS, then runs "next" when clean
+proc badchan:check {chan nick uhost next} {
+	global cc badchan_wait badchan_seen
+
+	if {![badchan:on $chan] || [llength [badchan:masks $chan]] == 0} {
+		lmao:run $next
+		return
+	}
+	# Checked clean a moment ago: a join/part flood must not become a WHOIS flood
+	set host [string tolower [lindex [split $uhost "@"] end]]
+	if {[info exists badchan_seen($host)] && [clock seconds] - $badchan_seen($host) < $cc(badchan_rescan_minutes) * 60} {
+		lmao:run $next
+		return
+	}
+	set ln [string tolower $nick]
+	set first [expr {![info exists badchan_wait($ln)]}]
+	lappend badchan_wait($ln) [list $chan $uhost $next [clock seconds]]
+	if {$first} {
+		putserv "WHOIS $nick"
+	}
+}
+
+# 319: "<us> <nick> :@#chan +#chan2 #chan3" - may come in several lines
+proc badchan:raw319 {from keyword text} {
+	global badchan_wait badchan_chans
+	set f [split $text]
+	set ln [string tolower [lindex $f 1]]
+	if {[info exists badchan_wait($ln)]} {
+		append badchan_chans($ln) " [string trimleft [join [lrange $f 2 end]] ":"]"
+	}
+	return 0
+}
+
+# 318: end of WHOIS - decide
+proc badchan:raw318 {from keyword text} {
+	global badchan_wait badchan_chans badchan_seen
+	set nick [lindex [split $text] 1]
+	set ln [string tolower $nick]
+	if {![info exists badchan_wait($ln)]} {
+		return 0
+	}
+	set chans [expr {[info exists badchan_chans($ln)] ? $badchan_chans($ln) : ""}]
+	set waiters $badchan_wait($ln)
+	unset -nocomplain badchan_wait($ln) badchan_chans($ln)
+
+	foreach w $waiters {
+		lassign $w chan uhost next
+		set hit [badchan:match $chan $chans]
+		if {$hit eq ""} {
+			set badchan_seen([string tolower [lindex [split $uhost "@"] end]]) [clock seconds]
+			lmao:run $next
+		} else {
+			badchan:sanction $chan $nick $uhost $hit
+		}
+	}
+	return 0
+}
+
+proc badchan:match {chan chans} {
+	foreach c [split $chans] {
+		set c [string trimleft $c "@+"]
+		if {$c eq "" || [string equal -nocase $c $chan]} {
+			continue
+		}
+		foreach entry [badchan:masks $chan] {
+			if {[string match -nocase [lindex $entry 0] $c]} {
+				return [list $c [lindex $entry 0] [lindex $entry 1]]
+			}
+		}
+	}
+	return ""
+}
+
+proc badchan:sanction {chan nick uhost hit} {
+	global cc botnick
+	if {![validchan $chan] || ![botisop $chan]} {
+		return
+	}
+	lassign $hit c mask why
+	set ban "*!*@[lindex [split $uhost "@"] end]"
+	set reason [expr {$why eq "" ? "Bad channel: $c" : "Bad channel: $c ($why)"}]
+	if {![matchban "$nick!$uhost" $chan]} {
+		newchanban $chan $ban $botnick $reason $cc(badchan_ban_minutes)
+	}
+	putserv "KICK $chan $nick :$reason"
+	chanlog $chan "SANCTION" "badchan banned $nick ($ban) for $cc(badchan_ban_minutes) min - in $c (matches $mask)"
+}
+
+# WHOIS that never finished (the nick left before the answer)
+proc badchan:expire {} {
+	global badchan_wait badchan_chans badchan_seen cc
+	set now [clock seconds]
+	foreach ln [array names badchan_wait] {
+		if {$now - [lindex $badchan_wait($ln) 0 3] > 60} {
+			unset -nocomplain badchan_wait($ln) badchan_chans($ln)
+		}
+	}
+	foreach host [array names badchan_seen] {
+		if {$now - $badchan_seen($host) > $cc(badchan_rescan_minutes) * 60} {
+			unset badchan_seen($host)
+		}
+	}
+}
+
+proc badchan:pub {nick uhost hand chan arg} {
+	global cc badchan_list
+
+	if {![access:require $nick $hand $chan [access:rank_of op] "change the bad channel list"]} {
+		return
+	}
+	set c [string trim $cc(cmdchar)]
+	set words [split [string trim $arg]]
+	set verb [string tolower [lindex $words 0]]
+	set where [string tolower $chan]
+	set rest [lrange $words 1 end]
+	if {[string equal -nocase [lindex $rest 0] "-global"]} {
+		if {[access:rank $hand $chan] < [access:rank_of owner]} {
+			putserv "NOTICE $nick :Only an Owner can change the global bad channel list."
+			return
+		}
+		set where "*"
+		set rest [lrange $rest 1 end]
+	}
+	set mask [lindex $rest 0]
+	set why [join [lrange $rest 1 end]]
+	set shown [expr {$where eq "*" ? "the global list" : $chan}]
+
+	switch -- $verb {
+		add {
+			if {$mask eq ""} {
+				putserv "NOTICE $nick :\002Usage:\002 ${c}badchan add \[-global\] <mask> \[reason\]"
+				return
+			}
+			if {[info exists badchan_list($where)]} {
+				foreach entry $badchan_list($where) {
+					if {[string equal -nocase [lindex $entry 0] $mask]} {
+						putserv "NOTICE $nick :$mask is already on $shown."
+						return
+					}
+				}
+			}
+			lappend badchan_list($where) [list $mask $why]
+			badchan:save
+			putserv "NOTICE $nick :\[OK\] Added $mask to $shown."
+			chanlog $chan "MODULE" "$nick added bad channel $mask to $shown"
+			if {![badchan:on $chan]} {
+				putserv "NOTICE $nick :The badchan module is off here - ${c}enable badchan to use it."
+			}
+		}
+		del {
+			set kept {}
+			set found 0
+			if {[info exists badchan_list($where)]} {
+				foreach entry $badchan_list($where) {
+					if {[string equal -nocase [lindex $entry 0] $mask]} {
+						set found 1
+					} else {
+						lappend kept $entry
+					}
+				}
+			}
+			if {!$found} {
+				putserv "NOTICE $nick :$mask is not on $shown."
+				return
+			}
+			if {[llength $kept]} {
+				set badchan_list($where) $kept
+			} else {
+				unset badchan_list($where)
+			}
+			badchan:save
+			putserv "NOTICE $nick :\[OK\] Removed $mask from $shown."
+			chanlog $chan "MODULE" "$nick removed bad channel $mask from $shown"
+		}
+		list - "" {
+			set entries [badchan:masks $chan]
+			if {![llength $entries]} {
+				putserv "NOTICE $nick :No bad channels listed for $chan."
+				return
+			}
+			puthelp "NOTICE $nick :\002Bad channels for $chan\002 ([llength $entries]):"
+			foreach entry $entries {
+				puthelp "NOTICE $nick :  [lindex $entry 0][expr {[lindex $entry 1] eq "" ? "" : " - [lindex $entry 1]"}]"
+			}
+		}
+		default {
+			putserv "NOTICE $nick :\002Usage:\002 ${c}badchan list | add \[-global\] <mask> \[reason\] | del \[-global\] <mask>"
+		}
+	}
+}
+
+# Visible joins (a channel without +D, or delayjoin off)
+proc scan:join {nick uhost hand chan} {
+	if {[isbotnick $nick] || [dj:on $chan] || [guard:trusted $nick $chan]} {
+		return 0
+	}
+	if {[dnsbl:on $chan] || [badchan:on $chan]} {
+		dnsbl:check $chan $nick $uhost [list badchan:check $chan $nick $uhost {}]
+	}
+	return 0
+}
+
+###########################################################################
 # X - UnderNet channel service
 #
 # All of this stays off until cc(x_user) and cc(x_pass) are set. Then the bot
@@ -3814,13 +4743,16 @@ proc setup_timers {} {
 	# Kill any leftover timers first - without this a .rehash (or the old
 	# re-arm bug) stacks duplicate timers until every check runs many times
 	foreach t [utimers] {
-		if {[lindex $t 1] in {idledeop:timer_check activevoice:timer_check guard:timer_check}} {
+		if {[lindex $t 1] in {idledeop:timer_check activevoice:timer_check guard:timer_check dj:timer_check}} {
 			killutimer [lindex $t 2]
 		}
 	}
 
 	# Guard: lift expired locks and forget old flood counts
 	utimer 15 guard:timer_check
+
+	# Delayjoin / DNSBL / badchan: look at the hidden members of +D channels
+	utimer $cc(dj_scan_seconds) dj:timer_check
 
 	# Schedule idle deop check
 	utimer $cc(idledeop_check_interval) idledeop:timer_check
@@ -3862,6 +4794,9 @@ foreach lmao_chan [channels] {
 	x:setup_need $lmao_chan
 }
 unset -nocomplain lmao_chan
+
+# Bad channel list from disk
+badchan:load
 
 putlog "$cc(version) - Complete production ready version"
 putlog "Loaded successfully - ready to serve!"

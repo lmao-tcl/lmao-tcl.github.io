@@ -232,6 +232,10 @@ body.paused #bg .col, body.paused .hero h1 .caret { animation-play-state: paused
 .feat .fi { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); margin-bottom: 12px; }
 .feat .ft { font-size: 15px; margin-bottom: 4px; }
 .feat p { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin: 0; }
+.credits { margin: 18px 0; }
+.credits .ft { font-size: 16px; margin-bottom: 2px; }
+.credits .credit-role { font: 600 11.5px var(--mono); color: var(--c); margin-bottom: 8px; }
+.credits .credit-link { margin-top: 10px; font-size: 13px; }
 
 /* ---------- sections ---------- */
 section { margin-bottom: 64px; }
@@ -391,6 +395,10 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
   <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 100 100"><path fill="currentColor" stroke="none" d="M50 4l4 16 9-4-3 14 16-5-4 9 20-2-7 9 12 7-31 8 6 18-16-4-2 6 1 11h-8l1-11-2-6-16 4 6-18-31-8 12-7-7-9 20 2-4-9 16 5-3-14 9 4z"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-hidden" viewBox="0 0 24 24"><path d="M17.9 17.9A10 10 0 0 1 12 20c-7 0-11-8-11-8a18.5 18.5 0 0 1 5.1-5.9M9.9 4.2A9 9 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.2 3.2M1 1l22 22"/><path d="M14.1 14.1a3 3 0 1 1-4.2-4.2"/></symbol>
+  <symbol id="i-radar" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><path d="M12 12l7-7"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></symbol>
 </svg>
 
 <div id="bg" aria-hidden="true"><div class="col"></div><div class="col"></div><div class="col"></div></div>
@@ -403,7 +411,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/><path d="M14 30q-3 4 0 7M50 30q3 4 0 7" stroke="#4cc3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <b>lmao<span>.tcl</span></b>
     </a>
-    <span class="ver">v6.7.0</span>
+    <span class="ver">v6.8.0</span>
     <nav class="navlinks" aria-label="Main">
       <a href="#features"><svg class="ico" aria-hidden="true"><use href="#i-home"/></svg><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a>
       <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span data-l="en">Install</span><span data-l="fr">Installer</span></a>
@@ -458,11 +466,15 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <a href="#idledeop"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></a>
     <a href="#guard"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></a>
     <a href="#xservice"><svg class="ico" aria-hidden="true"><use href="#i-key"/></svg><span data-l="en">X service</span><span data-l="fr">Service X</span></a>
+    <a href="#delayjoin"><svg class="ico" aria-hidden="true"><use href="#i-hidden"/></svg><span data-l="en">Delayed join (+Dm)</span><span data-l="fr">Arrivées différées (+Dm)</span></a>
+    <a href="#dnsbl"><svg class="ico" aria-hidden="true"><use href="#i-radar"/></svg><span data-l="en">Drone blacklists</span><span data-l="fr">Listes noires</span></a>
+    <a href="#badchan"><svg class="ico" aria-hidden="true"><use href="#i-ban"/></svg><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></a>
     <a href="#topicsys"><svg class="ico" aria-hidden="true"><use href="#i-hash"/></svg><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></a>
     <a href="#protections"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>Protections</a>
     <h2><span data-l="en">Reference</span><span data-l="fr">Référence</span></h2>
     <a href="#ctcp"><svg class="ico" aria-hidden="true"><use href="#i-plug"/></svg>CTCP &amp; DCC</a>
     <a href="#gotchas"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></a>
+    <a href="#credits"><svg class="ico" aria-hidden="true"><use href="#i-heart"/></svg><span data-l="en">Credits</span><span data-l="fr">Remerciements</span></a>
     <a href="#changelog"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></a>
   </nav>
 </aside>
@@ -476,7 +488,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <p class="tagline" data-l="en">Channel management for eggdrop, built for UnderNet. <em>Every reply by notice, never in your channel.</em></p>
     <p class="tagline" data-l="fr">La gestion de canal pour eggdrop, pensée pour UnderNet. <em>Chaque réponse par notice, jamais dans ton canal.</em></p>
     <div class="badges">
-      <span class="badge o">v6.7.0</span>
+      <span class="badge o">v6.8.0</span>
       <span class="badge g">eggdrop ≥ 1.8</span>
       <span class="badge b">Tcl ≥ 8.5</span>
       <span class="badge">UnderNet · ircu · X</span>
@@ -517,8 +529,8 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
 </div>
 
 <div class="stats" id="features">
-  <div class="stat"><b data-count="64">64</b><span data-l="en">commands, one help table</span><span data-l="fr">commandes, une seule table d'aide</span></div>
-  <div class="stat"><b data-count="6">6</b><span data-l="en">per-channel modules</span><span data-l="fr">modules par canal</span></div>
+  <div class="stat"><b data-count="66">66</b><span data-l="en">commands, one help table</span><span data-l="fr">commandes, une seule table d'aide</span></div>
+  <div class="stat"><b data-count="9">9</b><span data-l="en">per-channel modules</span><span data-l="fr">modules par canal</span></div>
   <div class="stat"><b data-count="0">0</b><span data-l="en">colour codes sent, ever</span><span data-l="fr">code de couleur envoyé, jamais</span></div>
   <div class="stat"><b data-count="100" data-suffix="%">100%</b><span data-l="en">replies by notice</span><span data-l="fr">des réponses par notice</span></div>
 </div>
@@ -572,6 +584,18 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <h2 class="ft"><span data-l="en">Any channel setting</span><span data-l="fr">Tous les réglages</span></h2>
     <p data-l="en"><code>!chanset</code> lists and changes every eggdrop channel setting, even ones other scripts add.</p>
     <p data-l="fr"><code>!chanset</code> liste et change tous les réglages de canal d'eggdrop, même ceux d'autres scripts.</p></div>
+  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-hidden"/></svg></div>
+    <h2 class="ft"><span data-l="en">Delayed join</span><span data-l="fr">Arrivées différées</span></h2>
+    <p data-l="en">Keeps a channel <code>+Dm</code> and lets newcomers in by voice: X users first, everyone else once they check out.</p>
+    <p data-l="fr">Garde un canal en <code>+Dm</code> et fait entrer les nouveaux par le voice : les comptes X d'abord, les autres une fois vérifiés.</p></div>
+  <div class="feat" style="--c:var(--red)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-radar"/></svg></div>
+    <h2 class="ft"><span data-l="en">Drone blacklists</span><span data-l="fr">Listes noires de drones</span></h2>
+    <p data-l="en">Checks IPs against DroneBL and EFnet RBL and bans drones while they are still hidden by <code>+D</code>.</p>
+    <p data-l="fr">Vérifie les IP auprès de DroneBL et d'EFnet RBL et bannit les drones pendant qu'ils sont encore cachés par <code>+D</code>.</p></div>
+  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-ban"/></svg></div>
+    <h2 class="ft"><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></h2>
+    <p data-l="en">Bans people who sit in channels you list, per channel or everywhere.</p>
+    <p data-l="fr">Bannit les gens présents dans les canaux que tu listes, par canal ou partout.</p></div>
 </div>
 
 <div class="note" data-l="fr"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg><div><b>Le robot parle anglais.</b> Le script envoie ses réponses en anglais : les exemples de sortie ci-dessous sont donc laissés tels quels. Les commandes, elles, sont les mêmes dans toutes les langues.</div></div>
@@ -591,13 +615,13 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     le robot n'inonde jamais le canal qu'il est censé protéger.</p>
   <div class="table-scroll">
   <table class="kv">
-    <tr><th>Script</th><td>lmao.tcl v6.7.0</td></tr>
+    <tr><th>Script</th><td>lmao.tcl v6.8.0</td></tr>
     <tr><th><span data-l="en">Repository</span><span data-l="fr">Dépôt</span></th><td><a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer">github.com/lmao-tcl/lmao-tcl.github.io</a></td></tr>
     <tr><th><span data-l="en">Requirements</span><span data-l="fr">Prérequis</span></th><td><span data-l="en">Eggdrop 1.8 or newer (tested on 1.10.1) · Tcl 8.5 or newer</span><span data-l="fr">Eggdrop 1.8 ou plus récent (testé sur 1.10.1) · Tcl 8.5 ou plus récent</span></td></tr>
     <tr><th><span data-l="en">Network</span><span data-l="fr">Réseau</span></th><td><span data-l="en">Written for UnderNet ircu — aware of the <code>X</code> and <code>W</code> services</span><span data-l="fr">Écrit pour ircu d'UnderNet — tient compte des services <code>X</code> et <code>W</code></span></td></tr>
     <tr><th><span data-l="en">Trigger</span><span data-l="fr">Déclencheur</span></th><td><code>!</code> <span data-l="en">by default</span><span data-l="fr">par défaut</span> — <code>cc(cmdchar)</code></td></tr>
-    <tr><th><span data-l="en">Commands</span><span data-l="fr">Commandes</span></th><td><span data-l="en">64, documented in one shared help table</span><span data-l="fr">64, documentées dans une seule table d'aide partagée</span></td></tr>
-    <tr><th>Modules</th><td><code>topic</code> · <code>activevoice</code> · <code>idledevoice</code> · <code>idledeop</code> · <code>chanlog</code> · <code>guard</code></td></tr>
+    <tr><th><span data-l="en">Commands</span><span data-l="fr">Commandes</span></th><td><span data-l="en">66, documented in one shared help table</span><span data-l="fr">66, documentées dans une seule table d'aide partagée</span></td></tr>
+    <tr><th>Modules</th><td><code>topic</code> · <code>activevoice</code> · <code>idledevoice</code> · <code>idledeop</code> · <code>chanlog</code> · <code>guard</code> · <code>delayjoin</code> · <code>dnsbl</code> · <code>badchan</code></td></tr>
     <tr><th><span data-l="en">License</span><span data-l="fr">Licence</span></th><td>GPLv3</td></tr>
   </table>
   </div>
@@ -624,12 +648,12 @@ source scripts/lmao.tcl</pre></div>
 
   <p data-l="en">You should see this in the partyline and the log:</p>
   <p data-l="fr">Tu devrais voir ceci dans la partyline et le journal :</p>
-  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.7.0] - Complete production ready version</span>
+  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.0] - Complete production ready version</span>
 <span class="n">Loaded successfully - ready to serve!</span></pre></div>
 
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
-    <div data-l="en"><b>Edit the config first.</b> <code>cc(mainchan)</code> and <code>cc(backchan)</code> ship as <code>#mainchan</code> and <code>#secretchan</code> placeholders — set them to your real channels before you rely on <code>!ops</code>.</div>
-    <div data-l="fr"><b>Modifie la config d'abord.</b> <code>cc(mainchan)</code> et <code>cc(backchan)</code> arrivent avec les valeurs bidon <code>#mainchan</code> et <code>#secretchan</code> — mets tes vrais canaux avant de compter sur <code>!ops</code>.</div></div>
+    <div data-l="en"><b>Edit the config first.</b> <code>cc(mainchan)</code> and <code>cc(backchan)</code> ship as <code>#mainchan</code> and <code>#secretchan</code> placeholders — set them to your real channels before you rely on <code>!ops</code>. Nothing else to install: the <code>dnsbl</code> module uses eggdrop's <code>dns</code> module, loaded by default, and <code>badchan</code> saves its lists in <code>lmao-badchan.txt</code>.</div>
+    <div data-l="fr"><b>Modifie la config d'abord.</b> <code>cc(mainchan)</code> et <code>cc(backchan)</code> arrivent avec les valeurs bidon <code>#mainchan</code> et <code>#secretchan</code> — mets tes vrais canaux avant de compter sur <code>!ops</code>. Rien d'autre à installer : le module <code>dnsbl</code> utilise le module <code>dns</code> d'eggdrop, chargé par défaut, et <code>badchan</code> enregistre ses listes dans <code>lmao-badchan.txt</code>.</div></div>
 </section>
 
 <!-- ================= CONFIG ================= -->
@@ -674,6 +698,18 @@ source scripts/lmao.tcl</pre></div>
     <tr><td><code>cc(x_pass)</code></td><td><em><span data-l="en">empty</span><span data-l="fr">vide</span></em></td><td><span data-l="en">X password. Keep the config file private</span><span data-l="fr">Mot de passe X. Garde le fichier de config privé</span></td></tr>
     <tr><td><code>cc(x_hide_host)</code></td><td><code>1</code></td><td><span data-l="en">Set <code>+x</code> after logging in, so the bot's host becomes <code>&lt;account&gt;.users.undernet.org</code></span><span data-l="fr">Mettre <code>+x</code> après la connexion : l'hôte du robot devient <code>&lt;compte&gt;.users.undernet.org</code></span></td></tr>
     <tr><td><code>cc(x_rescue)</code></td><td><code>1</code></td><td><span data-l="en">Point eggdrop's <code>need-*</code> hooks at X (op, unban, invite)</span><span data-l="fr">Diriger les crochets <code>need-*</code> d'eggdrop vers X (op, unban, invitation)</span></td></tr>
+    <tr><td><code>cc(dj_modes)</code></td><td><code>Dm</code></td><td><span data-l="en">Modes delayjoin keeps on the channel</span><span data-l="fr">Modes que delayjoin garde sur le canal</span></td></tr>
+    <tr><td><code>cc(dj_scan_seconds)</code></td><td><code>15</code></td><td><span data-l="en">How often hidden members are looked up (<code>NAMES -d</code>)</span><span data-l="fr">Fréquence de recherche des membres cachés (<code>NAMES -d</code>)</span></td></tr>
+    <tr><td><code>cc(dj_voice_authed)</code></td><td><code>0</code></td><td><span data-l="en">Seconds before someone logged in to X is voiced</span><span data-l="fr">Secondes avant de donner le voice à quelqu'un connecté à X</span></td></tr>
+    <tr><td><code>cc(dj_voice_unauthed)</code></td><td><code>30</code></td><td><span data-l="en">Seconds before everyone else is voiced, once they check out</span><span data-l="fr">Secondes avant de donner le voice aux autres, une fois vérifiés</span></td></tr>
+    <tr><td><code>cc(dj_welcome)</code></td><td><em><span data-l="en">text</span><span data-l="fr">texte</span></em></td><td><span data-l="en">Notice sent while they wait. <code>%chan%</code>, <code>%secs%</code>; <code>""</code> sends nothing</span><span data-l="fr">Notice envoyée pendant l'attente. <code>%chan%</code>, <code>%secs%</code> ; <code>""</code> n'envoie rien</span></td></tr>
+    <tr><td><code>cc(dnsbl_zones)</code></td><td>DroneBL, EFnet RBL</td><td><span data-l="en">Blacklists as <code>{zone name codes site}</code>; codes that mean ban (<code>*</code> = any)</span><span data-l="fr">Listes noires sous la forme <code>{zone nom codes site}</code> ; codes qui mènent au ban (<code>*</code> = tous)</span></td></tr>
+    <tr><td><code>cc(dnsbl_ban_minutes)</code></td><td><code>120</code></td><td><span data-l="en">How long a blacklist ban lasts</span><span data-l="fr">Durée d'un ban de liste noire</span></td></tr>
+    <tr><td><code>cc(dnsbl_cache_minutes)</code></td><td><code>60</code></td><td><span data-l="en">How long an answer is remembered for each IP</span><span data-l="fr">Durée pendant laquelle une réponse est gardée pour chaque IP</span></td></tr>
+    <tr><td><code>cc(dnsbl_webirc_hosts)</code></td><td>Mibbit, KiwiIRC</td><td><span data-l="en">Web clients that hide the user's IP as hex in the ident</span><span data-l="fr">Clients web qui cachent l'IP en hexadécimal dans l'ident</span></td></tr>
+    <tr><td><code>cc(badchan_file)</code></td><td><code>lmao-badchan.txt</code></td><td><span data-l="en">Where the bad channel lists are saved</span><span data-l="fr">Où les listes de canaux interdits sont enregistrées</span></td></tr>
+    <tr><td><code>cc(badchan_ban_minutes)</code></td><td><code>60</code></td><td><span data-l="en">How long a bad channel ban lasts</span><span data-l="fr">Durée d'un ban pour canal interdit</span></td></tr>
+    <tr><td><code>cc(badchan_rescan_minutes)</code></td><td><code>3</code></td><td><span data-l="en">A host checked clean is not checked again for this long</span><span data-l="fr">Un hôte vérifié propre n'est pas revérifié pendant ce temps</span></td></tr>
     <tr><td><code>hopondeop</code></td><td><code>1</code></td><td><span data-l="en">When deopped and alone in the channel, cycle to get op back (with an X account, X is asked instead)</span><span data-l="fr">Quand il perd l'op et est seul dans le canal, sortir et revenir pour le récupérer (avec un compte X, on demande à X)</span></td></tr>
   </table>
   </div>
@@ -1220,8 +1256,8 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 <!-- ================= MODULES ================= -->
 <section id="modules">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-puzzle"/></svg></span>Modules</h2>
-  <p class="sec-intro" data-l="en">Six features can be switched on and off <strong>per channel</strong>, live, without editing the config. Four start <span class="on">ON</span>; <code>idledeop</code> and <code>idledevoice</code> start <span class="off">OFF</span>.</p>
-  <p class="sec-intro" data-l="fr">Six fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Quatre partent <span class="on">ON</span> ; <code>idledeop</code> et <code>idledevoice</code> partent <span class="off">OFF</span>.</p>
+  <p class="sec-intro" data-l="en">Nine features can be switched on and off <strong>per channel</strong>, live, without editing the config. Four start <span class="on">ON</span>; the other five start <span class="off">OFF</span> because they change how the channel works.</p>
+  <p class="sec-intro" data-l="fr">Neuf fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Quatre partent <span class="on">ON</span> ; les cinq autres partent <span class="off">OFF</span> parce qu'elles changent le fonctionnement du canal.</p>
   <div class="table-scroll">
   <table>
     <tr><th scope="col" style="width:150px">Module</th><th scope="col" style="width:90px"><span data-l="en">Default</span><span data-l="fr">Défaut</span></th><th scope="col"><span data-l="en">What it does</span><span data-l="fr">À quoi ça sert</span></th></tr>
@@ -1231,6 +1267,9 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     <tr><td><code>idledeop</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Deops ops idle past the channel's limit</span><span data-l="fr">Retire l'op aux ops inactifs au-delà de la limite du canal</span></td></tr>
     <tr><td><code>chanlog</code></td><td><span class="on">ON</span></td><td><span data-l="en">Sends this channel's audit trail to the ops channel</span><span data-l="fr">Envoie le journal de ce canal au canal des ops</span></td></tr>
     <tr><td><code>guard</code></td><td><span class="on">ON</span></td><td><span data-l="en">Flood protection: kicks lone flooders, locks the channel under attack — see <a href="#guard">flood guard</a></span><span data-l="fr">Protection anti-flood : expulse les flooders isolés, verrouille le canal sous attaque — voir <a href="#guard">garde anti-flood</a></span></td></tr>
+    <tr><td><code>delayjoin</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Keeps the channel <code>+Dm</code> and voices hidden newcomers — see <a href="#delayjoin">delayed join</a></span><span data-l="fr">Garde le canal en <code>+Dm</code> et donne le voice aux nouveaux cachés — voir <a href="#delayjoin">arrivées différées</a></span></td></tr>
+    <tr><td><code>dnsbl</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Bans IPs listed on drone and proxy blacklists — see <a href="#dnsbl">drone blacklists</a></span><span data-l="fr">Bannit les IP inscrites sur les listes noires de drones et de proxys — voir <a href="#dnsbl">listes noires</a></span></td></tr>
+    <tr><td><code>badchan</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Bans people who sit in listed channels — see <a href="#badchan">bad channels</a></span><span data-l="fr">Bannit les gens présents dans les canaux listés — voir <a href="#badchan">canaux interdits</a></span></td></tr>
   </table>
   </div>
   <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
@@ -1355,6 +1394,72 @@ set cc(x_pass) "its-x-password"</pre></div>
   </div>
 </section>
 
+<!-- ================= DELAYJOIN ================= -->
+<section id="delayjoin">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hidden"/></svg></span><span data-l="en">Delayed join (+Dm)</span><span data-l="fr">Arrivées différées (+Dm)</span></h2>
+  <p class="sec-intro" data-l="en">The <code>delayjoin</code> module turns a channel into a waiting room. It keeps <code>+Dm</code> on: with <code>+D</code> nobody sees a join, with <code>+m</code> nobody without voice can talk. The bot then lets people in one by one by voicing them, which is also the moment they appear in the nick list. A drone wave lands in an empty room and never shows up.</p>
+  <p class="sec-intro" data-l="fr">Le module <code>delayjoin</code> fait du canal une salle d'attente. Il garde <code>+Dm</code> : avec <code>+D</code> personne ne voit les arrivées, avec <code>+m</code> personne sans voice ne peut parler. Le robot fait ensuite entrer les gens un par un en leur donnant le voice, c'est aussi à ce moment qu'ils apparaissent dans la liste. Une vague de drones arrive dans une salle vide et ne se montre jamais.</p>
+  <ol class="steps">
+    <li><span><span data-l="en">Every 15 seconds the bot asks the server for the hidden members: <code>NAMES -d #channel</code> (only a channel operator gets the answer).</span><span data-l="fr">Toutes les 15 secondes, le robot demande au serveur les membres cachés : <code>NAMES -d #canal</code> (seul un opérateur du canal reçoit la réponse).</span></span></li>
+    <li><span><span data-l="en">It looks them up in batches with one WHOX query, <code>WHO a,b,c n%tuhnar</code>, which tells it who is logged in to X.</span><span data-l="fr">Il les vérifie par lots avec une seule requête WHOX, <code>WHO a,b,c n%tuhnar</code>, qui lui dit qui est connecté à X.</span></span></li>
+    <li><span><span data-l="en">Logged in to X: voiced right away. Everyone else gets a short welcome notice, goes through the DNSBL and bad channel checks when those modules are on, and is voiced after 30 seconds.</span><span data-l="fr">Connecté à X : voice tout de suite. Les autres reçoivent une courte notice de bienvenue, passent les vérifications DNSBL et canaux interdits quand ces modules sont actifs, et reçoivent le voice après 30 secondes.</span></span></li>
+    <li><span><span data-l="en">Banned people stay hidden and silent. During a <a href="#guard">guard lock</a> only X users and regulars get in; the rest wait for the lock to lift.</span><span data-l="fr">Les bannis restent cachés et muets. Pendant un <a href="#guard">verrou de la garde</a>, seuls les comptes X et les habitués entrent ; les autres attendent la fin du verrou.</span></span></li>
+  </ol>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-mic"/></svg>
+    <div data-l="en">When you switch it on, everyone already talking is voiced before <code>+m</code> goes on, so nobody is cut off. Switching it off removes only the modes it set. The idle devoicer leaves delayjoin channels alone — there, a voice is what lets people talk at all.</div>
+    <div data-l="fr">À l'activation, tous ceux qui parlent déjà reçoivent le voice avant que <code>+m</code> soit posé : personne n'est coupé. La désactivation n'enlève que les modes qu'il a posés. Le retrait du voice des inactifs ignore les canaux en delayjoin — là, le voice est ce qui permet de parler.</div></div>
+  <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!enable</span> delayjoin
+<span class="t">!enable</span> dnsbl          <span class="c"># optional: blacklist check before the voice</span></pre></div>
+</section>
+
+<!-- ================= DNSBL ================= -->
+<section id="dnsbl">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-radar"/></svg></span><span data-l="en">Drone blacklists (DNSBL)</span><span data-l="fr">Listes noires de drones (DNSBL)</span></h2>
+  <p class="sec-intro" data-l="en">The <code>dnsbl</code> module checks the IP of people who join against public blacklists of drones, proxies and compromised machines. On a <code>+D</code> channel it checks the hidden members too, so a listed drone is banned and kicked <strong>before anyone in the channel ever sees it</strong>.</p>
+  <p class="sec-intro" data-l="fr">Le module <code>dnsbl</code> vérifie l'IP des arrivants auprès de listes noires publiques de drones, de proxys et de machines compromises. Sur un canal en <code>+D</code>, il vérifie aussi les membres cachés : un drone inscrit est banni et expulsé <strong>avant que quiconque dans le canal ne le voie</strong>.</p>
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:150px"><span data-l="en">List</span><span data-l="fr">Liste</span></th><th scope="col" style="width:180px">Zone</th><th scope="col"><span data-l="en">Banned for</span><span data-l="fr">Banni pour</span></th></tr>
+    <tr><td><a href="https://dronebl.org/" target="_blank" rel="noopener noreferrer">DroneBL</a></td><td><code>dnsbl.dronebl.org</code></td><td><span data-l="en">IRC drones, bottlers, spambots, DDoS drones, SOCKS/HTTP/WinGate proxies, proxy chains, web proxies, brute forcers, compromised routers, worms, botnets</span><span data-l="fr">drones IRC, bottlers, robots spammeurs, drones DDoS, proxys SOCKS/HTTP/WinGate, chaînes de proxys, proxys web, attaques par force brute, routeurs compromis, vers, botnets</span></td></tr>
+    <tr><td><a href="https://rbl.efnetrbl.org/" target="_blank" rel="noopener noreferrer">EFnet RBL</a></td><td><code>rbl.efnetrbl.org</code></td><td><span data-l="en">Open proxies, drones and flooders (TOR is listed too, but not banned unless you add code 4)</span><span data-l="fr">Proxys ouverts, drones et flooders (TOR y figure aussi, mais n'est pas banni sauf si tu ajoutes le code 4)</span></td></tr>
+  </table>
+  </div>
+  <ul class="steps">
+    <li><span><span data-l="en">Lookups use eggdrop's own non-blocking DNS, so the bot never stalls. IPv4 and IPv6 are both checked; hostnames are resolved first.</span><span data-l="fr">Les recherches passent par le DNS non bloquant d'eggdrop : le robot ne fige jamais. IPv4 et IPv6 sont vérifiés ; les noms d'hôte sont résolus d'abord.</span></span></li>
+    <li><span><span data-l="en">Each IP's answer is remembered for an hour, and many people on one IP cost one lookup.</span><span data-l="fr">La réponse de chaque IP est gardée une heure, et plusieurs personnes sur une même IP ne coûtent qu'une recherche.</span></span></li>
+    <li><span><span data-l="en">People with a hidden <code>*.users.undernet.org</code> host have no visible IP and are skipped. Web clients that hide the IP in the ident (Mibbit, KiwiIRC) are decoded, and only that ident is banned.</span><span data-l="fr">Les gens avec un hôte caché <code>*.users.undernet.org</code> n'ont pas d'IP visible et sont ignorés. Les clients web qui cachent l'IP dans l'ident (Mibbit, KiwiIRC) sont décodés, et seul cet ident est banni.</span></span></li>
+  </ul>
+  <div class="cmd" data-k="dnsbl blacklist drone proxy check ip dronebl">
+    <div class="cmd-head"><h4><span class="amp">!</span>dnsbl</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Checks a nick on the channel, an IP or a hostname, and tells you which list has it and why. Works even where the module is off.</p>
+  <p data-l="fr">Vérifie un pseudo du canal, une IP ou un nom d'hôte, et te dit quelle liste l'a et pourquoi. Marche même là où le module est éteint.</p>
+    <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>DNSBL: <span class="t">192.0.2.10</span> (192.0.2.10) is listed by DroneBL (IRC drone) - dronebl.org</pre></div>
+  </div>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>
+    <div data-l="en">Checking a blacklist means asking its DNS servers about an IP, so the list operator sees that IP. The <a href="privacy.html">privacy policy</a> says so. Needs eggdrop's <code>dns</code> module, which is loaded by default.</div>
+    <div data-l="fr">Vérifier une liste noire, c'est interroger ses serveurs DNS au sujet d'une IP : l'opérateur de la liste voit donc cette IP. La <a href="privacy.html">politique de confidentialité</a> le précise. Demande le module <code>dns</code> d'eggdrop, chargé par défaut.</div></div>
+</section>
+
+<!-- ================= BADCHAN ================= -->
+<section id="badchan">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-ban"/></svg></span><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></h2>
+  <p class="sec-intro" data-l="en">The <code>badchan</code> module looks at the channels a newcomer is in (with a WHOIS) and bans them if one matches your list. Lists are per channel, plus a global list used everywhere, and they are saved to disk.</p>
+  <p class="sec-intro" data-l="fr">Le module <code>badchan</code> regarde dans quels canaux se trouve un nouvel arrivant (avec un WHOIS) et le bannit si l'un d'eux correspond à ta liste. Les listes sont par canal, plus une liste globale utilisée partout, et elles sont enregistrées sur le disque.</p>
+  <div class="cmd" data-k="badchan bad channel list add del mask ban">
+    <div class="cmd-head"><h4><span class="amp">!</span>badchan</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en"><code>add</code> and <code>del</code> change this channel's list; <code>-global</code> changes the list for every channel (Owner only). A host checked clean is not checked again for 3 minutes, so a join flood never turns into a WHOIS flood.</p>
+  <p data-l="fr"><code>add</code> et <code>del</code> changent la liste de ce canal ; <code>-global</code> change la liste de tous les canaux (Propriétaire seulement). Un hôte vérifié propre n'est pas revérifié pendant 3 minutes : un flood d'arrivées ne devient jamais un flood de WHOIS.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!badchan</span> list
+<span class="t">!badchan</span> add <span class="o">[-global]</span> <span class="a">&lt;mask&gt;</span> <span class="o">[reason]</span>
+<span class="t">!badchan</span> del <span class="o">[-global]</span> <span class="a">&lt;mask&gt;</span></pre></div>
+    <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!badchan</span> add #*spam* no spammers
+<span class="t">!enable</span> badchan</pre></div>
+  </div>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg>
+    <div data-l="en">Secret and private channels never show in a WHOIS, so they cannot be matched.</div>
+    <div data-l="fr">Les canaux secrets et privés n'apparaissent jamais dans un WHOIS : ils ne peuvent pas être repérés.</div></div>
+</section>
+
 <!-- ================= TOPIC ================= -->
 <section id="topicsys">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hash"/></svg></span><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></h2>
@@ -1408,9 +1513,69 @@ set cc(x_pass) "its-x-password"</pre></div>
     <div data-l="fr"><b>Le robot doit être op</b> pour op, voice, kick, ban, sujet et chaque ménage. Il te le dit quand il ne l'est pas.</div></div>
 </section>
 
+<!-- ================= CREDITS ================= -->
+<section id="credits">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-heart"/></svg></span><span data-l="en">Credits & thanks</span><span data-l="fr">Remerciements</span></h2>
+  <p class="sec-intro" data-l="en">lmao.tcl stands on the work of people who wrote scripts for UnderNet and gave them to the community, often years ago and asking nothing back. The modules below are written fresh for lmao.tcl, but the ideas, the protocol know-how and a fair share of the inspiration are theirs. <strong>Thank you.</strong></p>
+  <p class="sec-intro" data-l="fr">lmao.tcl repose sur le travail de gens qui ont écrit des scripts pour UnderNet et les ont offerts à la communauté, souvent il y a des années et sans rien demander en retour. Les modules ci-dessous sont écrits à neuf pour lmao.tcl, mais les idées, le savoir-faire du protocole et une bonne part de l'inspiration leur reviennent. <strong>Merci.</strong></p>
+  <div class="features credits">
+  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-hidden"/></svg></div>
+    <h3 class="ft">^The_law^ &amp; #Ayuda</h3>
+    <p class="credit-role"><span data-l="en">eafs.tcl · UnderNet</span><span data-l="fr">eafs.tcl · UnderNet</span></p>
+    <p data-l="en">Showed how to run a channel behind <code>+Dm</code>: find the hidden members with <code>NAMES -d</code>, sort them with WHOX by X login, and voice them in tiers. The <a href="#delayjoin">delayed join</a> module is built on that design.</p>
+    <p data-l="fr">A montré comment faire vivre un canal derrière <code>+Dm</code> : trouver les membres cachés avec <code>NAMES -d</code>, les trier avec WHOX selon leur connexion à X, et leur donner le voice par paliers. Le module <a href="#delayjoin">arrivées différées</a> repose sur cette conception.</p></div>
+
+  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-mic"/></svg></div>
+    <h3 class="ft">xplorer &amp; OUTsider</h3>
+    <p class="credit-role"><span data-l="en">Dm.tcl · #mircscripting</span><span data-l="fr">Dm.tcl · #mircscripting</span></p>
+    <p data-l="en">xplorer wrote the first <code>+Dm</code> delay-voice script, and OUTsider made it work across many channels. Their per-channel approach shaped how delayjoin is switched on and off.</p>
+    <p data-l="fr">xplorer a écrit le premier script de voice différé en <code>+Dm</code>, et OUTsider l'a fait fonctionner sur plusieurs canaux. Leur approche canal par canal a guidé la façon d'activer et désactiver delayjoin.</p></div>
+
+  <div class="feat" style="--c:var(--red)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-radar"/></svg></div>
+    <h3 class="ft">Stefan Wold (Ratler)</h3>
+    <p class="credit-role"><span data-l="en">zapdnsbl.tcl</span><span data-l="fr">zapdnsbl.tcl</span></p>
+    <p data-l="en">ZAP DNS Blacklist checked joining users against DNS blacklists, with reply codes mapped to reasons and a trick to read the real IP behind Mibbit and KiwiIRC. The <a href="#dnsbl">drone blacklist</a> module follows the same approach.</p>
+    <p data-l="fr">ZAP DNS Blacklist vérifiait les arrivants auprès des listes noires DNS, avec des codes de réponse traduits en raisons et une astuce pour lire la vraie IP derrière Mibbit et KiwiIRC. Le module <a href="#dnsbl">listes noires</a> suit la même approche.</p>
+    <p class="credit-link"><a href="https://github.com/Ratler/zapdnsbl" target="_blank" rel="noopener noreferrer">github.com/Ratler/zapdnsbl ↗</a></p></div>
+
+  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-ban"/></svg></div>
+    <h3 class="ft">Bass</h3>
+    <p class="credit-role"><span data-l="en">badchan.tcl · #eggdrop on UnderNet</span><span data-l="fr">badchan.tcl · #eggdrop sur UnderNet</span></p>
+    <p data-l="en">A simple, sturdy idea: WHOIS newcomers and ban them if they sit in a listed channel, without letting a join flood turn into a WHOIS flood. The <a href="#badchan">bad channel</a> module keeps both.</p>
+    <p data-l="fr">Une idée simple et solide : faire un WHOIS des nouveaux et les bannir s'ils sont dans un canal listé, sans qu'un flood d'arrivées devienne un flood de WHOIS. Le module <a href="#badchan">canaux interdits</a> garde les deux.</p></div>
+
+  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-globe"/></svg></div>
+    <h3 class="ft">UnderNet coder-com</h3>
+    <p class="credit-role"><span data-l="en">ircu · gnuworld · X</span><span data-l="fr">ircu · gnuworld · X</span></p>
+    <p data-l="en">The IRC server and services this script is written for. Their source and documentation are where the modes, numerics and X commands used here come from.</p>
+    <p data-l="fr">Le serveur IRC et les services pour lesquels ce script est écrit. Leur code source et leur documentation sont la source des modes, des numériques et des commandes X utilisés ici.</p>
+    <p class="credit-link"><a href="https://github.com/UndernetIRC" target="_blank" rel="noopener noreferrer">github.com/UndernetIRC ↗</a></p></div>
+
+  <div class="feat" style="--c:var(--steel)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-book"/></svg></div>
+    <h3 class="ft">Eggheads</h3>
+    <p class="credit-role"><span data-l="en">eggdrop</span><span data-l="fr">eggdrop</span></p>
+    <p data-l="en">Decades of eggdrop, the bot lmao.tcl runs on, and the Tcl documentation that makes scripts like this possible.</p>
+    <p data-l="fr">Des décennies d'eggdrop, le robot sur lequel tourne lmao.tcl, et la documentation Tcl qui rend ce genre de script possible.</p>
+    <p class="credit-link"><a href="https://www.eggheads.org/" target="_blank" rel="noopener noreferrer">eggheads.org ↗</a></p></div>
+
+  </div>
+  <p data-l="en">The blacklists are run by volunteers too: <a href="https://dronebl.org/" target="_blank" rel="noopener noreferrer">DroneBL</a> and <a href="https://rbl.efnetrbl.org/" target="_blank" rel="noopener noreferrer">EFnet RBL</a>. If lmao.tcl helps keep your channel clean, think about reporting the drones you see to them.</p>
+  <p data-l="fr">Les listes noires sont elles aussi tenues par des bénévoles : <a href="https://dronebl.org/" target="_blank" rel="noopener noreferrer">DroneBL</a> et <a href="https://rbl.efnetrbl.org/" target="_blank" rel="noopener noreferrer">EFnet RBL</a>. Si lmao.tcl aide à garder ton canal propre, pense à leur signaler les drones que tu vois.</p>
+</section>
+
 <!-- ================= CHANGELOG ================= -->
 <section id="changelog">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-history"/></svg></span><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
+
+  <h3 class="sub">6.8.0</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Delayed join</span><span data-l="fr">Arrivées différées</span></th><td><span data-l="en">New <code>delayjoin</code> module: keeps a channel <code>+Dm</code>, finds hidden members with <code>NAMES -d</code> and WHOX, voices X users at once and everyone else after the checks.</span><span data-l="fr">Nouveau module <code>delayjoin</code> : garde un canal en <code>+Dm</code>, trouve les membres cachés avec <code>NAMES -d</code> et WHOX, donne le voice aux comptes X tout de suite et aux autres après les vérifications.</span></td></tr>
+    <tr><th><span data-l="en">Drone blacklists</span><span data-l="fr">Listes noires</span></th><td><span data-l="en">New <code>dnsbl</code> module and <code>!dnsbl</code>: DroneBL and EFnet RBL, IPv4 and IPv6, web client IPs, cached answers; hidden drones are banned before they show up.</span><span data-l="fr">Nouveau module <code>dnsbl</code> et <code>!dnsbl</code> : DroneBL et EFnet RBL, IPv4 et IPv6, IP des clients web, réponses en cache ; les drones cachés sont bannis avant d'apparaître.</span></td></tr>
+    <tr><th><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></th><td><span data-l="en">New <code>badchan</code> module and <code>!badchan</code>: per-channel and global lists saved to disk.</span><span data-l="fr">Nouveau module <code>badchan</code> et <code>!badchan</code> : listes par canal et globale, enregistrées sur le disque.</span></td></tr>
+    <tr><th><span data-l="en">Credits</span><span data-l="fr">Remerciements</span></th><td><span data-l="en">A <a href="#credits">credits</a> section for the authors whose scripts inspired these modules.</span><span data-l="fr">Une section <a href="#credits">remerciements</a> pour les auteurs dont les scripts ont inspiré ces modules.</span></td></tr>
+  </table>
+  </div>
 
   <h3 class="sub">6.7.0</h3>
   <div class="table-scroll">
@@ -1484,6 +1649,7 @@ set cc(x_pass) "its-x-password"</pre></div>
         <a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><span data-l="en">Source code ↗</span><span data-l="fr">Code source ↗</span></a>
         <a href="https://lmao-tcl.github.io/lmao.tcl" target="_blank" rel="noopener noreferrer"><span data-l="en">Download lmao.tcl ↗</span><span data-l="fr">Télécharger lmao.tcl ↗</span></a>
         <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/issues" target="_blank" rel="noopener noreferrer"><span data-l="en">Report a bug ↗</span><span data-l="fr">Signaler un bogue ↗</span></a>
+        <a href="#credits"><span data-l="en">Credits</span><span data-l="fr">Remerciements</span></a>
       </div>
       <div>
         <h2><span data-l="en">Community</span><span data-l="fr">Communauté</span></h2>
@@ -1555,7 +1721,7 @@ set cc(x_pass) "its-x-password"</pre></div>
     "-lmao- Quick Help: Type !help <command> for details",
     "-lmao- Access Info for maple: Level: Voice (v)",
     "-lmao- [OK] newguy moves up from Voice to Mod on #canada",
-    "-lmao- lmao.tcl 6.7.0 - https://github.com/lmao-tcl/lmao-tcl.github.io",
+    "-lmao- lmao.tcl 6.8.0 - https://github.com/lmao-tcl/lmao-tcl.github.io",
     "[SANCTION] #canada boss banned troll (*!*@troll.host) - spam",
     "[ACCESS] #canada boss opped chanop",
     "[REGISTER] newguy registered as newguy",
@@ -1677,6 +1843,8 @@ set cc(x_pass) "its-x-password"</pre></div>
       "<code>!suschan</code> parks a channel and keeps all of its users.",
       "<code>!lockdown 10</code> hides new joins and mutes everyone without voice for 10 minutes.",
       "<code>!chanset</code> on its own lists every channel setting the bot has.",
+      "<code>!enable delayjoin</code> turns the channel into a waiting room: joins stay hidden until they check out.",
+      "<code>!dnsbl nick</code> tells you whether someone's IP is on a drone blacklist.",
       "Type <kbd>/</kbd> anywhere on this page to filter commands."
     ],
     fr: [
@@ -1689,6 +1857,8 @@ set cc(x_pass) "its-x-password"</pre></div>
       "<code>!suschan</code> met un canal de côté en gardant tous ses utilisateurs.",
       "<code>!lockdown 10</code> cache les nouvelles arrivées et fait taire ceux sans voice pendant 10 minutes.",
       "<code>!chanset</code> tout seul liste tous les réglages de canal du robot.",
+      "<code>!enable delayjoin</code> fait du canal une salle d'attente : les arrivées restent cachées jusqu'à vérification.",
+      "<code>!dnsbl pseudo</code> te dit si l'IP de quelqu'un est sur une liste noire de drones.",
       "Tape <kbd>/</kbd> n'importe où sur la page pour filtrer les commandes."
     ]
   };

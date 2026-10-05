@@ -2,7 +2,7 @@
 
 **Channel management for eggdrop, built for UnderNet.**
 
-[![Version](https://img.shields.io/badge/version-6.7.0-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
+[![Version](https://img.shields.io/badge/version-6.8.0-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
 [![Eggdrop](https://img.shields.io/badge/eggdrop-1.8%2B-green.svg)](https://www.eggheads.org/)
 [![Tcl](https://img.shields.io/badge/tcl-8.5%2B-blue.svg)](https://www.tcl.tk/)
 [![License](https://img.shields.io/badge/license-GPLv3-lightgrey.svg)](LICENSE)
@@ -42,6 +42,11 @@ bot never floods your channel.
   then opens it again by itself.
 - **Works with X.** With its own X account the bot logs in, hides its host, and asks X for
   op, unban or invite when it is locked out.
+- **Delayed join.** Keeps a channel `+Dm` and lets newcomers in by voice: X users first,
+  everyone else once they check out.
+- **Drone blacklists.** Checks IPs against DroneBL and EFnet RBL and bans drones while they are
+  still hidden by `+D`.
+- **Bad channels.** Bans people who sit in channels you list.
 - **Any channel setting.** `!chanset` lists and changes every eggdrop channel setting, including
   the ones other scripts add.
 - **UnderNet aware.** Written against ircu, and reads what the server supports instead of assuming it.
@@ -64,9 +69,12 @@ source scripts/lmao.tcl
 Then `.rehash` on the partyline. You should see:
 
 ```
-[lmao.tcl 6.6.0] - Complete production ready version
+[lmao.tcl 6.8.0] - Complete production ready version
 Loaded successfully - ready to serve!
 ```
+
+Nothing else to install. The `dnsbl` module uses eggdrop's `dns` module, which is loaded by
+default, and `badchan` saves its lists in `lmao-badchan.txt` next to the bot.
 
 ---
 
@@ -104,12 +112,22 @@ Everything lives in the `CONFIGURATION SECTION` at the top of the script.
 | `cc(x_user)` / `cc(x_pass)` | empty | The bot's own X account. Empty keeps X off |
 | `cc(x_hide_host)` | `1` | Set `+x` after logging in to X |
 | `cc(x_rescue)` | `1` | Ask X for op, unban or invite when locked out |
+| `cc(dj_modes)` | `Dm` | Modes delayjoin keeps on the channel |
+| `cc(dj_scan_seconds)` | `15` | How often hidden members are looked up |
+| `cc(dj_voice_authed)` / `cc(dj_voice_unauthed)` | `0` / `30` | Seconds before X users / everyone else are voiced |
+| `cc(dj_welcome)` | text | Notice sent while they wait (`""` sends nothing) |
+| `cc(dnsbl_zones)` | DroneBL, EFnet RBL | Blacklists and the reply codes that mean ban |
+| `cc(dnsbl_ban_minutes)` | `120` | How long a blacklist ban lasts |
+| `cc(dnsbl_cache_minutes)` | `60` | How long each IP's answer is remembered |
+| `cc(badchan_file)` | `lmao-badchan.txt` | Where the bad channel lists are saved |
+| `cc(badchan_ban_minutes)` | `60` | How long a bad channel ban lasts |
 
 ---
 
 ## Modules
 
-Modules are per channel. Four start **on**; `idledeop` and `idledevoice` start **off**.
+Modules are per channel. Four start **on**; the other five start **off** because they change how
+the channel works.
 
 | Module | Default | What it does |
 | --- | --- | --- |
@@ -119,6 +137,9 @@ Modules are per channel. Four start **on**; `idledeop` and `idledevoice` start *
 | `idledeop` | **off** | Deops ops who have been idle past the channel's limit |
 | `chanlog` | on | Sends the channel's audit trail to the ops channel |
 | `guard` | on | Flood protection: kicks lone flooders, locks the channel under attack |
+| `delayjoin` | off | Keeps the channel `+Dm` and voices hidden newcomers once they check out |
+| `dnsbl` | off | Bans IPs listed on drone and proxy blacklists, even before they show up |
+| `badchan` | off | Bans people who sit in listed channels |
 
 ```
 !module list                          show every module and its state here
@@ -183,7 +204,7 @@ has every command with its syntax.
 | Registered | `!bot` `!info` `!whois` `!ops` |
 | Voice+ | `!voice` `!devoice` |
 | Mod+ | `!kick` `!ban` `!unban` `!bans` `!invite` `!addvoice` `!access` |
-| Op+ | `!op` `!deop` `!topic` `!topicsync` `!addmod` `!delaccess` `!lockdown` `!unlock` `!guard` |
+| Op+ | `!op` `!deop` `!topic` `!topicsync` `!addmod` `!delaccess` `!lockdown` `!unlock` `!guard` `!dnsbl` `!badchan` |
 | Master+ | `!mode` `!blacklist` `!whitelist` `!chattr` `!adduser` `!deluser` `!say` `!act` `!idledeop` `!module` `!enable` `!disable` `!chanlog` `!addop` `!chanset` |
 | Owner | `!addchan` `!delchan` `!suschan` `!unsuschan` `!join` `!part` `!comeback` `!botnick` `!away` `!back` `!global` `!rehash` `!restart` `!jump` `!save` `!addmaster` `!xlogin` |
 | Anyone (bound `n\|-`) | `!uptime` |
@@ -263,6 +284,48 @@ yourself is never overwritten. `!xlogin` sends the login again.
 
 ---
 
+## Delayed join (+Dm)
+
+`!enable delayjoin` turns a channel into a waiting room. The bot keeps `+Dm` on: nobody sees a
+join, and nobody without voice can talk. Every 15 seconds it asks for the hidden members
+(`NAMES -d`), looks them up in batches with WHOX, and lets them in by voicing them:
+
+- logged in to X: right away
+- everyone else: after 30 seconds, once the DNSBL and bad channel checks pass (when on)
+- banned people stay hidden; during a guard lock only X users and regulars get in
+
+People already talking are voiced before `+m` goes on, and switching the module off removes only
+the modes it set.
+
+---
+
+## Drone blacklists (DNSBL)
+
+`!enable dnsbl` checks the IP of people who join against DroneBL and EFnet RBL, and bans listed
+drones and proxies for 2 hours. On a `+D` channel the hidden members are checked too, so a drone is
+banned **before anyone sees it**. IPv4 and IPv6, hostnames resolved first, answers cached for an
+hour, web client IPs (Mibbit, KiwiIRC) decoded. `!dnsbl <nick|ip|host>` checks one by hand.
+
+The lookups use eggdrop's non-blocking `dnslookup` (the `dns` module, loaded by default). Asking a
+blacklist means its operator sees the IP being checked.
+
+---
+
+## Bad channels
+
+```
+!badchan add #*spam* no spammers      this channel's list
+!badchan add -global #*warez*         every channel (Owner)
+!badchan del #*spam*
+!badchan list
+!enable badchan
+```
+
+Newcomers are WHOISed and banned for an hour if they sit in a matching channel. A host checked
+clean is not checked again for 3 minutes. Lists are saved in `lmao-badchan.txt`.
+
+---
+
 ## Channel settings
 
 `!chanset` works with every eggdrop channel setting, built in or added by another script:
@@ -283,6 +346,24 @@ their value is Tcl code the bot runs.
 - eggdrop 1.8 or newer (tested on 1.10.1)
 - Tcl 8.5 or newer
 - The bot needs op in the channels it manages
+
+---
+
+## Credits
+
+lmao.tcl stands on the work of people who gave their scripts to the community. The modules are
+written fresh for lmao.tcl, but these ideas are theirs, and we are grateful:
+
+- **^The_law^ and #Ayuda** (UnderNet) — `eafs.tcl`, running a channel behind `+Dm` with tiered
+  voicing; the base of the delayed join module
+- **xplorer** (#mircscripting) and **OUTsider** — `Dm.tcl`, the first `+Dm` delay-voice script and
+  its multi-channel version
+- **Stefan Wold (Ratler)** — [zapdnsbl](https://github.com/Ratler/zapdnsbl), DNS blacklist checks
+  and the web client IP trick; the base of the DNSBL module
+- **Bass** (UnderNet #eggdrop) — `badchan.tcl`, the bad channel list
+- **UnderNet coder-com** — [ircu and gnuworld](https://github.com/UndernetIRC)
+- **The Eggheads** — [eggdrop](https://www.eggheads.org/)
+- **[DroneBL](https://dronebl.org/)** and **[EFnet RBL](https://rbl.efnetrbl.org/)**, run by volunteers
 
 ---
 
