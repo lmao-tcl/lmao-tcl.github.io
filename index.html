@@ -642,7 +642,7 @@ source scripts/lmao.tcl</pre></div>
     <tr><td><code>cc(activevoice_exempt_flags)</code></td><td><code>n m M v</code></td><td><span data-l="en">Flags that make a user invisible to ActiveVoice</span><span data-l="fr">Drapeaux qui rendent un utilisateur invisible pour ActiveVoice</span></td></tr>
     <tr><td><code>cc(protected_bots)</code></td><td><code>X W</code></td><td><span data-l="en">Nicks the bot will never deop or ban</span><span data-l="fr">Pseudos que le robot ne deop ni ne bannit jamais</span></td></tr>
     <tr><td><code>cc(protected_flags)</code></td><td><code>n m</code></td><td><span data-l="en">Flags that protect a user from deop/devoice/ban</span><span data-l="fr">Drapeaux qui protègent du deop, du devoice et du ban</span></td></tr>
-    <tr><td><code>cc(deop_exempt)</code></td><td><code>Secoupe Seb offline</code></td><td><span data-l="en">Nicks or handles the idle-deop sweep never touches</span><span data-l="fr">Pseudos ou handles que le deop des inactifs ne touche jamais</span></td></tr>
+    <tr><td><code>cc(deop_exempt)</code></td><td><code>You Bot1 Bot2</code></td><td><span data-l="en">Nicks or handles the idle-deop sweep never touches</span><span data-l="fr">Pseudos ou handles que le deop des inactifs ne touche jamais</span></td></tr>
     <tr><td><code>cc(register_enabled)</code></td><td><code>1</code></td><td><span data-l="en">Master switch for self-registration</span><span data-l="fr">Interrupteur général de l'auto-inscription</span></td></tr>
     <tr><td><code>cc(register_token_life)</code></td><td><code>300</code></td><td><span data-l="en">Seconds a registration code stays valid</span><span data-l="fr">Secondes de validité d'un code d'inscription</span></td></tr>
     <tr><td><code>cc(register_cooldown)</code></td><td><code>600</code></td><td><span data-l="en">Seconds between registration attempts from one host</span><span data-l="fr">Secondes entre deux tentatives d'inscription d'un même hôte</span></td></tr>
@@ -1237,7 +1237,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     <tr><th><span data-l="en">Never deopped</span><span data-l="fr">Jamais deop</span></th><td><span data-l="en">Service bots (<code>X</code>, <code>W</code>), the bot itself, <code>+n</code> / <code>+m</code> users, and anyone in <code>cc(deop_exempt)</code> by nick or handle</span><span data-l="fr">Les services (<code>X</code>, <code>W</code>), le robot lui-même, les <code>+n</code> / <code>+m</code>, et toute personne dans <code>cc(deop_exempt)</code> par pseudo ou handle</span></td></tr>
   </table>
   </div>
-  <div class="code"><span class="tag">config</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>set cc(deop_exempt) [list "Secoupe" "Seb"]</pre></div>
+  <div class="code"><span class="tag">config</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>set cc(deop_exempt) [list "You" "Bot1" "Bot2"]</pre></div>
 </section>
 
 <!-- ================= TOPIC ================= -->
