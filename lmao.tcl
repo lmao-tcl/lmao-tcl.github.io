@@ -52,8 +52,34 @@ set cc(register_cooldown) 600
 set cc(register_handle_max) 9
 set cc(register_flags) ""
 
+# Guard - flood and attack protection, per channel (!enable/!disable guard).
+# Limits are "count:seconds". Ops, registered regulars and service bots are
+# never counted. A user who floods alone is kicked (and banned for
+# guard_ban_minutes if guard_user_action is "kickban"). When the whole channel
+# floods, it is locked with guard_lock_modes until it has been quiet for
+# guard_lock_minutes. Modes the server does not support are skipped, and modes
+# already set are left alone and never removed by the unlock.
+set cc(guard_join_flood) "8:10"
+set cc(guard_line_flood) "15:5"
+set cc(guard_user_flood) "6:5"
+set cc(guard_nick_flood) "5:10"
+set cc(guard_user_action) "kickban"
+set cc(guard_ban_minutes) 10
+set cc(guard_lock_modes) "Dm"
+set cc(guard_lock_minutes) 5
+
+# X (UnderNet channel service). Leave x_user empty to keep all of this off.
+# With an X account the bot logs in when it connects, can hide its host
+# (+x, it becomes <account>.users.undernet.org), and asks X for help when it
+# is locked out: op when deopped, unban when banned, invite when the channel
+# is +i, +l, +k or +r (an invite gets past all of those on ircu).
+set cc(x_user) ""
+set cc(x_pass) ""
+set cc(x_hide_host) 1
+set cc(x_rescue) 1
+
 # Version info
-set cc(version_number) "6.6.0"
+set cc(version_number) "6.7.0"
 set cc(version) "\002\[lmao.tcl $cc(version_number)\]\002"
 set cc(www) "https://lmao-tcl.github.io/"
 
@@ -70,6 +96,7 @@ set module_defaults(activevoice) 1
 set module_defaults(idledeop) 0
 set module_defaults(idledevoice) 0
 set module_defaults(chanlog) 1
+set module_defaults(guard) 1
 
 proc init_channel_modules {chan} {
 	global module_defaults module_settings
@@ -209,8 +236,26 @@ bind pub n [string trim $cc(cmdchar)]unsuschan unsuschan:pub
 bind pub n [string trim $cc(cmdchar)]botnick botnick:pub
 bind pub nm|nm [string trim $cc(cmdchar)]adduser adduser:pub
 bind pub nm|nm [string trim $cc(cmdchar)]deluser deluser:pub
-bind pub n|- [string trim $cc(cmdchar)]chanset chanset:pub
+bind pub nm|nm [string trim $cc(cmdchar)]chanset chanset:pub
 bind pub n|- [string trim $cc(cmdchar)]uptime uptime:pub
+
+# Guard - flood protection. The lock commands check Op level themselves.
+bind pub - [string trim $cc(cmdchar)]lockdown guard:lock:pub
+bind pub - [string trim $cc(cmdchar)]unlock guard:unlock:pub
+bind pub - [string trim $cc(cmdchar)]guard guard:status:pub
+bind join - * guard:join
+bind pubm - * guard:pubm
+bind notc - * guard:notc
+bind ctcp - ACTION guard:action
+bind nick - * guard:nick
+
+# X (channel service)
+bind pub n [string trim $cc(cmdchar)]xlogin x:login:pub
+bind evnt - init-server x:on_connect
+bind notc - * x:notc
+
+# What the server supports (CHANMODES, MODES, STATUSMSG...)
+bind raw - 005 lmao:raw005
 
 # Flag - (registered users)
 bind pub - [string trim $cc(cmdchar)]bot pub_do_bot
@@ -233,9 +278,10 @@ bind dcc fn|fn lmao pub_lmao
 bind dcc fn|fn keepalive dobinddcckeepalive
 bind dcc fn|fn undokeepalive undobinddcckeepalive
 
-# Hop on deop setting
+# When the bot is deopped: ask X for op if an X account is set, otherwise
+# cycle the channel when the bot is alone in it (the only case where cycling
+# gets op back). It never kicks back - whoever deopped it may be staff, or X.
 set hopondeop 1
-set kickondeop 1
 bind mode - * hop:mode
 
 # CTCP Replies
@@ -321,6 +367,7 @@ array set module_desc {
 	idledevoice	{removes voice from non-registered users idle too long}
 	chanlog		{logs access, sanctions and registrations to the ops channel}
 	idledeop	{deops ops who have been idle past the channel limit}
+	guard		{flood protection - kicks flooders, locks the channel (+Dm) under attack}
 }
 
 proc module:show {nick chan} {
@@ -488,7 +535,11 @@ array set helpdb {
 	disable		{{%C%disable <module>} {Turns a module OFF for this channel - use this to stop the idle devoicer or the idle deopper. Modules: %M%} {%C%disable idledevoice} {/msg %B% disable #chan idledevoice}}
 	chanlog		{{%C%chanlog [#channel|on|off]} {Shows or sets where this channel's audit log goes. Access changes, sanctions, registrations, denied attempts and bot control all land there} {%C%chanlog #ops} {/msg %B% chanlog #chan #ops}}
 	idledeop	{{%C%idledeop <#channel> [minutes]} {Sets the idle-deop timer for a channel (default 180 minutes). Master+ only. Switch it off with %C%disable idledeop} {%C%idledeop #canada 180} {}}
-	chanset		{{%C%chanset <+|->setting} {Toggles a per-channel setting: youtube, weather, needhelp, isup} {%C%chanset +weather} {}}
+	chanset		{{%C%chanset [list | +setting | -setting | setting value]} {Lists or changes any eggdrop channel setting here, built in or added by another script. Says so if it fails and suggests close names. Master+} {%C%chanset +autoop} {}}
+	lockdown	{{%C%lockdown [minutes]} {Locks the channel with the guard modes (+Dm by default) for a while: new joins stay hidden and only voiced users can talk. Op+} {%C%lockdown 10} {}}
+	unlock		{{%C%unlock} {Lifts a guard lock early and removes only the modes the guard set. Op+} {%C%unlock} {}}
+	guard		{{%C%guard} {Shows whether the flood guard is on, whether the channel is locked, and the flood limits. Op+} {%C%guard} {}}
+	xlogin		{{%C%xlogin} {Makes the bot log in to X again with the account from the config (owner only)} {%C%xlogin} {}}
 	join		{{%C%join <#channel>} {Makes the bot join a channel and adds it to the channel list (owner only)} {%C%join #newchan} {}}
 	addchan		{{%C%addchan <#channel>} {Adds a channel, saves it to the chanfile and joins it} {%C%addchan #newchan} {/msg %B% addchan #newchan}}
 	delchan		{{%C%delchan <#channel>} {Removes the channel from the bot and chanfile without deleting users} {%C%delchan #oldchan} {}}
@@ -531,6 +582,7 @@ proc help:send {nick text} {
 		puthelp "NOTICE $nick :\002Quick Help:\002 Type ${c}help <command> for details - (To prevent spam, you can use /msg $botnick help <command>)"
 		puthelp "NOTICE $nick :\002Common:\002 op deop voice devoice invite kick ban unban bans topic mode verify whois info ops"
 		puthelp "NOTICE $nick :\002Access:\002 ${c}access - ${c}addvoice ${c}addmod ${c}addop ${c}addmaster - ${c}delvoice ${c}delmod ${c}delop ${c}delmaster ${c}delaccess"
+		puthelp "NOTICE $nick :\002Guard:\002 ${c}guard - ${c}lockdown \[minutes\] - ${c}unlock (flood protection, locks the channel +Dm under attack)"
 		puthelp "NOTICE $nick :\002Modules:\002 ${c}module list - ${c}enable <module> - ${c}disable <module> (available: [help:modules])"
 		puthelp "NOTICE $nick :Or try ${c}showcommands for the full list"
 		return
@@ -1237,9 +1289,16 @@ proc activevoice:track {nick host hand chan text} {
 	# Update activity time for this user in this channel
 	set activevoice_data($chan:$nick) [clock seconds]
 
-	# If user doesn't have voice yet, give it to them
-	if {![isvoice $nick $chan]} {
-		putserv "MODE $chan +v $nick"
+	# Never voice anyone while the guard has the channel locked - under +m
+	# that would hand the flood its voice back.
+	if {[guard:locked $chan]} {
+		return
+	}
+
+	# If user doesn't have voice yet, give it to them. pushmode batches it
+	# with other mode changes, up to what the server allows per line.
+	if {![isvoice $nick $chan] && [botisop $chan]} {
+		pushmode $chan +v $nick
 	}
 }
 
@@ -1305,7 +1364,7 @@ proc activevoice:devoice_idle {min hour day weekday year} {
 			set last_activity $activevoice_data($chan:$user)
 			if {$last_activity < $idle_threshold} {
 				# User is idle, devoice them
-				putserv "MODE $chan -v $user"
+				pushmode $chan -v $user
 				unset activevoice_data($chan:$user)
 			}
 		}
@@ -2131,38 +2190,168 @@ proc pub_do_save:msg {nick host handle text} {
 	owner:msg $nick $host $handle $text pub_do_save
 }
 
+###########################################################################
+# CHANSET - any eggdrop channel setting, not a fixed list
+#
+# Settings come from eggdrop itself (channel get), so built-in ones and the
+# ones other scripts add with setudef all work with no list to maintain.
+#   !chanset                  list every setting on this channel
+#   !chanset +autoop          turn an on/off setting on (- turns it off)
+#   !chanset flood-chan 10:60 give a setting a value
+# need-* settings are refused: their value is Tcl code eggdrop runs.
+###########################################################################
+
+# Every setting on this channel as a name/value list, or "" when this eggdrop
+# cannot list them (channel get with no setting needs eggdrop 1.9 or newer).
+proc chanset:all {chan} {
+	if {[catch {channel get $chan} all] || [llength $all] % 2} {
+		return ""
+	}
+	return $all
+}
+
+proc chanset:list {nick chan} {
+	global cc
+	set all [chanset:all $chan]
+	if {$all eq ""} {
+		putserv "NOTICE $nick :This eggdrop cannot list channel settings (it needs eggdrop 1.9 or newer). [string trim $cc(cmdchar)]chanset +name / -name / name value still work."
+		return
+	}
+
+	set flags {}
+	set values {}
+	foreach {name value} $all {
+		if {[string match "need-*" $name]} {
+			continue
+		}
+		if {$value eq "0" || $value eq "1"} {
+			lappend flags [expr {$value ? "+" : "-"}]$name
+		} else {
+			lappend values "$name=[expr {$value eq "" ? {""} : $value}]"
+		}
+	}
+
+	puthelp "NOTICE $nick :\002Channel settings for $chan\002 ([expr {[llength $flags] + [llength $values]}]):"
+	foreach group [list $flags $values] {
+		set line ""
+		foreach item [lsort -dictionary $group] {
+			if {[string length $line] + [string length $item] > 380} {
+				puthelp "NOTICE $nick :[string trimright $line]"
+				set line ""
+			}
+			append line "$item "
+		}
+		if {$line ne ""} {
+			puthelp "NOTICE $nick :[string trimright $line]"
+		}
+	}
+	puthelp "NOTICE $nick :Change one with [string trim $cc(cmdchar)]chanset +name, -name, or name value"
+}
+
 proc chanset:pub {nick uhost hand chan arg} {
 	global cc
-	set mode [lindex [split $arg] 0]
-	
-	if {[regexp {^[+-](youtube|weather|needhelp|isup)$} $mode]} {
-		channel set $chan $mode
-		putserv "NOTICE $nick :Set mode on $chan: $mode"
-	} else {
-		putserv "NOTICE $nick :\002USAGE\002 - [string trim $cc(cmdchar)]chanset <+|->setting"
+	set c [string trim $cc(cmdchar)]
+	set words [split [string trim $arg]]
+	set first [lindex $words 0]
+
+	if {$first eq "" || [string equal -nocase $first "list"]} {
+		chanset:list $nick $chan
+		return
 	}
+
+	if {[string index $first 0] in {+ -}} {
+		set name [string tolower [string range $first 1 end]]
+		set opt [list "[string index $first 0]$name"]
+		set want "[string index $first 0]$name"
+	} else {
+		set name [string tolower $first]
+		set value [join [lrange $words 1 end]]
+		set opt [list $name $value]
+		set want "$name $value"
+	}
+
+	if {$name eq ""} {
+		putserv "NOTICE $nick :\002Usage:\002 ${c}chanset \[list | +setting | -setting | setting value\]"
+		return
+	}
+
+	if {[string match -nocase "need-*" $name]} {
+		putserv "NOTICE $nick :\002$name\002 runs Tcl code inside the bot, so it can only be changed from the partyline."
+		chanlog $chan "DENIED" "$nick tried ${c}chanset $want"
+		return
+	}
+
+	# Unknown setting: say so and point at the ones that look close
+	set all [chanset:all $chan]
+	if {$all ne "" && [lsearch -exact [dict keys $all] $name] < 0} {
+		set close {}
+		foreach known [dict keys $all] {
+			if {[string first [string tolower $name] $known] >= 0 || [string first $known [string tolower $name]] >= 0} {
+				lappend close $known
+			}
+		}
+		if {[llength $close]} {
+			putserv "NOTICE $nick :There is no \002$name\002 setting on $chan. Did you mean: [join [lrange [lsort $close] 0 9] {, }]?"
+		} else {
+			putserv "NOTICE $nick :There is no \002$name\002 setting on $chan. Type ${c}chanset list to see them all."
+		}
+		return
+	}
+
+	if {[catch {channel set $chan {*}$opt} err]} {
+		putserv "NOTICE $nick :Could not set \002$want\002 on $chan: $err"
+		return
+	}
+
+	if {[catch {channel get $chan $name} now]} {
+		putserv "NOTICE $nick :Sent \002$want\002 to $chan, but I could not read the setting back to check it."
+		return
+	}
+
+	if {[string index $first 0] in {+ -}} {
+		set shown [expr {$now eq "0" ? "-$name (off)" : "+$name (on)"}]
+	} else {
+		set shown "$name = $now"
+	}
+	putserv "NOTICE $nick :\[OK\] $chan: $shown"
+	chanlog $chan "MODULE" "$nick set channel setting $shown"
 }
 
 proc comeback:pub {nick uhost hand chan text} {
 	putserv "PART $chan :coming right back"
-	after 1000
-	putserv "JOIN $chan"
+	utimer 2 [list putserv "JOIN $chan"]
 }
 
+# Deopped: X first, cycling only when it can actually help.
+array set hop_last {}
 proc hop:mode {nick uhost hand chan mc vict} {
-	global hopondeop kickondeop botnick
-	
-	if {$mc eq "-o" && $vict eq $botnick && $hopondeop eq 1} {
-		putlog "Hopping channel $chan due to deop"
-		putserv "PART $chan :Trying to fix something"
-		after 1000
-		putserv "JOIN $chan"
-		
-		if {$nick ne $botnick && $kickondeop eq 1} {
-			after 2000
-			putserv "KICK $chan $nick"
-		}
+	global hopondeop botnick hop_last
+
+	if {$mc ne "-o" || ![isbotnick $vict] || [isbotnick $nick]} {
+		return
 	}
+
+	if {[x:configured]} {
+		putlog "lmao.tcl: deopped on $chan by $nick - asking X for op"
+		x:need op $chan
+		return
+	}
+
+	if {!$hopondeop || [llength [chanlist $chan]] > 1} {
+		return
+	}
+
+	# Alone in the channel: a part and rejoin makes the server op us again.
+	# Once a minute at most, so a flapping mode can never become a join flood.
+	set key [string tolower $chan]
+	set now [clock seconds]
+	if {[info exists hop_last($key)] && $now - $hop_last($key) < 60} {
+		return
+	}
+	set hop_last($key) $now
+	putlog "lmao.tcl: deopped on $chan and alone there - cycling to get op back"
+	putserv "PART $chan :brb"
+	utimer 2 [list putserv "JOIN $chan"]
 }
 
 
@@ -2188,7 +2377,7 @@ proc addchan:pub {nick uhost hand chan text} {
 			putserv "NOTICE $nick :$target is already configured and I am already there."
 		}
 	} else {
-		channel add $target
+		channel add $target; x:setup_need $target
 		putserv "JOIN :$target"
 		putserv "NOTICE $nick :Added $target and joined it."
 	}
@@ -2285,7 +2474,7 @@ proc join:pub {nick uhost hand chan text} {
 	putlog "Joining $target at $nick's request"
 	chanlog "" "BOT" "$nick had me join \002$target\002"
 	putserv "JOIN :$target"
-	channel add $target
+	channel add $target; x:setup_need $target
 }
 
 proc part:pub {nick uhost hand chan text} {
@@ -3126,6 +3315,496 @@ proc pub_lmao {handle idx text} {
 }
 
 ###########################################################################
+# SERVER CAPABILITIES - what the IRC server says it supports
+#
+# Eggdrop 1.9+ answers through isupport; older ones get it from the 005
+# numeric, which is cached here. The fallbacks are what UnderNet's servers
+# announce today, so the script is right even before the first 005 arrives.
+###########################################################################
+
+array set lmao_isupport {}
+
+proc lmao:raw005 {from keyword text} {
+	global lmao_isupport
+
+	# "<ournick> TOKEN TOKEN=value ... :are supported by this server"
+	foreach tok [lrange [split $text] 1 end] {
+		if {[string index $tok 0] eq ":"} {
+			break
+		}
+		set kv [split $tok "="]
+		set lmao_isupport([string toupper [lindex $kv 0]]) [join [lrange $kv 1 end] "="]
+	}
+	return 0
+}
+
+proc lmao:isup {key default} {
+	global lmao_isupport
+
+	if {[info commands isupport] ne ""} {
+		if {![catch {isupport get $key} value] && $value ne ""} {
+			return $value
+		}
+	}
+	if {[info exists lmao_isupport($key)] && $lmao_isupport($key) ne ""} {
+		return $lmao_isupport($key)
+	}
+	return $default
+}
+
+# Every channel mode letter the server knows, e.g. "bklimnpstrDdRcC"
+proc lmao:server_modes {} {
+	return [string map {, ""} [lmao:isup CHANMODES "b,k,l,imnpstrDdRcC"]]
+}
+
+# Is this mode letter set on the channel right now?
+proc lmao:chan_has_mode {chan letter} {
+	set modes [lindex [split [getchanmode $chan]] 0]
+	return [expr {[string first $letter $modes] >= 0}]
+}
+
+###########################################################################
+# GUARD MODULE - flood and attack protection
+#
+# Four counters per channel, all "count:seconds" from the config:
+#   guard_user_flood  one person saying too much  -> kick (and ban)
+#   guard_line_flood  the channel as a whole       -> lock
+#   guard_join_flood  joins (drones, clones)       -> lock
+#   guard_nick_flood  nick changes                 -> lock
+# Ops, registered regulars (n m o M v) and service bots are never counted.
+#
+# A lock sets guard_lock_modes (default +Dm). On ircu +D hides new joins
+# until they are voiced or opped, and +m silences everyone without voice, so
+# a drone wave neither shows up nor talks while regulars carry on. The lock
+# lifts itself after guard_lock_minutes, and only removes the modes it set.
+#   !lockdown [minutes]   lock now          (Op+)
+#   !unlock               lift it early     (Op+)
+#   !guard                state and limits  (Op+)
+###########################################################################
+
+array set guard_hits {}
+array set guard_until {}
+array set guard_added {}
+
+# {count seconds} for a config limit, or "" when it is off or malformed
+proc guard:limit {name} {
+	global cc
+	if {[info exists cc($name)] && [scan $cc($name) "%d:%d" count secs] == 2 && $count > 0 && $secs > 0} {
+		return [list $count $secs]
+	}
+	return ""
+}
+
+# Count one event; 1 when that pushed it over the limit
+proc guard:hit {key name} {
+	global guard_hits
+	set lim [guard:limit $name]
+	if {$lim eq ""} {
+		return 0
+	}
+	lassign $lim count secs
+
+	set now [clock seconds]
+	set keep {}
+	if {[info exists guard_hits($key)]} {
+		foreach t $guard_hits($key) {
+			if {$now - $t < $secs} {
+				lappend keep $t
+			}
+		}
+	}
+	lappend keep $now
+	set guard_hits($key) $keep
+	return [expr {[llength $keep] >= $count}]
+}
+
+proc guard:clear {key} {
+	global guard_hits
+	if {[info exists guard_hits($key)]} {
+		unset guard_hits($key)
+	}
+}
+
+proc guard:active {chan} {
+	return [expr {[validchan $chan] && [module_enabled $chan "guard"]}]
+}
+
+proc guard:trusted {nick chan} {
+	if {[isbotnick $nick] || [is_protected_bot $nick]} {
+		return 1
+	}
+	if {[onchan $nick $chan] && [isop $nick $chan]} {
+		return 1
+	}
+	set hand [nick2hand $nick $chan]
+	if {$hand ne "" && $hand ne "*" && [matchattr $hand nmoMv|nmoMv $chan]} {
+		return 1
+	}
+	return 0
+}
+
+proc guard:locked {chan} {
+	global guard_until
+	return [info exists guard_until([string tolower $chan])]
+}
+
+# A notice only the channel ops see (ircu STATUSMSG: NOTICE @#chan)
+proc guard:tell_ops {chan text} {
+	if {![validchan $chan] || ![botonchan $chan]} {
+		return
+	}
+	if {[string first "@" [lmao:isup STATUSMSG "@+"]] >= 0} {
+		putquick "NOTICE @$chan :$text"
+	}
+}
+
+# One line said in the channel (message, action or notice)
+proc guard:line {nick uhost chan} {
+	if {![guard:active $chan] || [guard:trusted $nick $chan]} {
+		return
+	}
+	set lc [string tolower $chan]
+	set host [string tolower [lindex [split $uhost "@"] 1]]
+
+	if {[guard:hit "$lc,user,$host" guard_user_flood]} {
+		guard:clear "$lc,user,$host"
+		guard:punish $nick $uhost $chan "flooding"
+	}
+	if {[guard:hit "$lc,lines" guard_line_flood]} {
+		guard:clear "$lc,lines"
+		guard:lock $chan "channel flood"
+	}
+}
+
+proc guard:pubm {nick uhost hand chan text} {
+	guard:line $nick $uhost $chan
+	return 0
+}
+
+proc guard:notc {nick uhost hand text {dest ""}} {
+	set dest [string trimleft $dest "@+"]
+	if {$dest ne "" && [string index $dest 0] in {# &}} {
+		guard:line $nick $uhost $dest
+	}
+	return 0
+}
+
+proc guard:action {nick uhost hand dest keyword text} {
+	if {[string index $dest 0] in {# &}} {
+		guard:line $nick $uhost $dest
+	}
+	return 0
+}
+
+proc guard:join {nick uhost hand chan} {
+	if {[isbotnick $nick] || ![guard:active $chan] || [guard:trusted $nick $chan]} {
+		return 0
+	}
+	set lc [string tolower $chan]
+	if {[guard:hit "$lc,joins" guard_join_flood]} {
+		guard:clear "$lc,joins"
+		guard:lock $chan "join flood"
+	}
+	return 0
+}
+
+proc guard:nick {nick uhost hand chan newnick} {
+	if {![guard:active $chan] || [guard:trusted $newnick $chan]} {
+		return 0
+	}
+	set lc [string tolower $chan]
+	if {[guard:hit "$lc,nicks" guard_nick_flood]} {
+		guard:clear "$lc,nicks"
+		guard:lock $chan "nick change flood"
+	}
+	return 0
+}
+
+# One person flooding: kick, and ban for a while when set to kickban
+proc guard:punish {nick uhost chan why} {
+	global cc botnick
+
+	set action [string tolower $cc(guard_user_action)]
+	set mask "*!*@[lindex [split $uhost "@"] 1]"
+
+	if {$action eq "none" || ![onchan $nick $chan]} {
+		return
+	}
+	if {![botisop $chan]} {
+		chanlog $chan "GUARD" "$nick ($mask) is $why, but I am not opped"
+		return
+	}
+
+	if {$action eq "kickban"} {
+		newchanban $chan $mask $botnick "flood" $cc(guard_ban_minutes)
+		set did "kickbanned $nick ($mask) for $cc(guard_ban_minutes) min"
+	} else {
+		set did "kicked $nick ($mask)"
+	}
+	putkick $chan $nick "Flood detected - slow down"
+	chanlog $chan "SANCTION" "guard $did - $why"
+}
+
+proc guard:lock {chan reason {minutes ""}} {
+	global cc guard_until guard_added
+
+	if {$minutes eq ""} {
+		set minutes $cc(guard_lock_minutes)
+	}
+	set key [string tolower $chan]
+	set until [expr {[clock seconds] + $minutes * 60}]
+
+	# Already locked: more trouble just keeps it locked longer
+	if {[info exists guard_until($key)]} {
+		if {$until > $guard_until($key)} {
+			set guard_until($key) $until
+		}
+		return
+	}
+
+	# Only modes this server has, and only ones not set already - those are
+	# not ours to remove later
+	set supported [lmao:server_modes]
+	set add ""
+	foreach m [split $cc(guard_lock_modes) ""] {
+		if {[string first $m $supported] >= 0 && ![lmao:chan_has_mode $chan $m]} {
+			append add $m
+		}
+	}
+	set guard_until($key) $until
+	set guard_added($key) $add
+
+	if {$add ne ""} {
+		if {[botisop $chan]} {
+			putquick "MODE $chan +$add"
+		} elseif {[x:configured]} {
+			putquick "PRIVMSG X :mode $chan +$add"
+		}
+	}
+
+	set shown [expr {$add eq "" ? "modes already set" : "+$add"}]
+	guard:tell_ops $chan "Guard: $reason - channel locked ($shown) for $minutes min. [string trim $cc(cmdchar)]unlock opens it early."
+	chanlog $chan "GUARD" "$reason - locked ($shown) for $minutes min"
+	putlog "lmao.tcl guard: $reason on $chan - locked ($shown)"
+}
+
+# 1 = unlocked, 0 = was not locked, -1 = cannot change modes right now
+proc guard:unlock {chan why} {
+	global guard_until guard_added
+
+	set key [string tolower $chan]
+	if {![info exists guard_until($key)]} {
+		return 0
+	}
+
+	set remove ""
+	if {[validchan $chan]} {
+		foreach m [split $guard_added($key) ""] {
+			if {[lmao:chan_has_mode $chan $m]} {
+				append remove $m
+			}
+		}
+	}
+
+	if {$remove ne ""} {
+		if {[botisop $chan]} {
+			putquick "MODE $chan -$remove"
+		} elseif {[x:configured]} {
+			putquick "PRIVMSG X :mode $chan -$remove"
+		} else {
+			return -1
+		}
+	}
+
+	unset guard_until($key) guard_added($key)
+	set shown [expr {$remove eq "" ? "" : " (-$remove)"}]
+	guard:tell_ops $chan "Guard: channel unlocked$shown - $why."
+	chanlog $chan "GUARD" "unlocked$shown - $why"
+	return 1
+}
+
+# Every 15 seconds: lift locks that have run out, forget old counts
+proc guard:timer_check {} {
+	global guard_until guard_hits
+
+	set now [clock seconds]
+	foreach key [array names guard_until] {
+		if {$now >= $guard_until($key)} {
+			guard:unlock $key "quiet for long enough"
+		}
+	}
+	foreach key [array names guard_hits] {
+		set last [lindex $guard_hits($key) end]
+		if {$last eq "" || $now - $last > 300} {
+			unset guard_hits($key)
+		}
+	}
+	utimer 15 guard:timer_check
+}
+
+proc guard:lock:pub {nick uhost hand chan arg} {
+	global cc guard_until
+
+	if {![access:require $nick $hand $chan [access:rank_of op] "lock the channel"]} {
+		return
+	}
+	set minutes [lindex [split [string trim $arg]] 0]
+	if {$minutes eq ""} {
+		set minutes $cc(guard_lock_minutes)
+	}
+	if {![string is integer -strict $minutes] || $minutes < 1 || $minutes > 1440} {
+		putserv "NOTICE $nick :\002Usage:\002 [string trim $cc(cmdchar)]lockdown \[minutes\] (1 to 1440)"
+		return
+	}
+	if {[guard:locked $chan]} {
+		set guard_until([string tolower $chan]) [expr {[clock seconds] + $minutes * 60}]
+		putserv "NOTICE $nick :$chan was already locked - it now stays locked for $minutes min."
+		return
+	}
+	if {![botisop $chan] && ![x:configured]} {
+		putserv "NOTICE $nick :I am not opped on $chan and have no X account, so I cannot set the lock modes."
+		return
+	}
+	guard:lock $chan "locked by $nick" $minutes
+}
+
+proc guard:unlock:pub {nick uhost hand chan arg} {
+	global cc
+
+	if {![access:require $nick $hand $chan [access:rank_of op] "unlock the channel"]} {
+		return
+	}
+	switch -- [guard:unlock $chan "opened by $nick"] {
+		1  { putserv "NOTICE $nick :$chan is unlocked." }
+		0  { putserv "NOTICE $nick :$chan is not locked by the guard. To clear modes by hand: [string trim $cc(cmdchar)]mode -[string trim $cc(guard_lock_modes)]" }
+		-1 { putserv "NOTICE $nick :I am not opped on $chan and have no X account, so I cannot remove the lock modes yet. I will keep trying." }
+	}
+}
+
+proc guard:status:pub {nick uhost hand chan arg} {
+	global cc guard_until
+
+	if {![access:require $nick $hand $chan [access:rank_of op] "see the guard"]} {
+		return
+	}
+	set key [string tolower $chan]
+	set state [expr {[module_enabled $chan "guard"] ? "ON" : "OFF"}]
+	if {[info exists guard_until($key)]} {
+		set left [expr {max(0, $guard_until($key) - [clock seconds])}]
+		set lock "LOCKED for [expr {($left + 59) / 60}] more min"
+	} else {
+		set lock "not locked"
+	}
+	set usable ""
+	foreach m [split $cc(guard_lock_modes) ""] {
+		if {[string first $m [lmao:server_modes]] >= 0} {
+			append usable $m
+		}
+	}
+	putserv "NOTICE $nick :\002Guard on $chan:\002 $state, $lock. Lock modes: +$usable"
+	putserv "NOTICE $nick :Limits (count:seconds) - one user: $cc(guard_user_flood) ($cc(guard_user_action)), channel: $cc(guard_line_flood), joins: $cc(guard_join_flood), nick changes: $cc(guard_nick_flood)"
+}
+
+###########################################################################
+# X - UnderNet channel service
+#
+# All of this stays off until cc(x_user) and cc(x_pass) are set. Then the bot
+# logs in to X when it connects, can hide its host with +x, and asks X when
+# it is locked out of a channel through eggdrop's need-* hooks:
+#   need-op                      -> X op #chan
+#   need-unban                   -> X unban #chan <bot>
+#   need-invite/need-limit/need-key -> X invite #chan
+# On ircu an invite gets past +i, +l, +k, +b and +r alike. A need-* hook that
+# was set by hand (not by this script) is never overwritten.
+###########################################################################
+
+array set x_last {}
+
+proc x:configured {} {
+	global cc
+	return [expr {[info exists cc(x_user)] && $cc(x_user) ne "" && [info exists cc(x_pass)] && $cc(x_pass) ne ""}]
+}
+
+proc x:login {} {
+	global cc
+	if {![x:configured]} {
+		return 0
+	}
+	# The secure form X asks for: the full address, never plain "X"
+	putquick "PRIVMSG x@channels.undernet.org :login $cc(x_user) $cc(x_pass)"
+	if {$cc(x_hide_host)} {
+		utimer 5 x:hide
+	}
+	putlog "lmao.tcl: logging in to X as $cc(x_user)"
+	return 1
+}
+
+proc x:hide {} {
+	global botnick
+	putquick "MODE $botnick +x"
+}
+
+proc x:on_connect {type} {
+	x:login
+	return 0
+}
+
+# Ask X for something, at most once every 30 seconds per channel and request
+proc x:need {type chan} {
+	global botnick x_last
+	if {![x:configured]} {
+		return
+	}
+	set key "$type,[string tolower $chan]"
+	set now [clock seconds]
+	if {[info exists x_last($key)] && $now - $x_last($key) < 30} {
+		return
+	}
+	set x_last($key) $now
+
+	switch -- $type {
+		op      { putquick "PRIVMSG X :op $chan" }
+		unban   { putquick "PRIVMSG X :unban $chan $botnick" }
+		default { putquick "PRIVMSG X :invite $chan" }
+	}
+	putlog "lmao.tcl: asked X to $type on $chan"
+}
+
+proc x:setup_need {chan} {
+	global cc
+	if {![x:configured] || !$cc(x_rescue) || ![validchan $chan]} {
+		return
+	}
+	foreach type {op unban invite limit key} {
+		if {[catch {channel get $chan need-$type} current]} {
+			continue
+		}
+		if {$current eq "" || [string match "x:need *" $current]} {
+			set ask [expr {$type in {limit key} ? "invite" : $type}]
+			catch {channel set $chan need-$type [list x:need $ask $chan]}
+		}
+	}
+}
+
+# X's answers (login result and so on) go to the partyline
+proc x:notc {nick uhost hand text {dest ""}} {
+	if {[string equal -nocase $nick "X"] && [string match -nocase "*@undernet.org" $uhost] && [isbotnick $dest]} {
+		putlog "X: $text"
+	}
+	return 0
+}
+
+proc x:login:pub {nick uhost hand chan arg} {
+	global cc
+	if {![x:configured]} {
+		putserv "NOTICE $nick :No X account is set. Fill in cc(x_user) and cc(x_pass) in the config, then .rehash."
+		return
+	}
+	x:login
+	putserv "NOTICE $nick :Sent the login to X for $cc(x_user). X's answer shows on the partyline."
+}
+
+###########################################################################
 # TIMER INITIALIZATION - Set up recurring checks
 ###########################################################################
 
@@ -3135,10 +3814,13 @@ proc setup_timers {} {
 	# Kill any leftover timers first - without this a .rehash (or the old
 	# re-arm bug) stacks duplicate timers until every check runs many times
 	foreach t [utimers] {
-		if {[lindex $t 1] eq "idledeop:timer_check" || [lindex $t 1] eq "activevoice:timer_check"} {
+		if {[lindex $t 1] in {idledeop:timer_check activevoice:timer_check guard:timer_check}} {
 			killutimer [lindex $t 2]
 		}
 	}
+
+	# Guard: lift expired locks and forget old flood counts
+	utimer 15 guard:timer_check
 
 	# Schedule idle deop check
 	utimer $cc(idledeop_check_interval) idledeop:timer_check
@@ -3174,6 +3856,12 @@ setup_timers
 # Away message: load the wanted state and, on a rehash, set it if the bot is not away yet
 away:load
 away:apply
+
+# X: point every channel's need-* hooks at X (only when an X account is set)
+foreach lmao_chan [channels] {
+	x:setup_need $lmao_chan
+}
+unset -nocomplain lmao_chan
 
 putlog "$cc(version) - Complete production ready version"
 putlog "Loaded successfully - ready to serve!"

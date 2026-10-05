@@ -403,7 +403,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/><path d="M14 30q-3 4 0 7M50 30q3 4 0 7" stroke="#4cc3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <b>lmao<span>.tcl</span></b>
     </a>
-    <span class="ver">v6.6.0</span>
+    <span class="ver">v6.7.0</span>
     <nav class="navlinks" aria-label="Main">
       <a href="#features"><svg class="ico" aria-hidden="true"><use href="#i-home"/></svg><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a>
       <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span data-l="en">Install</span><span data-l="fr">Installer</span></a>
@@ -456,6 +456,8 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <a href="#modules"><svg class="ico" aria-hidden="true"><use href="#i-puzzle"/></svg>Modules</a>
     <a href="#activevoice"><svg class="ico" aria-hidden="true"><use href="#i-mic"/></svg>ActiveVoice</a>
     <a href="#idledeop"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></a>
+    <a href="#guard"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></a>
+    <a href="#xservice"><svg class="ico" aria-hidden="true"><use href="#i-key"/></svg><span data-l="en">X service</span><span data-l="fr">Service X</span></a>
     <a href="#topicsys"><svg class="ico" aria-hidden="true"><use href="#i-hash"/></svg><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></a>
     <a href="#protections"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>Protections</a>
     <h2><span data-l="en">Reference</span><span data-l="fr">Référence</span></h2>
@@ -474,7 +476,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <p class="tagline" data-l="en">Channel management for eggdrop, built for UnderNet. <em>Every reply by notice, never in your channel.</em></p>
     <p class="tagline" data-l="fr">La gestion de canal pour eggdrop, pensée pour UnderNet. <em>Chaque réponse par notice, jamais dans ton canal.</em></p>
     <div class="badges">
-      <span class="badge o">v6.6.0</span>
+      <span class="badge o">v6.7.0</span>
       <span class="badge g">eggdrop ≥ 1.8</span>
       <span class="badge b">Tcl ≥ 8.5</span>
       <span class="badge">UnderNet · ircu · X</span>
@@ -515,8 +517,8 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
 </div>
 
 <div class="stats" id="features">
-  <div class="stat"><b data-count="60">60</b><span data-l="en">commands, one help table</span><span data-l="fr">commandes, une seule table d'aide</span></div>
-  <div class="stat"><b data-count="5">5</b><span data-l="en">per-channel modules</span><span data-l="fr">modules par canal</span></div>
+  <div class="stat"><b data-count="64">64</b><span data-l="en">commands, one help table</span><span data-l="fr">commandes, une seule table d'aide</span></div>
+  <div class="stat"><b data-count="6">6</b><span data-l="en">per-channel modules</span><span data-l="fr">modules par canal</span></div>
   <div class="stat"><b data-count="0">0</b><span data-l="en">colour codes sent, ever</span><span data-l="fr">code de couleur envoyé, jamais</span></div>
   <div class="stat"><b data-count="100" data-suffix="%">100%</b><span data-l="en">replies by notice</span><span data-l="fr">des réponses par notice</span></div>
 </div>
@@ -558,6 +560,18 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <h2 class="ft"><span data-l="en">No colour codes</span><span data-l="fr">Aucun code de couleur</span></h2>
     <p data-l="en">Plain text reads the same in every client and on every theme. Tags like <code>[OK]</code> carry the meaning.</p>
     <p data-l="fr">Le texte brut se lit pareil dans tous les clients et avec tous les thèmes. Des étiquettes comme <code>[OK]</code> portent le sens.</p></div>
+  <div class="feat" style="--c:var(--red)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></div>
+    <h2 class="ft"><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></h2>
+    <p data-l="en">Kicks a lone flooder and locks the channel <code>+Dm</code> when a drone wave hits, then opens it again by itself.</p>
+    <p data-l="fr">Expulse un flooder isolé et verrouille le canal en <code>+Dm</code> quand une vague de drones frappe, puis le rouvre tout seul.</p></div>
+  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-key"/></svg></div>
+    <h2 class="ft"><span data-l="en">Works with X</span><span data-l="fr">Travaille avec X</span></h2>
+    <p data-l="en">Logs in to X, hides its host, and asks X for op, unban or invite when it gets locked out.</p>
+    <p data-l="fr">Se connecte à X, cache son hôte, et demande à X l'op, un unban ou une invitation quand on le bloque.</p></div>
+  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-gear"/></svg></div>
+    <h2 class="ft"><span data-l="en">Any channel setting</span><span data-l="fr">Tous les réglages</span></h2>
+    <p data-l="en"><code>!chanset</code> lists and changes every eggdrop channel setting, even ones other scripts add.</p>
+    <p data-l="fr"><code>!chanset</code> liste et change tous les réglages de canal d'eggdrop, même ceux d'autres scripts.</p></div>
 </div>
 
 <div class="note" data-l="fr"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg><div><b>Le robot parle anglais.</b> Le script envoie ses réponses en anglais : les exemples de sortie ci-dessous sont donc laissés tels quels. Les commandes, elles, sont les mêmes dans toutes les langues.</div></div>
@@ -577,13 +591,13 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     le robot n'inonde jamais le canal qu'il est censé protéger.</p>
   <div class="table-scroll">
   <table class="kv">
-    <tr><th>Script</th><td>lmao.tcl v6.6.0</td></tr>
+    <tr><th>Script</th><td>lmao.tcl v6.7.0</td></tr>
     <tr><th><span data-l="en">Repository</span><span data-l="fr">Dépôt</span></th><td><a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer">github.com/lmao-tcl/lmao-tcl.github.io</a></td></tr>
     <tr><th><span data-l="en">Requirements</span><span data-l="fr">Prérequis</span></th><td><span data-l="en">Eggdrop 1.8 or newer (tested on 1.10.1) · Tcl 8.5 or newer</span><span data-l="fr">Eggdrop 1.8 ou plus récent (testé sur 1.10.1) · Tcl 8.5 ou plus récent</span></td></tr>
     <tr><th><span data-l="en">Network</span><span data-l="fr">Réseau</span></th><td><span data-l="en">Written for UnderNet ircu — aware of the <code>X</code> and <code>W</code> services</span><span data-l="fr">Écrit pour ircu d'UnderNet — tient compte des services <code>X</code> et <code>W</code></span></td></tr>
     <tr><th><span data-l="en">Trigger</span><span data-l="fr">Déclencheur</span></th><td><code>!</code> <span data-l="en">by default</span><span data-l="fr">par défaut</span> — <code>cc(cmdchar)</code></td></tr>
-    <tr><th><span data-l="en">Commands</span><span data-l="fr">Commandes</span></th><td><span data-l="en">60, documented in one shared help table</span><span data-l="fr">60, documentées dans une seule table d'aide partagée</span></td></tr>
-    <tr><th>Modules</th><td><code>topic</code> · <code>activevoice</code> · <code>idledevoice</code> · <code>idledeop</code> · <code>chanlog</code></td></tr>
+    <tr><th><span data-l="en">Commands</span><span data-l="fr">Commandes</span></th><td><span data-l="en">64, documented in one shared help table</span><span data-l="fr">64, documentées dans une seule table d'aide partagée</span></td></tr>
+    <tr><th>Modules</th><td><code>topic</code> · <code>activevoice</code> · <code>idledevoice</code> · <code>idledeop</code> · <code>chanlog</code> · <code>guard</code></td></tr>
     <tr><th><span data-l="en">License</span><span data-l="fr">Licence</span></th><td>GPLv3</td></tr>
   </table>
   </div>
@@ -610,7 +624,7 @@ source scripts/lmao.tcl</pre></div>
 
   <p data-l="en">You should see this in the partyline and the log:</p>
   <p data-l="fr">Tu devrais voir ceci dans la partyline et le journal :</p>
-  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.6.0] - Complete production ready version</span>
+  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.7.0] - Complete production ready version</span>
 <span class="n">Loaded successfully - ready to serve!</span></pre></div>
 
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
@@ -648,7 +662,19 @@ source scripts/lmao.tcl</pre></div>
     <tr><td><code>cc(register_cooldown)</code></td><td><code>600</code></td><td><span data-l="en">Seconds between registration attempts from one host</span><span data-l="fr">Secondes entre deux tentatives d'inscription d'un même hôte</span></td></tr>
     <tr><td><code>cc(register_handle_max)</code></td><td><code>9</code></td><td><span data-l="en">Longest handle a registration may claim — must not exceed <code>handlen</code></span><span data-l="fr">Longueur maximale d'un handle — ne doit pas dépasser <code>handlen</code></span></td></tr>
     <tr><td><code>cc(register_flags)</code></td><td><em><span data-l="en">empty</span><span data-l="fr">vide</span></em></td><td><span data-l="en">Flags a self-registered user gets. Leave empty</span><span data-l="fr">Drapeaux donnés à l'inscription. Laisse vide</span></td></tr>
-    <tr><td><code>hopondeop</code> / <code>kickondeop</code></td><td><code>1</code></td><td><span data-l="en">React when the bot itself is deopped</span><span data-l="fr">Réagir quand le robot lui-même perd son op</span></td></tr>
+    <tr><td><code>cc(guard_user_flood)</code></td><td><code>6:5</code></td><td><span data-l="en">One person saying this many lines in this many seconds is kicked</span><span data-l="fr">Une personne qui dit autant de lignes en autant de secondes est expulsée</span></td></tr>
+    <tr><td><code>cc(guard_line_flood)</code></td><td><code>15:5</code></td><td><span data-l="en">The channel as a whole saying this much locks it</span><span data-l="fr">Le canal entier qui en dit autant le verrouille</span></td></tr>
+    <tr><td><code>cc(guard_join_flood)</code></td><td><code>8:10</code></td><td><span data-l="en">This many joins locks the channel</span><span data-l="fr">Autant d'arrivées verrouillent le canal</span></td></tr>
+    <tr><td><code>cc(guard_nick_flood)</code></td><td><code>5:10</code></td><td><span data-l="en">This many nick changes locks the channel</span><span data-l="fr">Autant de changements de pseudo verrouillent le canal</span></td></tr>
+    <tr><td><code>cc(guard_user_action)</code></td><td><code>kickban</code></td><td><span data-l="en"><code>kickban</code>, <code>kick</code> or <code>none</code> for a lone flooder</span><span data-l="fr"><code>kickban</code>, <code>kick</code> ou <code>none</code> pour un flooder isolé</span></td></tr>
+    <tr><td><code>cc(guard_ban_minutes)</code></td><td><code>10</code></td><td><span data-l="en">How long that ban lasts</span><span data-l="fr">Durée de ce bannissement</span></td></tr>
+    <tr><td><code>cc(guard_lock_modes)</code></td><td><code>Dm</code></td><td><span data-l="en">Modes a lock sets. Letters the server does not support are skipped</span><span data-l="fr">Modes posés par le verrou. Les lettres que le serveur ne connaît pas sont ignorées</span></td></tr>
+    <tr><td><code>cc(guard_lock_minutes)</code></td><td><code>5</code></td><td><span data-l="en">Quiet minutes before a lock lifts itself</span><span data-l="fr">Minutes de calme avant que le verrou se lève</span></td></tr>
+    <tr><td><code>cc(x_user)</code></td><td><em><span data-l="en">empty</span><span data-l="fr">vide</span></em></td><td><span data-l="en">X account name. Empty keeps every X feature off</span><span data-l="fr">Nom du compte X. Vide, toutes les fonctions X restent éteintes</span></td></tr>
+    <tr><td><code>cc(x_pass)</code></td><td><em><span data-l="en">empty</span><span data-l="fr">vide</span></em></td><td><span data-l="en">X password. Keep the config file private</span><span data-l="fr">Mot de passe X. Garde le fichier de config privé</span></td></tr>
+    <tr><td><code>cc(x_hide_host)</code></td><td><code>1</code></td><td><span data-l="en">Set <code>+x</code> after logging in, so the bot's host becomes <code>&lt;account&gt;.users.undernet.org</code></span><span data-l="fr">Mettre <code>+x</code> après la connexion : l'hôte du robot devient <code>&lt;compte&gt;.users.undernet.org</code></span></td></tr>
+    <tr><td><code>cc(x_rescue)</code></td><td><code>1</code></td><td><span data-l="en">Point eggdrop's <code>need-*</code> hooks at X (op, unban, invite)</span><span data-l="fr">Diriger les crochets <code>need-*</code> d'eggdrop vers X (op, unban, invitation)</span></td></tr>
+    <tr><td><code>hopondeop</code></td><td><code>1</code></td><td><span data-l="en">When deopped and alone in the channel, cycle to get op back (with an X account, X is asked instead)</span><span data-l="fr">Quand il perd l'op et est seul dans le canal, sortir et revenir pour le récupérer (avec un compte X, on demande à X)</span></td></tr>
   </table>
   </div>
 </section>
@@ -1068,14 +1094,26 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 <span class="t">!global</span> <span class="a">&lt;message&gt;</span></pre></div>
   </div>
 
-  <div class="cmd" data-k="chanset uptime channel setting youtube weather needhelp isup">
-    <div class="cmd-head"><h4><span class="amp">!</span>chanset &nbsp;/&nbsp; <span class="amp">!</span>uptime</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span></div>
-    <p data-l="en">Toggles a channel setting (<code>youtube</code>, <code>weather</code>, <code>needhelp</code>, <code>isup</code>), or shows how long the bot has been running.</p>
-    <p data-l="fr">Bascule un réglage du canal (<code>youtube</code>, <code>weather</code>, <code>needhelp</code>, <code>isup</code>), ou affiche depuis combien de temps le robot tourne.</p>
-    <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!chanset</span> +weather</pre></div>
-    <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
-      <div data-l="en"><b>Heads up:</b> both are bound <code>n|-</code>, so the channel side requires <em>no flags at all</em> — anyone can toggle these settings. Change the bind to <code>n|m</code> to restrict <code>!chanset</code> to masters.</div>
-      <div data-l="fr"><b>Attention :</b> les deux sont liées en <code>n|-</code>, donc côté canal <em>aucun drapeau</em> n'est demandé — n'importe qui peut basculer ces réglages. Change le bind en <code>n|m</code> pour réserver <code>!chanset</code> aux maîtres.</div></div>
+  <div class="cmd" data-k="chanset channel setting settings list flag udef autoop bitch flood">
+    <div class="cmd-head"><h4><span class="amp">!</span>chanset</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Lists or changes <strong>any</strong> eggdrop channel setting on this channel: the built-in ones and the ones other scripts add with <code>setudef</code>. No list to maintain. It tries the change, reads it back, and tells you if it failed and why. An unknown name gets a list of close matches.</p>
+    <p data-l="fr">Liste ou change <strong>n'importe quel</strong> réglage de canal d'eggdrop : ceux de base et ceux qu'ajoutent d'autres scripts avec <code>setudef</code>. Aucune liste à tenir. Il tente le changement, le relit, et te dit s'il a échoué et pourquoi. Un nom inconnu donne une liste de noms proches.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!chanset</span>                    <span class="c">list</span>
+<span class="t">!chanset</span> <span class="a">+autoop</span>            <span class="c">on</span>
+<span class="t">!chanset</span> <span class="a">-autoop</span>            <span class="c">off</span>
+<span class="t">!chanset</span> <span class="a">flood-chan 10:60</span>   <span class="c">value</span></pre></div>
+    <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>[OK] #canada: +autoop (on)
+There is no <span class="t">flood</span> setting on #canada. Did you mean: flood-chan, flood-ctcp, flood-join?
+Could not set <span class="t">+flood-chan</span> on #canada: illegal channel option</pre></div>
+    <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>
+      <div data-l="en"><code>need-*</code> settings are refused here: their value is Tcl code the bot runs. Listing needs eggdrop 1.9 or newer; changing works everywhere.</div>
+      <div data-l="fr">Les réglages <code>need-*</code> sont refusés ici : leur valeur est du code Tcl que le robot exécute. La liste demande eggdrop 1.9 ou plus récent ; les changements marchent partout.</div></div>
+  </div>
+
+  <div class="cmd" data-k="uptime running time how long">
+    <div class="cmd-head"><h4><span class="amp">!</span>uptime</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span></div>
+    <p data-l="en">How long the bot has been running.</p>
+    <p data-l="fr">Depuis combien de temps le robot tourne.</p>
   </div>
 </section>
 
@@ -1182,8 +1220,8 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 <!-- ================= MODULES ================= -->
 <section id="modules">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-puzzle"/></svg></span>Modules</h2>
-  <p class="sec-intro" data-l="en">Five features can be switched on and off <strong>per channel</strong>, live, without editing the config. Three start <span class="on">ON</span>; <code>idledeop</code> and <code>idledevoice</code> start <span class="off">OFF</span>.</p>
-  <p class="sec-intro" data-l="fr">Cinq fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Trois partent <span class="on">ON</span> ; <code>idledeop</code> et <code>idledevoice</code> partent <span class="off">OFF</span>.</p>
+  <p class="sec-intro" data-l="en">Six features can be switched on and off <strong>per channel</strong>, live, without editing the config. Four start <span class="on">ON</span>; <code>idledeop</code> and <code>idledevoice</code> start <span class="off">OFF</span>.</p>
+  <p class="sec-intro" data-l="fr">Six fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Quatre partent <span class="on">ON</span> ; <code>idledeop</code> et <code>idledevoice</code> partent <span class="off">OFF</span>.</p>
   <div class="table-scroll">
   <table>
     <tr><th scope="col" style="width:150px">Module</th><th scope="col" style="width:90px"><span data-l="en">Default</span><span data-l="fr">Défaut</span></th><th scope="col"><span data-l="en">What it does</span><span data-l="fr">À quoi ça sert</span></th></tr>
@@ -1192,6 +1230,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     <tr><td><code>idledevoice</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Removes voice from non-registered users who have gone idle</span><span data-l="fr">Retire le voice aux non-inscrits devenus inactifs</span></td></tr>
     <tr><td><code>idledeop</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Deops ops idle past the channel's limit</span><span data-l="fr">Retire l'op aux ops inactifs au-delà de la limite du canal</span></td></tr>
     <tr><td><code>chanlog</code></td><td><span class="on">ON</span></td><td><span data-l="en">Sends this channel's audit trail to the ops channel</span><span data-l="fr">Envoie le journal de ce canal au canal des ops</span></td></tr>
+    <tr><td><code>guard</code></td><td><span class="on">ON</span></td><td><span data-l="en">Flood protection: kicks lone flooders, locks the channel under attack — see <a href="#guard">flood guard</a></span><span data-l="fr">Protection anti-flood : expulse les flooders isolés, verrouille le canal sous attaque — voir <a href="#guard">garde anti-flood</a></span></td></tr>
   </table>
   </div>
   <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
@@ -1240,6 +1279,82 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
   <div class="code"><span class="tag">config</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>set cc(deop_exempt) [list "You" "Bot1" "Bot2"]</pre></div>
 </section>
 
+<!-- ================= GUARD ================= -->
+<section id="guard">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></span><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></h2>
+  <p class="sec-intro" data-l="en">The <code>guard</code> module watches every channel it is on for floods. One person flooding is kicked (and banned for a while). A real attack — the whole channel flooding, a wave of joins, a storm of nick changes — <strong>locks the channel</strong> with <code>+Dm</code> until it has been quiet for a few minutes.</p>
+  <p class="sec-intro" data-l="fr">Le module <code>guard</code> surveille les floods dans chaque canal. Une personne qui floode seule est expulsée (et bannie un moment). Une vraie attaque — le canal entier qui floode, une vague d'arrivées, une rafale de changements de pseudo — <strong>verrouille le canal</strong> en <code>+Dm</code> jusqu'à quelques minutes de calme.</p>
+
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:180px"><span data-l="en">What</span><span data-l="fr">Quoi</span></th><th scope="col" style="width:110px"><span data-l="en">Default</span><span data-l="fr">Défaut</span></th><th scope="col"><span data-l="en">What happens</span><span data-l="fr">Ce qui arrive</span></th></tr>
+    <tr><td><span data-l="en">One person</span><span data-l="fr">Une personne</span></td><td><code>6:5</code></td><td><span data-l="en">6 lines in 5 seconds: kicked, and banned for 10 minutes (<code>*!*@host</code>)</span><span data-l="fr">6 lignes en 5 secondes : expulsée, et bannie 10 minutes (<code>*!*@hôte</code>)</span></td></tr>
+    <tr><td><span data-l="en">Whole channel</span><span data-l="fr">Canal entier</span></td><td><code>15:5</code></td><td><span data-l="en">Channel locked</span><span data-l="fr">Canal verrouillé</span></td></tr>
+    <tr><td><span data-l="en">Joins</span><span data-l="fr">Arrivées</span></td><td><code>8:10</code></td><td><span data-l="en">Channel locked (drones, clones)</span><span data-l="fr">Canal verrouillé (drones, clones)</span></td></tr>
+    <tr><td><span data-l="en">Nick changes</span><span data-l="fr">Changements de pseudo</span></td><td><code>5:10</code></td><td><span data-l="en">Channel locked</span><span data-l="fr">Canal verrouillé</span></td></tr>
+  </table>
+  </div>
+
+  <h3 class="sub"><span data-l="en">Why +Dm</span><span data-l="fr">Pourquoi +Dm</span></h3>
+  <ul class="steps" style="list-style:none">
+    <li><span><span data-l="en"><code>+D</code> (delayed join) is an ircu mode: new joins stay invisible until they are voiced or opped, so a drone wave never fills the nick list.</span><span data-l="fr"><code>+D</code> (arrivées différées) est un mode d'ircu : les nouvelles arrivées restent invisibles tant qu'elles n'ont pas le voice ou l'op, donc une vague de drones ne remplit jamais la liste.</span></span></li>
+    <li><span><span data-l="en"><code>+m</code> (moderated) silences everyone without voice or op. Regulars who already have voice keep talking.</span><span data-l="fr"><code>+m</code> (modéré) fait taire tous ceux qui n'ont ni voice ni op. Les habitués qui ont déjà le voice continuent de parler.</span></span></li>
+    <li><span><span data-l="en">The lock only sets modes the server supports and that are not already on, and the unlock only removes those. ActiveVoice stops voicing anyone while the channel is locked.</span><span data-l="fr">Le verrou ne pose que les modes que le serveur connaît et qui ne sont pas déjà mis, et le déverrouillage n'enlève que ceux-là. ActiveVoice arrête de donner le voice pendant le verrou.</span></span></li>
+  </ul>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg>
+    <div data-l="en">Ops, registered regulars (<code>n m o M v</code>) and service bots are never counted. The ops are warned with a notice only they see (<code>NOTICE @#channel</code>), and every lock, unlock and kick goes to <a href="#chanlog">chanlog</a>.</div>
+    <div data-l="fr">Les ops, les habitués inscrits (<code>n m o M v</code>) et les services ne sont jamais comptés. Les ops sont avertis par une notice qu'eux seuls voient (<code>NOTICE @#canal</code>), et chaque verrou, déverrouillage et expulsion va dans le <a href="#chanlog">chanlog</a>.</div></div>
+
+  <div class="cmd" data-k="lockdown lock flood attack drones +D +m verrouiller">
+    <div class="cmd-head"><h4><span class="amp">!</span>lockdown</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Locks the channel by hand, for <code>cc(guard_lock_minutes)</code> or the minutes you give. On a channel that is already locked it resets the timer.</p>
+    <p data-l="fr">Verrouille le canal à la main, pour <code>cc(guard_lock_minutes)</code> ou les minutes indiquées. Sur un canal déjà verrouillé, il relance le chrono.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!lockdown</span> <span class="o">[minutes]</span></pre></div>
+    <div class="code reply"><span class="tag">ops</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">-lmao:@#canada-</span> Guard: locked by boss - channel locked (+Dm) for 10 min. !unlock opens it early.</pre></div>
+  </div>
+
+  <div class="cmd" data-k="unlock open lift guard deverrouiller">
+    <div class="cmd-head"><h4><span class="amp">!</span>unlock</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Lifts a lock early. Removes only the modes the guard set.</p>
+    <p data-l="fr">Lève un verrou plus tôt. N'enlève que les modes que la garde a posés.</p>
+  </div>
+
+  <div class="cmd" data-k="guard status flood limits garde">
+    <div class="cmd-head"><h4><span class="amp">!</span>guard</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Whether the guard is on here, whether the channel is locked and for how long, and the limits in use.</p>
+    <p data-l="fr">Si la garde est active ici, si le canal est verrouillé et pour combien de temps, et les limites utilisées.</p>
+  </div>
+</section>
+
+<!-- ================= X ================= -->
+<section id="xservice">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-key"/></svg></span><span data-l="en">X service</span><span data-l="fr">Service X</span></h2>
+  <p class="sec-intro" data-l="en">X is UnderNet's channel service. Give the bot its own X account and it can get itself out of trouble. Everything here stays <strong>off</strong> until <code>cc(x_user)</code> and <code>cc(x_pass)</code> are set.</p>
+  <p class="sec-intro" data-l="fr">X est le service de canaux d'UnderNet. Donne au robot son propre compte X et il pourra se sortir d'affaire tout seul. Tout ici reste <strong>éteint</strong> tant que <code>cc(x_user)</code> et <code>cc(x_pass)</code> sont vides.</p>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">On connect</span><span data-l="fr">À la connexion</span></th><td><span data-l="en">Logs in with <code>/msg x@channels.undernet.org login</code> (the secure form X asks for), then sets <code>+x</code> so its host becomes <code>&lt;account&gt;.users.undernet.org</code>.</span><span data-l="fr">Se connecte avec <code>/msg x@channels.undernet.org login</code> (la forme sécurisée que demande X), puis met <code>+x</code> : son hôte devient <code>&lt;compte&gt;.users.undernet.org</code>.</span></td></tr>
+    <tr><th><span data-l="en">Deopped</span><span data-l="fr">Perd l'op</span></th><td><code>X op #channel</code></td></tr>
+    <tr><th><span data-l="en">Banned</span><span data-l="fr">Banni</span></th><td><code>X unban #channel &lt;bot&gt;</code></td></tr>
+    <tr><th><code>+i</code> <code>+l</code> <code>+k</code> <code>+r</code></th><td><span data-l="en"><code>X invite #channel</code> — on ircu an invite gets past all of these</span><span data-l="fr"><code>X invite #canal</code> — sur ircu une invitation passe outre tous ces modes</span></td></tr>
+    <tr><th><span data-l="en">Lock while not opped</span><span data-l="fr">Verrou sans être op</span></th><td><code>X mode #channel +Dm</code></td></tr>
+  </table>
+  </div>
+  <p data-l="en">The lockout answers go through eggdrop's own <code>need-op</code>, <code>need-unban</code>, <code>need-invite</code>, <code>need-limit</code> and <code>need-key</code> hooks, set on every channel when the script loads. A hook you set yourself is never overwritten. Each request is sent at most once every 30 seconds per channel, and X's replies show on the partyline.</p>
+  <p data-l="fr">Les réponses aux blocages passent par les crochets <code>need-op</code>, <code>need-unban</code>, <code>need-invite</code>, <code>need-limit</code> et <code>need-key</code> d'eggdrop, réglés sur chaque canal au chargement. Un crochet que tu as réglé toi-même n'est jamais écrasé. Chaque demande part au plus une fois par 30 secondes par canal, et les réponses de X s'affichent dans la partyline.</p>
+  <div class="code"><span class="tag">config</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>set cc(x_user) "mybot"
+set cc(x_pass) "its-x-password"</pre></div>
+  <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+    <div data-l="en"><b>Give the bot its own X account</b>, never yours, with only the access it needs on the channel (op level). The password sits in the config file, so keep that file private.</div>
+    <div data-l="fr"><b>Donne au robot son propre compte X</b>, jamais le tien, avec seulement l'accès dont il a besoin dans le canal (niveau op). Le mot de passe est dans le fichier de config : garde-le privé.</div></div>
+
+  <div class="cmd" data-k="xlogin x login auth channel service">
+    <div class="cmd-head"><h4><span class="amp">!</span>xlogin</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span></div>
+    <p data-l="en">Sends the login to X again, for instance after X was down.</p>
+    <p data-l="fr">Renvoie la connexion à X, par exemple après une panne de X.</p>
+  </div>
+</section>
+
 <!-- ================= TOPIC ================= -->
 <section id="topicsys">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hash"/></svg></span><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></h2>
@@ -1258,7 +1373,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     <tr><th><span data-l="en">Protected bots</span><span data-l="fr">Services protégés</span></th><td><span data-l="en"><code>X</code> and <code>W</code> are never deopped or acted on</span><span data-l="fr"><code>X</code> et <code>W</code> ne sont jamais deop ni visés</span></td></tr>
     <tr><th><span data-l="en">Owner re-check on /msg</span><span data-l="fr">Propriétaire revérifié en /msg</span></th><td><span data-l="en">Owner commands sent by <code>/msg</code> re-verify the <code>n</code> flag and log refused attempts</span><span data-l="fr">Les commandes propriétaire en <code>/msg</code> revérifient le drapeau <code>n</code> et journalisent les refus</span></td></tr>
     <tr><th><span data-l="en">Strangers stay quiet</span><span data-l="fr">Les inconnus restent discrets</span></th><td><span data-l="en">Someone the bot has no record for gets refusals by notice, so a stranger can't make the bot talk to the channel</span><span data-l="fr">Quelqu'un sans fiche reçoit les refus par notice : un inconnu ne peut pas faire parler le robot dans le canal</span></td></tr>
-    <tr><th><span data-l="en">Hop on deop</span><span data-l="fr">Réaction au deop</span></th><td><span data-l="en"><code>hopondeop</code> / <code>kickondeop</code> react when the bot itself is deopped</span><span data-l="fr"><code>hopondeop</code> / <code>kickondeop</code> réagissent quand le robot perd son op</span></td></tr>
+    <tr><th><span data-l="en">Deopped</span><span data-l="fr">Perte de l'op</span></th><td><span data-l="en">Asks X for op when it has an X account, otherwise cycles only when alone in the channel. It never kicks back: whoever deopped it may be staff, or X.</span><span data-l="fr">Demande l'op à X s'il a un compte X, sinon sort et revient seulement s'il est seul dans le canal. Il ne riposte jamais : qui l'a deop est peut-être de l'équipe, ou X.</span></td></tr>
   </table>
   </div>
 </section>
@@ -1286,8 +1401,8 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     <div data-l="en"><b>Memory only.</b> Module states, stored topics and chanlog destinations reset on <code>.rehash</code> or <code>.restart</code>.</div>
     <div data-l="fr"><b>En mémoire seulement.</b> L'état des modules, les sujets gardés et les destinations du chanlog repartent à zéro au <code>.rehash</code> ou au <code>.restart</code>.</div></div>
   <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
-    <div data-l="en"><b><code>!chanset</code> and <code>!uptime</code> are open to everyone</b> — both are bound <code>n|-</code>.</div>
-    <div data-l="fr"><b><code>!chanset</code> et <code>!uptime</code> sont ouvertes à tous</b> — les deux sont liées en <code>n|-</code>.</div></div>
+    <div data-l="en"><b>A channel's <code>chanmode</code> setting wins over a lock.</b> If it enforces <code>-m</code> or <code>-D</code>, eggdrop undoes the guard's lock. Check it with <code>!chanset list</code>. <code>!uptime</code> is open to everyone (bound <code>n|-</code>).</div>
+    <div data-l="fr"><b>Le réglage <code>chanmode</code> d'un canal l'emporte sur un verrou.</b> S'il impose <code>-m</code> ou <code>-D</code>, eggdrop défait le verrou de la garde. Vérifie-le avec <code>!chanset list</code>. <code>!uptime</code> est ouverte à tous (liée en <code>n|-</code>).</div></div>
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-hammer"/></svg>
     <div data-l="en"><b>The bot must be opped</b> for op, voice, kick, ban, topic and every sweep. It tells you when it isn't.</div>
     <div data-l="fr"><b>Le robot doit être op</b> pour op, voice, kick, ban, sujet et chaque ménage. Il te le dit quand il ne l'est pas.</div></div>
@@ -1296,6 +1411,17 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 <!-- ================= CHANGELOG ================= -->
 <section id="changelog">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-history"/></svg></span><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
+
+  <h3 class="sub">6.7.0</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></th><td><span data-l="en">New <code>guard</code> module (on by default): kicks lone flooders and locks the channel <code>+Dm</code> under a channel, join or nick flood, then unlocks by itself. <code>!lockdown</code>, <code>!unlock</code> and <code>!guard</code> for the ops.</span><span data-l="fr">Nouveau module <code>guard</code> (actif par défaut) : expulse les flooders isolés et verrouille le canal en <code>+Dm</code> sous un flood de canal, d'arrivées ou de pseudos, puis le rouvre tout seul. <code>!lockdown</code>, <code>!unlock</code> et <code>!guard</code> pour les ops.</span></td></tr>
+    <tr><th><span data-l="en">X service</span><span data-l="fr">Service X</span></th><td><span data-l="en">Optional X account: login and <code>+x</code> on connect, X asked for op, unban or invite when locked out, <code>!xlogin</code>.</span><span data-l="fr">Compte X facultatif : connexion et <code>+x</code> au démarrage, X sollicité pour l'op, un unban ou une invitation en cas de blocage, <code>!xlogin</code>.</span></td></tr>
+    <tr><th><code>!chanset</code></th><td><span data-l="en">Works with every channel setting instead of four, lists them, reports failures and suggests close names. Now Master+ (it was open to everyone).</span><span data-l="fr">Marche avec tous les réglages de canal au lieu de quatre, les liste, signale les échecs et propose des noms proches. Maintenant Maître+ (c'était ouvert à tous).</span></td></tr>
+    <tr><th><span data-l="en">Server aware</span><span data-l="fr">À l'écoute du serveur</span></th><td><span data-l="en">Reads what the server supports (modes, ops-only notices) instead of assuming it.</span><span data-l="fr">Lit ce que le serveur prend en charge (modes, notices aux ops) au lieu de le supposer.</span></td></tr>
+    <tr><th><span data-l="en">Fixes</span><span data-l="fr">Correctifs</span></th><td><span data-l="en">Being deopped no longer freezes the bot for a second or kicks back at whoever did it. ActiveVoice sends its modes in batches.</span><span data-l="fr">Perdre l'op ne fige plus le robot une seconde et ne riposte plus contre qui l'a fait. ActiveVoice envoie ses modes par lots.</span></td></tr>
+  </table>
+  </div>
 
   <h3 class="sub">6.6.0</h3>
   <div class="table-scroll">
@@ -1429,7 +1555,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     "-lmao- Quick Help: Type !help <command> for details",
     "-lmao- Access Info for maple: Level: Voice (v)",
     "-lmao- [OK] newguy moves up from Voice to Mod on #canada",
-    "-lmao- lmao.tcl 6.6.0 - https://github.com/lmao-tcl/lmao-tcl.github.io",
+    "-lmao- lmao.tcl 6.7.0 - https://github.com/lmao-tcl/lmao-tcl.github.io",
     "[SANCTION] #canada boss banned troll (*!*@troll.host) - spam",
     "[ACCESS] #canada boss opped chanop",
     "[REGISTER] newguy registered as newguy",
@@ -1549,6 +1675,8 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
       "<code>!addvoice</code> on an op moves them <em>down</em> — one rung at a time.",
       "<code>!chanlog #ops</code> sends this channel's audit trail to #ops.",
       "<code>!suschan</code> parks a channel and keeps all of its users.",
+      "<code>!lockdown 10</code> hides new joins and mutes everyone without voice for 10 minutes.",
+      "<code>!chanset</code> on its own lists every channel setting the bot has.",
       "Type <kbd>/</kbd> anywhere on this page to filter commands."
     ],
     fr: [
@@ -1559,6 +1687,8 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
       "<code>!addvoice</code> sur un op le fait <em>descendre</em> — un échelon à la fois.",
       "<code>!chanlog #ops</code> envoie le journal de ce canal dans #ops.",
       "<code>!suschan</code> met un canal de côté en gardant tous ses utilisateurs.",
+      "<code>!lockdown 10</code> cache les nouvelles arrivées et fait taire ceux sans voice pendant 10 minutes.",
+      "<code>!chanset</code> tout seul liste tous les réglages de canal du robot.",
       "Tape <kbd>/</kbd> n'importe où sur la page pour filtrer les commandes."
     ]
   };

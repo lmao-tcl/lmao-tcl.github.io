@@ -2,7 +2,7 @@
 
 **Channel management for eggdrop, built for UnderNet.**
 
-[![Version](https://img.shields.io/badge/version-6.6.0-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
+[![Version](https://img.shields.io/badge/version-6.7.0-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
 [![Eggdrop](https://img.shields.io/badge/eggdrop-1.8%2B-green.svg)](https://www.eggheads.org/)
 [![Tcl](https://img.shields.io/badge/tcl-8.5%2B-blue.svg)](https://www.tcl.tk/)
 [![License](https://img.shields.io/badge/license-GPLv3-lightgrey.svg)](LICENSE)
@@ -38,7 +38,13 @@ bot never floods your channel.
   deopped, devoiced, kicked or banned by the bot. A named exempt list covers the
   people who run the channel even when they aren't in the userfile.
 - **No colour codes.** Plain text reads the same in every client and on every theme.
-- **UnderNet aware.** Written against ircu behaviour and the `X` service.
+- **Flood guard.** Kicks a lone flooder and locks the channel `+Dm` when a drone wave hits,
+  then opens it again by itself.
+- **Works with X.** With its own X account the bot logs in, hides its host, and asks X for
+  op, unban or invite when it is locked out.
+- **Any channel setting.** `!chanset` lists and changes every eggdrop channel setting, including
+  the ones other scripts add.
+- **UnderNet aware.** Written against ircu, and reads what the server supports instead of assuming it.
 
 ---
 
@@ -87,12 +93,23 @@ Everything lives in the `CONFIGURATION SECTION` at the top of the script.
 | `cc(protected_bots)` | `X W` | Nicks the bot will never deop |
 | `cc(protected_flags)` | `n m` | Flags that protect a user from deop/devoice |
 | `cc(deop_exempt)` | `You Bot1 Bot2` | Nicks or handles the idle-deop sweep never touches |
+| `cc(guard_user_flood)` | `6:5` | Lines in seconds from one person before a kick |
+| `cc(guard_line_flood)` | `15:5` | Lines in seconds from the whole channel before a lock |
+| `cc(guard_join_flood)` | `8:10` | Joins in seconds before a lock |
+| `cc(guard_nick_flood)` | `5:10` | Nick changes in seconds before a lock |
+| `cc(guard_user_action)` | `kickban` | `kickban`, `kick` or `none` for a lone flooder |
+| `cc(guard_ban_minutes)` | `10` | How long that ban lasts |
+| `cc(guard_lock_modes)` | `Dm` | Modes a lock sets (unsupported letters are skipped) |
+| `cc(guard_lock_minutes)` | `5` | Quiet minutes before a lock lifts itself |
+| `cc(x_user)` / `cc(x_pass)` | empty | The bot's own X account. Empty keeps X off |
+| `cc(x_hide_host)` | `1` | Set `+x` after logging in to X |
+| `cc(x_rescue)` | `1` | Ask X for op, unban or invite when locked out |
 
 ---
 
 ## Modules
 
-Modules are per channel. Three start **on**; `idledeop` and `idledevoice` start **off**.
+Modules are per channel. Four start **on**; `idledeop` and `idledevoice` start **off**.
 
 | Module | Default | What it does |
 | --- | --- | --- |
@@ -101,6 +118,7 @@ Modules are per channel. Three start **on**; `idledeop` and `idledevoice` start 
 | `idledevoice` | **off** | Removes voice from non-registered users who have gone idle |
 | `idledeop` | **off** | Deops ops who have been idle past the channel's limit |
 | `chanlog` | on | Sends the channel's audit trail to the ops channel |
+| `guard` | on | Flood protection: kicks lone flooders, locks the channel under attack |
 
 ```
 !module list                          show every module and its state here
@@ -165,10 +183,10 @@ has every command with its syntax.
 | Registered | `!bot` `!info` `!whois` `!ops` |
 | Voice+ | `!voice` `!devoice` |
 | Mod+ | `!kick` `!ban` `!unban` `!bans` `!invite` `!addvoice` `!access` |
-| Op+ | `!op` `!deop` `!topic` `!topicsync` `!addmod` `!delaccess` |
-| Master+ | `!mode` `!blacklist` `!whitelist` `!chattr` `!adduser` `!deluser` `!say` `!act` `!idledeop` `!module` `!enable` `!disable` `!chanlog` `!addop` |
-| Owner | `!addchan` `!delchan` `!suschan` `!unsuschan` `!join` `!part` `!comeback` `!botnick` `!away` `!back` `!global` `!rehash` `!restart` `!jump` `!save` `!addmaster` |
-| Anyone (bound `n\|-`) | `!chanset` `!uptime` |
+| Op+ | `!op` `!deop` `!topic` `!topicsync` `!addmod` `!delaccess` `!lockdown` `!unlock` `!guard` |
+| Master+ | `!mode` `!blacklist` `!whitelist` `!chattr` `!adduser` `!deluser` `!say` `!act` `!idledeop` `!module` `!enable` `!disable` `!chanlog` `!addop` `!chanset` |
+| Owner | `!addchan` `!delchan` `!suschan` `!unsuschan` `!join` `!part` `!comeback` `!botnick` `!away` `!back` `!global` `!rehash` `!restart` `!jump` `!save` `!addmaster` `!xlogin` |
+| Anyone (bound `n\|-`) | `!uptime` |
 
 ### Channel management (owner)
 
@@ -203,6 +221,60 @@ The module is off by default. `!enable idledeop` turns it on for a channel and `
 sets the limit. Never deopped: the service bots in `cc(protected_bots)`, the bot itself,
 anyone with a flag from `cc(protected_flags)`, and anyone named in `cc(deop_exempt)`
 (nick or handle, case-insensitive).
+
+---
+
+## Flood guard
+
+The `guard` module is on by default. One person saying 6 lines in 5 seconds is kicked and
+banned for 10 minutes. The whole channel flooding (15 lines in 5 seconds), 8 joins in 10
+seconds or 5 nick changes in 10 seconds **locks the channel** with `+Dm`:
+
+- `+D` hides new joins until they are voiced or opped, so a drone wave never fills the nick list.
+- `+m` silences everyone without voice; regulars who have voice keep talking.
+
+The lock lifts itself after 5 quiet minutes and only removes the modes it set. Ops, registered
+regulars and service bots are never counted. The ops get a notice only they see, and every
+lock, unlock and kick goes to chanlog.
+
+```
+!lockdown [minutes]    lock now
+!unlock                lift it early
+!guard                 state and limits
+```
+
+If a channel's eggdrop `chanmode` setting enforces `-m` or `-D`, it will undo a lock.
+
+---
+
+## X
+
+Give the bot **its own** X account and it can get itself out of trouble:
+
+```tcl
+set cc(x_user) "mybot"
+set cc(x_pass) "its-x-password"
+```
+
+On connect it logs in through `x@channels.undernet.org` and sets `+x`. Deopped, it asks X
+for op; banned, for an unban; kept out by `+i`, `+l`, `+k` or `+r`, for an invite (an invite
+gets past all of those on ircu). This goes through eggdrop's `need-*` hooks; one you set
+yourself is never overwritten. `!xlogin` sends the login again.
+
+---
+
+## Channel settings
+
+`!chanset` works with every eggdrop channel setting, built in or added by another script:
+
+```
+!chanset                 list them all (eggdrop 1.9+)
+!chanset +autoop         turn one on, - turns it off
+!chanset flood-chan 10:60
+```
+
+It reads the change back and tells you if it failed. `need-*` settings are refused because
+their value is Tcl code the bot runs.
 
 ---
 
