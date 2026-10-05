@@ -116,7 +116,7 @@ set cc(protected_flags) [list "n" "m"]
 # Nicks or handles the idle deop timer must never touch, whatever flags they
 # carry and however long they sit there. The people who actually run the
 # channel go in here - they op themselves on purpose and keep it.
-set cc(deop_exempt) [list "Secoupe" "Seb" "offline"]
+set cc(deop_exempt) [list "You" "Bot1" "Bot2"]
 
 # Store idle deop settings per channel
 array set idledeop_config {}
