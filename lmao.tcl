@@ -3957,10 +3957,14 @@ proc dj:raw355 {from keyword text} {
 		}
 		set dj_pending($k) [clock seconds]
 		set ln [string tolower $nick]
-		if {![info exists dj_whochan($ln)] || [lsearch -exact $dj_whochan($ln) $chan] < 0} {
+		# Already being looked up for another channel: one answer serves both
+		set asking [info exists dj_whochan($ln)]
+		if {!$asking || [lsearch -exact $dj_whochan($ln) $chan] < 0} {
 			lappend dj_whochan($ln) $chan
 		}
-		lappend ask $nick
+		if {!$asking} {
+			lappend ask $nick
+		}
 	}
 	# 15 nicks per WHO keeps each line short and well under ircu's reply cap
 	while {[llength $ask]} {
