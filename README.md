@@ -2,12 +2,12 @@
 
 **Channel management for eggdrop, built for UnderNet.**
 
-[![Version](https://img.shields.io/badge/version-6.5.2-orange.svg)](https://github.com/lmao-tcl/lmao)
+[![Version](https://img.shields.io/badge/version-6.6.0-orange.svg)](https://github.com/lmao-tcl/lmao)
 [![Eggdrop](https://img.shields.io/badge/eggdrop-1.8%2B-green.svg)](https://www.eggheads.org/)
 [![Tcl](https://img.shields.io/badge/tcl-8.5%2B-blue.svg)](https://www.tcl.tk/)
 [![License](https://img.shields.io/badge/license-GPLv3-lightgrey.svg)](LICENSE)
 
-📖 **Full documentation: [lmao-tcl.github.io/lmao](https://lmao-tcl.github.io/lmao/)**
+📖 **Full documentation: [lmao-tcl.github.io](https://lmao-tcl.github.io/)**
 
 One script that gives your eggdrop the public commands people actually expect in a
 channel — ops, bans, topic, user management — plus an auto-voice system for regulars
@@ -58,7 +58,7 @@ source scripts/lmao.tcl
 Then `.rehash` on the partyline. You should see:
 
 ```
-[lmao.tcl 6.5.2] - Complete production ready version
+[lmao.tcl 6.6.0] - Complete production ready version
 Loaded successfully - ready to serve!
 ```
 
@@ -74,28 +74,31 @@ Everything lives in the `CONFIGURATION SECTION` at the top of the script.
 | `cc(mainchan)` | `#mainchan` | Main public channel |
 | `cc(backchan)` | `#secretchan` | Ops channel that `!ops` alerts |
 | `cc(backmode)` | `+snt` | Modes for the back channel |
-| `cc(idledeop_enabled)` | `0` | Master switch for idle deop — off out of the box |
+| `cc(away_enabled)` | `0` | Set the bot away with `cc(away_message)` on connect and rehash |
+| `cc(away_message)` | text | The default away message |
+| `cc(away_file)` | `lmao-away.txt` | Where `!away` / `!back` are saved so they survive reboots |
+| `cc(idledeop_enabled)` | `1` | Master switch for idle deop (the module still starts off per channel) |
 | `cc(idledeop_default_minutes)` | `180` | Minutes before an idle op is deopped |
-| `cc(idledeop_check_interval)` | `300` | Seconds between idle-deop sweeps |
+| `cc(idledeop_check_interval)` | `5` | Seconds between idle-deop sweeps |
 | `cc(activevoice_idle_minutes)` | `180` | Minutes before an idle voice is removed |
-| `cc(activevoice_check_interval)` | `300` | Seconds between devoice sweeps |
+| `cc(activevoice_check_interval)` | `10` | Seconds between devoice sweeps |
 | `cc(access_welcome_delay)` | `3` | Seconds between queued welcome notices |
 | `cc(activevoice_exempt_flags)` | `n m M v` | Flags that make a user invisible to ActiveVoice |
 | `cc(protected_bots)` | `X W` | Nicks the bot will never deop |
 | `cc(protected_flags)` | `n m` | Flags that protect a user from deop/devoice |
-| `cc(deop_exempt)` | `Secoupe Seb` | Nicks or handles the idle-deop sweep never touches |
+| `cc(deop_exempt)` | `Secoupe Seb offline` | Nicks or handles the idle-deop sweep never touches |
 
 ---
 
 ## Modules
 
-Modules are per channel. Four start **on**; `idledeop` starts **off**.
+Modules are per channel. Three start **on**; `idledeop` and `idledevoice` start **off**.
 
 | Module | Default | What it does |
 | --- | --- | --- |
 | `topic` | on | `!topic` / `!topicsync` — stores the topic and re-applies it when it drifts |
 | `activevoice` | on | Auto-voices non-registered users when they talk, and tracks their activity |
-| `idledevoice` | on | Removes voice from non-registered users who have gone idle |
+| `idledevoice` | **off** | Removes voice from non-registered users who have gone idle |
 | `idledeop` | **off** | Deops ops who have been idle past the channel's limit |
 | `chanlog` | on | Sends the channel's audit trail to the ops channel |
 
@@ -153,7 +156,7 @@ Access is a **position**, not a pile of flags. Every user sits on exactly one ru
 ## Commands
 
 Help is always a notice. `!help` lists the categories; `!help <command>` gives usage,
-description and an example. The [documentation site](https://lmao-tcl.github.io/lmao/)
+description and an example. The [documentation site](https://lmao-tcl.github.io/)
 has every command with its syntax.
 
 | Who | Commands |
@@ -188,6 +191,7 @@ channel you name, so channel-only ops and masters work too.
 /msg <bot> module #chan list
 /msg <bot> chanlog #chan #ops
 /msg <bot> addchan #chan
+/msg <bot> away [message] | back
 /msg <bot> rehash | restart | jump | save
 ```
 
@@ -195,7 +199,7 @@ channel you name, so channel-only ops and masters work too.
 
 ## Idle deop
 
-Off by default. `!enable idledeop` turns it on for a channel and `!idledeop #chan <minutes>`
+The module is off by default. `!enable idledeop` turns it on for a channel and `!idledeop #chan <minutes>`
 sets the limit. Never deopped: the service bots in `cc(protected_bots)`, the bot itself,
 anyone with a flag from `cc(protected_flags)`, and anyone named in `cc(deop_exempt)`
 (nick or handle, case-insensitive).
