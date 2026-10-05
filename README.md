@@ -86,7 +86,7 @@ Everything lives in the `CONFIGURATION SECTION` at the top of the script.
 | `cc(activevoice_exempt_flags)` | `n m M v` | Flags that make a user invisible to ActiveVoice |
 | `cc(protected_bots)` | `X W` | Nicks the bot will never deop |
 | `cc(protected_flags)` | `n m` | Flags that protect a user from deop/devoice |
-| `cc(deop_exempt)` | `Secoupe Seb offline` | Nicks or handles the idle-deop sweep never touches |
+| `cc(deop_exempt)` | `You Bot1 Bot2` | Nicks or handles the idle-deop sweep never touches |
 
 ---
 
