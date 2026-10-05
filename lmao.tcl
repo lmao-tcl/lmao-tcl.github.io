@@ -1,4 +1,4 @@
-# https://github.com/lmao-tcl/lmao  -  docs: https://lmao-tcl.github.io/
+# https://lmao-tcl.github.io/  -  source: https://github.com/lmao-tcl/lmao-tcl.github.io
 # Enhanced version 6.5 - COMPLETE with help system, topic system, module framework,
 # ActiveVoice and the access level system (!addvoice !addmod !addop !addmaster)
 # For UnderNet ircu with proper flag protection
@@ -55,7 +55,7 @@ set cc(register_flags) ""
 # Version info
 set cc(version_number) "6.6.0"
 set cc(version) "\002\[lmao.tcl $cc(version_number)\]\002"
-set cc(www) "https://github.com/lmao-tcl/lmao"
+set cc(www) "https://lmao-tcl.github.io/"
 
 ###########################################################################
 # MODULE ENABLE/DISABLE SYSTEM

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090c11">
+<link rel="canonical" href="https://lmao-tcl.github.io/cookies.html">
+<title>Cookie policy — lmao.tcl</title>
+<meta name="description" content="lmao.tcl sets no cookies. Here is what your browser stores.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z' fill='%23ff7a1a'/%3E%3Cpath d='M18 24q4-5 8 0M38 24q4-5 8 0' stroke='%23140800' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M18 31h28q-2 10-14 10t-14-10z' fill='%23140800'/%3E%3C/svg%3E">
+<script>
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l !== "en" && l !== "fr") l = (navigator.language || "en").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    document.documentElement.lang = l;
+  })();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #090c11; --bg2: #0d1118; --panel: #10151e; --panel2: #161d29; --line: #222b39; --line2: #2d3949;
+  --ink: #dfe6ef; --muted: #9aa7b8; --faint: #7d8a9e; --orange: #ff7a1a; --orange-soft: #ffa25c;
+  --green: #7ed957; --blue: #4cc3ff; --amber: #ffb020;
+  --mono: "Cascadia Code", "JetBrains Mono", Consolas, ui-monospace, monospace;
+  --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+html[lang="fr"] [data-l="en"], html[lang="en"] [data-l="fr"] { display: none !important; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 15.5px/1.7 var(--sans); -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 122, 26, 0.08), transparent 70%); background-repeat: no-repeat; }
+a { color: var(--blue); }
+code { font-family: var(--mono); font-size: 0.86em; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--orange-soft); }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 4px; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--amber); color: #0b0e13; font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none; }
+.skip:focus { top: 10px; }
+main:focus { outline: none; }
+.top { position: sticky; top: 0; z-index: 10; background: rgba(9, 12, 17, 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.top-in { max-width: 1080px; margin: 0 auto; min-height: 64px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; padding: 8px 20px; }
+.logo { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; text-decoration: none; }
+.logo svg { width: 30px; height: 30px; filter: drop-shadow(0 0 10px rgba(255, 122, 26, 0.5)); }
+.logo b { font-family: var(--mono); }
+.logo b span { color: var(--orange); }
+nav.links { display: flex; flex-wrap: wrap; gap: 2px; margin-left: auto; }
+nav.links a { color: var(--muted); font-size: 13.5px; font-weight: 600; padding: 7px 11px; border-radius: 8px; text-decoration: none; }
+nav.links a:hover { color: var(--ink); background: var(--panel2); }
+nav.links a[aria-current] { color: var(--orange-soft); background: rgba(255, 122, 26, 0.09); }
+.lang { display: inline-flex; border: 1px solid var(--line2); background: var(--panel); border-radius: 9px; padding: 3px; }
+.lang button { font: 700 12px var(--mono); color: var(--faint); background: none; border: 0; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--orange); color: #140800; }
+.wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+article { padding: 52px 0 70px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--orange); margin-bottom: 9px; }
+h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.6px; }
+.updated { color: var(--faint); font-size: 13.5px; margin-top: 8px; }
+.summary { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--green); border-radius: 10px; padding: 14px 18px; margin: 26px 0 8px; }
+h2 { font-size: 20px; margin: 38px 0 10px; letter-spacing: -0.2px; }
+p, li { color: var(--muted); }
+p + p { margin-top: 10px; }
+ul { margin: 10px 0 0 22px; }
+li { margin: 5px 0; }
+strong { color: var(--ink); }
+.table-scroll { overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 9px 13px; background: var(--panel2); color: var(--ink); font-size: 12px; letter-spacing: 0.6px; border-bottom: 1px solid var(--line); }
+td { padding: 9px 13px; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+.btn { font: 600 14px var(--sans); padding: 9px 16px; border-radius: 9px; border: 0; background: var(--orange); color: #140800; cursor: pointer; }
+.btn:hover { background: var(--orange-soft); }
+.status { margin-left: 10px; color: var(--green); font-size: 14px; }
+footer { border-top: 1px solid var(--line); padding: 26px 0 40px; font-size: 13.5px; color: var(--faint); }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; }
+footer a { color: var(--muted); }
+@media (max-width: 600px) { h1 { font-size: 28px; } article { padding: 36px 0 50px; } nav.links { margin-left: 0; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main"><span data-l="en">Skip to content</span><span data-l="fr">Aller au contenu</span></a>
+<span id="newtab-hint" hidden><span data-l="en">(opens in a new tab)</span><span data-l="fr">(s'ouvre dans un nouvel onglet)</span></span>
+
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/></svg>
+      <b>lmao<span>.tcl</span></b>
+    </a>
+    <nav class="links" aria-label="Legal">
+      <a href="index.html"><span data-l="en">← Home</span><span data-l="fr">← Accueil</span></a>
+      <a href="privacy.html"><span data-l="en">Privacy</span><span data-l="fr">Confidentialité</span></a>
+      <a href="terms.html"><span data-l="en">Terms</span><span data-l="fr">Conditions</span></a>
+      <a href="cookies.html" aria-current="page"><span data-l="en">Cookies</span><span data-l="fr">Témoins</span></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language / Langue">
+      <button type="button" lang="en" data-lang="en" aria-label="English" aria-pressed="false">EN</button>
+      <button type="button" lang="fr" data-lang="fr" aria-label="Français" aria-pressed="false">FR</button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" class="wrap">
+
+<article data-l="en" lang="en">
+  <div class="kicker">Legal</div>
+  <h1>Cookie policy</h1>
+  <p class="updated">Last updated: October 4, 2026</p>
+  <div class="summary"><p><strong>In short:</strong> this site sets <strong>no cookies</strong> and uses no tracking of
+  any kind. It keeps two settings in your own browser so it works the way you left it.</p></div>
+
+  <h2>Cookies</h2>
+  <p>lmao-tcl.github.io doesn't set any cookies, first-party or third-party. There are no analytics, ads, social
+  buttons or embedded content that could set them for us.</p>
+
+  <h2>What your browser stores</h2>
+  <p>The site uses your browser's <em>local storage</em> for two settings. They stay on your device, aren't sent to any
+  server, and don't identify you.</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th scope="col">Name</th><th scope="col">Value</th><th scope="col">Purpose</th><th scope="col">Duration</th></tr></thead>
+    <tbody>
+      <tr><td><code>lang</code></td><td><code>en</code> or <code>fr</code></td><td>Remembers the language you picked</td><td>Until you clear your browser data</td></tr>
+      <tr><td><code>notice-ok</code></td><td><code>1</code></td><td>Remembers that you closed the notice about cookies</td><td>Until you clear your browser data</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin-top:12px">Both are strictly functional, so the site doesn't ask for consent. It still shows the
+  notice once so you know what's stored.</p>
+
+  <h2>Clear these settings</h2>
+  <p>Use the button below, or clear this site's data in your browser settings. The site works the same either way: it
+  goes back to your browser's language and shows the notice again.</p>
+  <p style="margin-top:14px"><button class="btn clear-storage" type="button">Clear my settings for this site</button>
+  <span class="status" role="status"></span></p>
+
+  <h2>Other sites</h2>
+  <p>GitHub and the other sites we link to are separate websites with their own cookie policies, which apply once you
+  open them. Nothing from those sites loads here.</p>
+</article>
+
+<article data-l="fr" lang="fr">
+  <div class="kicker">Mentions légales</div>
+  <h1>Politique relative aux témoins</h1>
+  <p class="updated">Dernière mise à jour : 4 octobre 2026</p>
+  <div class="summary"><p><strong>En bref :</strong> ce site ne dépose <strong>aucun témoin</strong> (cookie) et n'utilise
+  aucun pistage. Il garde deux réglages dans ton propre navigateur pour fonctionner comme tu l'as laissé.</p></div>
+
+  <h2>Témoins</h2>
+  <p>lmao-tcl.github.io ne dépose aucun témoin, ni propre ni tiers. Il n'y a ni outil d'analyse, ni publicité, ni bouton
+  de réseau social, ni contenu intégré qui pourrait en déposer pour nous.</p>
+
+  <h2>Ce que ton navigateur garde</h2>
+  <p>Le site utilise le <em>stockage local</em> de ton navigateur pour deux réglages. Ils restent sur ton appareil, ne
+  sont envoyés à aucun serveur et ne t'identifient pas.</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th scope="col">Nom</th><th scope="col">Valeur</th><th scope="col">Utilité</th><th scope="col">Durée</th></tr></thead>
+    <tbody>
+      <tr><td><code>lang</code></td><td><code>en</code> ou <code>fr</code></td><td>Retient la langue choisie</td><td>Jusqu'à ce que tu effaces les données du navigateur</td></tr>
+      <tr><td><code>notice-ok</code></td><td><code>1</code></td><td>Retient que tu as fermé l'avis sur les témoins</td><td>Jusqu'à ce que tu effaces les données du navigateur</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin-top:12px">Les deux sont strictement fonctionnels : le site ne demande donc pas de consentement. Il
+  affiche quand même l'avis une fois pour que tu saches ce qui est gardé.</p>
+
+  <h2>Effacer ces réglages</h2>
+  <p>Utilise le bouton ci-dessous, ou efface les données de ce site dans les réglages de ton navigateur. Le site marche
+  pareil dans les deux cas : il revient à la langue de ton navigateur et réaffiche l'avis.</p>
+  <p style="margin-top:14px"><button class="btn clear-storage" type="button">Effacer mes réglages pour ce site</button>
+  <span class="status" role="status"></span></p>
+
+  <h2>Autres sites</h2>
+  <p>GitHub et les autres sites vers lesquels nous renvoyons sont des sites distincts avec leurs propres politiques sur
+  les témoins, qui s'appliquent dès que tu les ouvres. Rien de ces sites ne se charge ici.</p>
+</article>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Legal pages">
+      <a href="index.html"><span data-l="en">lmao.tcl home</span><span data-l="fr">Accueil lmao.tcl</span></a>
+      <a href="privacy.html"><span data-l="en">Privacy policy</span><span data-l="fr">Politique de confidentialité</span></a>
+      <a href="terms.html"><span data-l="en">Terms of use</span><span data-l="fr">Conditions d'utilisation</span></a>
+      <a href="cookies.html"><span data-l="en">Cookie policy</span><span data-l="fr">Politique relative aux témoins</span></a>
+    </nav>
+    <p data-l="en">A volunteer open-source project. Not affiliated with the Undernet IRC network or the Eggheads project.</p>
+    <p data-l="fr">Un projet bénévole à code source ouvert. Non affilié au réseau IRC Undernet ni au projet Eggheads.</p>
+  </div>
+</footer>
+
+<script>
+  var TITLES = { en: "Cookie policy — lmao.tcl", fr: "Politique relative aux témoins — lmao.tcl" };
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.title = TITLES[l];
+    document.querySelectorAll(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === l); });
+    try { localStorage.setItem("lang", l); } catch (e) {}
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.lang); }); });
+  document.querySelectorAll('a[target="_blank"]').forEach(function (a) { a.setAttribute("aria-describedby", "newtab-hint"); });
+  setLang(document.documentElement.lang === "fr" ? "fr" : "en");
+  document.querySelectorAll(".clear-storage").forEach(function (b) {
+    b.addEventListener("click", function () {
+      try { localStorage.removeItem("lang"); localStorage.removeItem("notice-ok"); } catch (e) {}
+      var fr = document.documentElement.lang === "fr";
+      b.nextElementSibling.textContent = fr ? "C'est fait. Tes réglages sont effacés." : "Done. Your settings are cleared.";
+    });
+  });
+</script>
+</body>
+</html>

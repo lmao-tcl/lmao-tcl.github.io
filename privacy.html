@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090c11">
+<link rel="canonical" href="https://lmao-tcl.github.io/privacy.html">
+<title>Privacy policy — lmao.tcl</title>
+<meta name="description" content="What the lmao.tcl website and script collect, and what they don't.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z' fill='%23ff7a1a'/%3E%3Cpath d='M18 24q4-5 8 0M38 24q4-5 8 0' stroke='%23140800' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M18 31h28q-2 10-14 10t-14-10z' fill='%23140800'/%3E%3C/svg%3E">
+<script>
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l !== "en" && l !== "fr") l = (navigator.language || "en").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    document.documentElement.lang = l;
+  })();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #090c11; --bg2: #0d1118; --panel: #10151e; --panel2: #161d29; --line: #222b39; --line2: #2d3949;
+  --ink: #dfe6ef; --muted: #9aa7b8; --faint: #7d8a9e; --orange: #ff7a1a; --orange-soft: #ffa25c;
+  --green: #7ed957; --blue: #4cc3ff; --amber: #ffb020;
+  --mono: "Cascadia Code", "JetBrains Mono", Consolas, ui-monospace, monospace;
+  --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+html[lang="fr"] [data-l="en"], html[lang="en"] [data-l="fr"] { display: none !important; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 15.5px/1.7 var(--sans); -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 122, 26, 0.08), transparent 70%); background-repeat: no-repeat; }
+a { color: var(--blue); }
+code { font-family: var(--mono); font-size: 0.86em; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--orange-soft); }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 4px; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--amber); color: #0b0e13; font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none; }
+.skip:focus { top: 10px; }
+main:focus { outline: none; }
+.top { position: sticky; top: 0; z-index: 10; background: rgba(9, 12, 17, 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.top-in { max-width: 1080px; margin: 0 auto; min-height: 64px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; padding: 8px 20px; }
+.logo { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; text-decoration: none; }
+.logo svg { width: 30px; height: 30px; filter: drop-shadow(0 0 10px rgba(255, 122, 26, 0.5)); }
+.logo b { font-family: var(--mono); }
+.logo b span { color: var(--orange); }
+nav.links { display: flex; flex-wrap: wrap; gap: 2px; margin-left: auto; }
+nav.links a { color: var(--muted); font-size: 13.5px; font-weight: 600; padding: 7px 11px; border-radius: 8px; text-decoration: none; }
+nav.links a:hover { color: var(--ink); background: var(--panel2); }
+nav.links a[aria-current] { color: var(--orange-soft); background: rgba(255, 122, 26, 0.09); }
+.lang { display: inline-flex; border: 1px solid var(--line2); background: var(--panel); border-radius: 9px; padding: 3px; }
+.lang button { font: 700 12px var(--mono); color: var(--faint); background: none; border: 0; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--orange); color: #140800; }
+.wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+article { padding: 52px 0 70px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--orange); margin-bottom: 9px; }
+h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.6px; }
+.updated { color: var(--faint); font-size: 13.5px; margin-top: 8px; }
+.summary { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--green); border-radius: 10px; padding: 14px 18px; margin: 26px 0 8px; }
+h2 { font-size: 20px; margin: 38px 0 10px; letter-spacing: -0.2px; }
+p, li { color: var(--muted); }
+p + p { margin-top: 10px; }
+ul { margin: 10px 0 0 22px; }
+li { margin: 5px 0; }
+strong { color: var(--ink); }
+.table-scroll { overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 9px 13px; background: var(--panel2); color: var(--ink); font-size: 12px; letter-spacing: 0.6px; border-bottom: 1px solid var(--line); }
+td { padding: 9px 13px; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+.btn { font: 600 14px var(--sans); padding: 9px 16px; border-radius: 9px; border: 0; background: var(--orange); color: #140800; cursor: pointer; }
+.btn:hover { background: var(--orange-soft); }
+.status { margin-left: 10px; color: var(--green); font-size: 14px; }
+footer { border-top: 1px solid var(--line); padding: 26px 0 40px; font-size: 13.5px; color: var(--faint); }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; }
+footer a { color: var(--muted); }
+@media (max-width: 600px) { h1 { font-size: 28px; } article { padding: 36px 0 50px; } nav.links { margin-left: 0; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main"><span data-l="en">Skip to content</span><span data-l="fr">Aller au contenu</span></a>
+<span id="newtab-hint" hidden><span data-l="en">(opens in a new tab)</span><span data-l="fr">(s'ouvre dans un nouvel onglet)</span></span>
+
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/></svg>
+      <b>lmao<span>.tcl</span></b>
+    </a>
+    <nav class="links" aria-label="Legal">
+      <a href="index.html"><span data-l="en">← Home</span><span data-l="fr">← Accueil</span></a>
+      <a href="privacy.html" aria-current="page"><span data-l="en">Privacy</span><span data-l="fr">Confidentialité</span></a>
+      <a href="terms.html"><span data-l="en">Terms</span><span data-l="fr">Conditions</span></a>
+      <a href="cookies.html"><span data-l="en">Cookies</span><span data-l="fr">Témoins</span></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language / Langue">
+      <button type="button" lang="en" data-lang="en" aria-label="English" aria-pressed="false">EN</button>
+      <button type="button" lang="fr" data-lang="fr" aria-label="Français" aria-pressed="false">FR</button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" class="wrap">
+
+<article data-l="en" lang="en">
+  <div class="kicker">Legal</div>
+  <h1>Privacy policy</h1>
+  <p class="updated">Last updated: October 4, 2026</p>
+  <div class="summary"><p><strong>In short:</strong> this website collects nothing about you. No cookies, no
+  analytics, no ads, no forms, no third-party scripts. lmao.tcl is a script that other people run on their own
+  bots: what a bot stores is up to whoever runs it, and this page lists what the script keeps so you know.</p></div>
+
+  <h2>Who we are</h2>
+  <p>lmao-tcl.github.io is the website of <strong>lmao.tcl</strong>, a free, open-source (GPLv3) channel
+  management script for eggdrop, maintained by volunteers. For privacy questions, open an issue on
+  <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/issues" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+
+  <h2>What this website collects</h2>
+  <p><strong>Nothing.</strong> The pages are plain HTML files. They load no fonts, images, scripts or embeds from
+  other sites, and a Content Security Policy blocks such requests. There is no visitor counter, no analytics, no
+  advertising and no form.</p>
+  <p>Your browser keeps two small settings on your own device: your language and whether you closed the notice
+  about cookies. They are never sent anywhere. The <a href="cookies.html">cookie policy</a> lists them.</p>
+
+  <h2>Hosting</h2>
+  <p>The site is hosted on GitHub Pages. Like any web host, GitHub receives your IP address when your browser asks
+  for a page and may log it for security and to run the service. We don't have access to those logs. See the
+  <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">GitHub privacy statement</a>.</p>
+
+  <h2>Downloading the script</h2>
+  <p>The download and source links go to GitHub. Downloading lmao.tcl sends nothing to us; the script has no
+  update check, no telemetry and never contacts us.</p>
+
+  <h2>What the script stores on a bot</h2>
+  <p>We don't run your channel's bot: each bot is run by its own owner, who decides how it is used. When a bot runs
+  lmao.tcl, the script keeps only what it needs:</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th scope="col">What</th><th scope="col">When</th><th scope="col">Where</th></tr></thead>
+    <tbody>
+      <tr><td>Time of your last message in a channel</td><td>When you talk, for ActiveVoice and idle deop</td><td>The bot's memory, cleared on restart</td></tr>
+      <tr><td>Handle, hostmask, flags and an info line if you set one</td><td>Only if you register with <code>/msg bot register</code> or an op adds you</td><td>The bot's userfile</td></tr>
+      <tr><td>A one-time registration code and your host</td><td>During registration</td><td>Memory, for a few minutes</td></tr>
+      <tr><td>Bans and blacklist entries, with the reason</td><td>When an op bans someone</td><td>The bot's channel and user files</td></tr>
+      <tr><td>An audit line for access changes, sanctions and registrations</td><td>When those happen</td><td>Sent as a message to the channel staff's ops channel</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin-top:12px">The script does <strong>not</strong> log what people say in a channel and sends nothing
+  to us or to anyone outside the bot's own channels.</p>
+
+  <h2>Your choices and rights</h2>
+  <p>Under Canadian privacy law (including PIPEDA and, in Quebec, Law 25) you can ask what is held about you, have it
+  corrected, or have it deleted. For data a bot holds, ask that channel's operators or the bot's owner: they can
+  remove your registration with <code>!deluser</code>. For this website, open an issue on GitHub. Don't post private
+  details in a public issue; ask there for a private way to reach us instead.</p>
+  <p>If you're not satisfied with the answer, you can contact the
+  <a href="https://www.priv.gc.ca/" target="_blank" rel="noopener noreferrer">Office of the Privacy Commissioner of Canada</a> or, in Quebec, the
+  <a href="https://www.cai.gouv.qc.ca/" target="_blank" rel="noopener noreferrer">Commission d'accès à l'information</a>.</p>
+
+  <h2>Children</h2>
+  <p>This site is a technical reference for bot operators and is not aimed at children.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, the new version will be posted here with a new date. The full history is public in the
+  site's GitHub repository.</p>
+</article>
+
+<article data-l="fr" lang="fr">
+  <div class="kicker">Mentions légales</div>
+  <h1>Politique de confidentialité</h1>
+  <p class="updated">Dernière mise à jour : 4 octobre 2026</p>
+  <div class="summary"><p><strong>En bref :</strong> ce site ne recueille rien à ton sujet. Aucun témoin, aucun outil
+  d'analyse, aucune publicité, aucun formulaire, aucun script tiers. lmao.tcl est un script que d'autres personnes font
+  tourner sur leurs propres robots : ce qu'un robot conserve dépend de la personne qui l'exploite, et cette page liste ce
+  que le script garde pour que tu le saches.</p></div>
+
+  <h2>Qui nous sommes</h2>
+  <p>lmao-tcl.github.io est le site de <strong>lmao.tcl</strong>, un script libre et gratuit (GPLv3) de gestion de canal
+  pour eggdrop, maintenu par des bénévoles. Pour toute question sur la confidentialité, ouvre un ticket sur
+  <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/issues" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+
+  <h2>Ce que ce site recueille</h2>
+  <p><strong>Rien.</strong> Les pages sont de simples fichiers HTML. Elles ne chargent aucune police, image, aucun script
+  ni contenu intégré d'autres sites, et une politique de sécurité du contenu (CSP) bloque ce genre de requêtes. Il n'y a
+  ni compteur de visites, ni outil d'analyse, ni publicité, ni formulaire.</p>
+  <p>Ton navigateur garde deux petits réglages sur ton propre appareil : ta langue et le fait que tu as fermé l'avis sur
+  les témoins. Ils ne sont jamais transmis. La <a href="cookies.html">politique relative aux témoins</a> les détaille.</p>
+
+  <h2>Hébergement</h2>
+  <p>Le site est hébergé par GitHub Pages. Comme tout hébergeur, GitHub reçoit ton adresse IP quand ton navigateur demande
+  une page et peut la journaliser pour la sécurité et le fonctionnement du service. Nous n'avons pas accès à ces journaux.
+  Voir la <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener noreferrer">déclaration de confidentialité de GitHub</a>.</p>
+
+  <h2>Télécharger le script</h2>
+  <p>Les liens de téléchargement et de code source mènent à GitHub. Télécharger lmao.tcl ne nous envoie rien ; le script
+  ne vérifie pas les mises à jour, n'a aucune télémétrie et ne nous contacte jamais.</p>
+
+  <h2>Ce que le script garde sur un robot</h2>
+  <p>Nous n'exploitons pas le robot de ton canal : chaque robot appartient à son propriétaire, qui décide de son usage.
+  Quand un robot fait tourner lmao.tcl, le script ne garde que le nécessaire :</p>
+  <div class="table-scroll">
+  <table>
+    <thead><tr><th scope="col">Quoi</th><th scope="col">Quand</th><th scope="col">Où</th></tr></thead>
+    <tbody>
+      <tr><td>L'heure de ton dernier message dans un canal</td><td>Quand tu parles, pour ActiveVoice et le deop des inactifs</td><td>La mémoire du robot, effacée au redémarrage</td></tr>
+      <tr><td>Handle, masque d'hôte, drapeaux et ligne d'info si tu en mets une</td><td>Seulement si tu t'inscris avec <code>/msg robot register</code> ou si un op t'ajoute</td><td>Le userfile du robot</td></tr>
+      <tr><td>Un code d'inscription à usage unique et ton hôte</td><td>Pendant l'inscription</td><td>La mémoire, quelques minutes</td></tr>
+      <tr><td>Les bannissements et la liste noire, avec la raison</td><td>Quand un op bannit quelqu'un</td><td>Les fichiers de canaux et d'utilisateurs du robot</td></tr>
+      <tr><td>Une ligne de journal pour les changements d'accès, sanctions et inscriptions</td><td>Quand ça arrive</td><td>Envoyée en message dans le canal des ops de l'équipe</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin-top:12px">Le script n'enregistre <strong>pas</strong> ce que les gens disent dans un canal et n'envoie
+  rien, ni à nous ni à qui que ce soit en dehors des canaux du robot.</p>
+
+  <h2>Tes choix et tes droits</h2>
+  <p>En vertu des lois canadiennes sur la protection des renseignements personnels (dont la LPRPDE et, au Québec, la
+  Loi 25), tu peux demander quels renseignements sont détenus à ton sujet, les faire corriger ou les faire supprimer.
+  Pour les données d'un robot, adresse-toi aux opérateurs du canal ou au propriétaire du robot : ils peuvent supprimer ton
+  inscription avec <code>!deluser</code>. Pour ce site, ouvre un ticket sur GitHub. N'y publie pas de renseignements
+  privés : demande plutôt un moyen de nous joindre en privé.</p>
+  <p>Si la réponse ne te satisfait pas, tu peux t'adresser au
+  <a href="https://www.priv.gc.ca/fr/" target="_blank" rel="noopener noreferrer">Commissariat à la protection de la vie privée du Canada</a> ou, au Québec, à la
+  <a href="https://www.cai.gouv.qc.ca/" target="_blank" rel="noopener noreferrer">Commission d'accès à l'information</a>.</p>
+
+  <h2>Enfants</h2>
+  <p>Ce site est une référence technique pour les gens qui exploitent des robots ; il ne s'adresse pas aux enfants.</p>
+
+  <h2>Modifications</h2>
+  <p>Si cette politique change, la nouvelle version sera publiée ici avec une nouvelle date. L'historique complet est
+  public dans le dépôt GitHub du site.</p>
+</article>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Legal pages">
+      <a href="index.html"><span data-l="en">lmao.tcl home</span><span data-l="fr">Accueil lmao.tcl</span></a>
+      <a href="privacy.html"><span data-l="en">Privacy policy</span><span data-l="fr">Politique de confidentialité</span></a>
+      <a href="terms.html"><span data-l="en">Terms of use</span><span data-l="fr">Conditions d'utilisation</span></a>
+      <a href="cookies.html"><span data-l="en">Cookie policy</span><span data-l="fr">Politique relative aux témoins</span></a>
+    </nav>
+    <p data-l="en">A volunteer open-source project. Not affiliated with the Undernet IRC network or the Eggheads project.</p>
+    <p data-l="fr">Un projet bénévole à code source ouvert. Non affilié au réseau IRC Undernet ni au projet Eggheads.</p>
+  </div>
+</footer>
+
+<script>
+  var TITLES = { en: "Privacy policy — lmao.tcl", fr: "Politique de confidentialité — lmao.tcl" };
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.title = TITLES[l];
+    document.querySelectorAll(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === l); });
+    try { localStorage.setItem("lang", l); } catch (e) {}
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.lang); }); });
+  document.querySelectorAll('a[target="_blank"]').forEach(function (a) { a.setAttribute("aria-describedby", "newtab-hint"); });
+  setLang(document.documentElement.lang === "fr" ? "fr" : "en");
+</script>
+</body>
+</html>

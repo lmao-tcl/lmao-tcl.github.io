@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090c11">
+<link rel="canonical" href="https://lmao-tcl.github.io/terms.html">
+<title>Terms of use — lmao.tcl</title>
+<meta name="description" content="Terms of use for the lmao.tcl website and script.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z' fill='%23ff7a1a'/%3E%3Cpath d='M18 24q4-5 8 0M38 24q4-5 8 0' stroke='%23140800' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M18 31h28q-2 10-14 10t-14-10z' fill='%23140800'/%3E%3C/svg%3E">
+<script>
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l !== "en" && l !== "fr") l = (navigator.language || "en").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    document.documentElement.lang = l;
+  })();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #090c11; --bg2: #0d1118; --panel: #10151e; --panel2: #161d29; --line: #222b39; --line2: #2d3949;
+  --ink: #dfe6ef; --muted: #9aa7b8; --faint: #7d8a9e; --orange: #ff7a1a; --orange-soft: #ffa25c;
+  --green: #7ed957; --blue: #4cc3ff; --amber: #ffb020;
+  --mono: "Cascadia Code", "JetBrains Mono", Consolas, ui-monospace, monospace;
+  --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+}
+html[lang="fr"] [data-l="en"], html[lang="en"] [data-l="fr"] { display: none !important; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font: 15.5px/1.7 var(--sans); -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(255, 122, 26, 0.08), transparent 70%); background-repeat: no-repeat; }
+a { color: var(--blue); }
+code { font-family: var(--mono); font-size: 0.86em; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--orange-soft); }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 4px; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--amber); color: #0b0e13; font-weight: 700; padding: 9px 14px; border-radius: 8px; text-decoration: none; }
+.skip:focus { top: 10px; }
+main:focus { outline: none; }
+.top { position: sticky; top: 0; z-index: 10; background: rgba(9, 12, 17, 0.88); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+.top-in { max-width: 1080px; margin: 0 auto; min-height: 64px; display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; padding: 8px 20px; }
+.logo { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; text-decoration: none; }
+.logo svg { width: 30px; height: 30px; filter: drop-shadow(0 0 10px rgba(255, 122, 26, 0.5)); }
+.logo b { font-family: var(--mono); }
+.logo b span { color: var(--orange); }
+nav.links { display: flex; flex-wrap: wrap; gap: 2px; margin-left: auto; }
+nav.links a { color: var(--muted); font-size: 13.5px; font-weight: 600; padding: 7px 11px; border-radius: 8px; text-decoration: none; }
+nav.links a:hover { color: var(--ink); background: var(--panel2); }
+nav.links a[aria-current] { color: var(--orange-soft); background: rgba(255, 122, 26, 0.09); }
+.lang { display: inline-flex; border: 1px solid var(--line2); background: var(--panel); border-radius: 9px; padding: 3px; }
+.lang button { font: 700 12px var(--mono); color: var(--faint); background: none; border: 0; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--orange); color: #140800; }
+.wrap { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+article { padding: 52px 0 70px; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--orange); margin-bottom: 9px; }
+h1 { font-size: 34px; line-height: 1.15; letter-spacing: -0.6px; }
+.updated { color: var(--faint); font-size: 13.5px; margin-top: 8px; }
+.summary { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--green); border-radius: 10px; padding: 14px 18px; margin: 26px 0 8px; }
+h2 { font-size: 20px; margin: 38px 0 10px; letter-spacing: -0.2px; }
+p, li { color: var(--muted); }
+p + p { margin-top: 10px; }
+ul { margin: 10px 0 0 22px; }
+li { margin: 5px 0; }
+strong { color: var(--ink); }
+.table-scroll { overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; padding: 9px 13px; background: var(--panel2); color: var(--ink); font-size: 12px; letter-spacing: 0.6px; border-bottom: 1px solid var(--line); }
+td { padding: 9px 13px; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+.btn { font: 600 14px var(--sans); padding: 9px 16px; border-radius: 9px; border: 0; background: var(--orange); color: #140800; cursor: pointer; }
+.btn:hover { background: var(--orange-soft); }
+.status { margin-left: 10px; color: var(--green); font-size: 14px; }
+footer { border-top: 1px solid var(--line); padding: 26px 0 40px; font-size: 13.5px; color: var(--faint); }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-bottom: 10px; }
+footer a { color: var(--muted); }
+@media (max-width: 600px) { h1 { font-size: 28px; } article { padding: 36px 0 50px; } nav.links { margin-left: 0; } }
+</style>
+</head>
+<body>
+<a class="skip" href="#main"><span data-l="en">Skip to content</span><span data-l="fr">Aller au contenu</span></a>
+<span id="newtab-hint" hidden><span data-l="en">(opens in a new tab)</span><span data-l="fr">(s'ouvre dans un nouvel onglet)</span></span>
+
+<header class="top">
+  <div class="top-in">
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/></svg>
+      <b>lmao<span>.tcl</span></b>
+    </a>
+    <nav class="links" aria-label="Legal">
+      <a href="index.html"><span data-l="en">← Home</span><span data-l="fr">← Accueil</span></a>
+      <a href="privacy.html"><span data-l="en">Privacy</span><span data-l="fr">Confidentialité</span></a>
+      <a href="terms.html" aria-current="page"><span data-l="en">Terms</span><span data-l="fr">Conditions</span></a>
+      <a href="cookies.html"><span data-l="en">Cookies</span><span data-l="fr">Témoins</span></a>
+    </nav>
+    <div class="lang" role="group" aria-label="Language / Langue">
+      <button type="button" lang="en" data-lang="en" aria-label="English" aria-pressed="false">EN</button>
+      <button type="button" lang="fr" data-lang="fr" aria-label="Français" aria-pressed="false">FR</button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1" class="wrap">
+
+<article data-l="en" lang="en">
+  <div class="kicker">Legal</div>
+  <h1>Terms of use</h1>
+  <p class="updated">Last updated: October 4, 2026</p>
+  <div class="summary"><p><strong>In short:</strong> lmao.tcl is free software under the GPLv3, provided as is by
+  volunteers. Use it responsibly and follow the rules of the networks you run it on.</p></div>
+
+  <h2>About these terms</h2>
+  <p>These terms cover your use of lmao-tcl.github.io. The script itself is covered by its license (below). By using
+  the site you agree to these terms; if you don't, please don't use it.</p>
+
+  <h2>Who runs this</h2>
+  <p>The site and the script are maintained by volunteers. We are <strong>not</strong> Undernet or the Eggheads
+  (eggdrop) project and don't speak for them. Their names belong to their owners and are used here only to describe
+  what the script works with.</p>
+
+  <h2>The script's license</h2>
+  <p>lmao.tcl is free software under the
+  <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/blob/master/LICENSE" target="_blank" rel="noopener noreferrer">GNU General Public License v3</a>. You may run,
+  study, change and share it under that license. The license's own terms, including its disclaimer of warranty and
+  limitation of liability, apply to the script.</p>
+
+  <h2>Running a bot</h2>
+  <ul>
+    <li>You are responsible for the bot you run and for how its operators use it.</li>
+    <li>Follow the rules of your IRC network, such as Undernet's
+    <a href="https://www.undernet.org/aup.php" target="_blank" rel="noopener noreferrer">acceptable use policy</a>.</li>
+    <li>Don't use the script for anything illegal under Canadian law or the law where you run it.</li>
+    <li>If your bot stores information about people, you are the one responsible for it. The
+    <a href="privacy.html">privacy policy</a> lists what the script keeps.</li>
+  </ul>
+
+  <h2>Other sites</h2>
+  <p>We link to GitHub, Undernet, Eggheads and community sites. We don't run them and aren't responsible for them;
+  read their own terms.</p>
+
+  <h2>No warranty</h2>
+  <p>The site and the script are provided free, "as is", with no warranty of any kind. They may change or stop at any
+  time. To the extent the law allows, the maintainers are not liable for any loss or damage from using them. Nothing in
+  these terms limits rights you have under consumer protection laws that can't be waived.</p>
+
+  <h2>Privacy</h2>
+  <p>See the <a href="privacy.html">privacy policy</a> and the <a href="cookies.html">cookie policy</a>.</p>
+
+  <h2>Changes and contact</h2>
+  <p>We may update these terms. The date at the top shows the latest version, and the full history is public on GitHub.
+  For questions, open an issue on <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/issues" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+  <p>These terms are governed by the laws that apply in Canada.</p>
+</article>
+
+<article data-l="fr" lang="fr">
+  <div class="kicker">Mentions légales</div>
+  <h1>Conditions d'utilisation</h1>
+  <p class="updated">Dernière mise à jour : 4 octobre 2026</p>
+  <div class="summary"><p><strong>En bref :</strong> lmao.tcl est un logiciel libre sous GPLv3, fourni tel quel par des
+  bénévoles. Utilise-le de façon responsable et respecte les règles des réseaux où tu le fais tourner.</p></div>
+
+  <h2>À propos de ces conditions</h2>
+  <p>Ces conditions encadrent ton utilisation de lmao-tcl.github.io. Le script lui-même est encadré par sa licence
+  (plus bas). En utilisant le site, tu acceptes ces conditions ; sinon, merci de ne pas l'utiliser.</p>
+
+  <h2>Qui gère ceci</h2>
+  <p>Le site et le script sont maintenus par des bénévoles. Nous ne sommes <strong>pas</strong> Undernet ni le projet
+  Eggheads (eggdrop) et ne parlons pas en leur nom. Leurs noms appartiennent à leurs propriétaires et ne servent ici qu'à
+  décrire avec quoi le script fonctionne.</p>
+
+  <h2>La licence du script</h2>
+  <p>lmao.tcl est un logiciel libre sous la
+  <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/blob/master/LICENSE" target="_blank" rel="noopener noreferrer">Licence publique générale GNU v3</a> (en anglais).
+  Tu peux l'exécuter, l'étudier, le modifier et le partager selon cette licence. Ses propres conditions, dont l'exclusion
+  de garantie et la limitation de responsabilité, s'appliquent au script.</p>
+
+  <h2>Faire tourner un robot</h2>
+  <ul>
+    <li>Tu es responsable du robot que tu fais tourner et de l'usage qu'en font ses opérateurs.</li>
+    <li>Respecte les règles de ton réseau IRC, comme la
+    <a href="https://www.undernet.org/aup.php" target="_blank" rel="noopener noreferrer">politique d'utilisation acceptable</a> d'Undernet (en anglais).</li>
+    <li>N'utilise pas le script pour quoi que ce soit d'illégal au Canada ou là où tu le fais tourner.</li>
+    <li>Si ton robot conserve des renseignements sur des gens, c'est toi qui en es responsable. La
+    <a href="privacy.html">politique de confidentialité</a> liste ce que garde le script.</li>
+  </ul>
+
+  <h2>Autres sites</h2>
+  <p>Nous renvoyons vers GitHub, Undernet, Eggheads et des sites communautaires. Nous ne les exploitons pas et n'en
+  sommes pas responsables ; lis leurs propres conditions.</p>
+
+  <h2>Aucune garantie</h2>
+  <p>Le site et le script sont fournis gratuitement, « tels quels », sans garantie d'aucune sorte. Ils peuvent changer ou
+  s'arrêter à tout moment. Dans la mesure permise par la loi, les responsables ne sont pas tenus responsables des pertes
+  ou dommages liés à leur utilisation. Rien dans ces conditions ne limite les droits que te donnent les lois sur la
+  protection du consommateur auxquels on ne peut renoncer.</p>
+
+  <h2>Confidentialité</h2>
+  <p>Voir la <a href="privacy.html">politique de confidentialité</a> et la
+  <a href="cookies.html">politique relative aux témoins</a>.</p>
+
+  <h2>Modifications et contact</h2>
+  <p>Nous pouvons mettre ces conditions à jour. La date en haut indique la dernière version, et l'historique complet est
+  public sur GitHub. Pour toute question, ouvre un ticket sur
+  <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/issues" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+  <p>Ces conditions sont régies par les lois applicables au Canada.</p>
+</article>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav aria-label="Legal pages">
+      <a href="index.html"><span data-l="en">lmao.tcl home</span><span data-l="fr">Accueil lmao.tcl</span></a>
+      <a href="privacy.html"><span data-l="en">Privacy policy</span><span data-l="fr">Politique de confidentialité</span></a>
+      <a href="terms.html"><span data-l="en">Terms of use</span><span data-l="fr">Conditions d'utilisation</span></a>
+      <a href="cookies.html"><span data-l="en">Cookie policy</span><span data-l="fr">Politique relative aux témoins</span></a>
+    </nav>
+    <p data-l="en">A volunteer open-source project. Not affiliated with the Undernet IRC network or the Eggheads project.</p>
+    <p data-l="fr">Un projet bénévole à code source ouvert. Non affilié au réseau IRC Undernet ni au projet Eggheads.</p>
+  </div>
+</footer>
+
+<script>
+  var TITLES = { en: "Terms of use — lmao.tcl", fr: "Conditions d'utilisation — lmao.tcl" };
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.title = TITLES[l];
+    document.querySelectorAll(".lang button").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.lang === l); });
+    try { localStorage.setItem("lang", l); } catch (e) {}
+  }
+  document.querySelectorAll(".lang button").forEach(function (b) { b.addEventListener("click", function () { setLang(b.dataset.lang); }); });
+  document.querySelectorAll('a[target="_blank"]').forEach(function (a) { a.setAttribute("aria-describedby", "newtab-hint"); });
+  setLang(document.documentElement.lang === "fr" ? "fr" : "en");
+</script>
+</body>
+</html>

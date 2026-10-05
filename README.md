@@ -2,7 +2,7 @@
 
 **Channel management for eggdrop, built for UnderNet.**
 
-[![Version](https://img.shields.io/badge/version-6.6.0-orange.svg)](https://github.com/lmao-tcl/lmao)
+[![Version](https://img.shields.io/badge/version-6.6.0-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
 [![Eggdrop](https://img.shields.io/badge/eggdrop-1.8%2B-green.svg)](https://www.eggheads.org/)
 [![Tcl](https://img.shields.io/badge/tcl-8.5%2B-blue.svg)](https://www.tcl.tk/)
 [![License](https://img.shields.io/badge/license-GPLv3-lightgrey.svg)](LICENSE)
@@ -46,7 +46,7 @@ bot never floods your channel.
 
 ```sh
 cd ~/eggdrop/scripts
-wget https://raw.githubusercontent.com/lmao-tcl/lmao/master/lmao.tcl
+wget https://lmao-tcl.github.io/lmao.tcl
 ```
 
 Add it to your `eggdrop.conf`:

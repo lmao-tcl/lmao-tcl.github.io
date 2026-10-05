@@ -3,15 +3,1688 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<meta http-equiv="refresh" content="0; url=https://lmao-tcl.github.io/">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#090c11">
 <link rel="canonical" href="https://lmao-tcl.github.io/">
-<title>lmao.tcl has moved — lmao.tcl a déménagé</title>
-<style>body{background:#090c11;color:#dfe6ef;font:16px/1.6 "Segoe UI",system-ui,sans-serif;display:grid;place-items:center;min-height:100vh;margin:0;text-align:center}a{color:#ff7a1a}</style>
-<script>location.replace("https://lmao-tcl.github.io/" + location.hash);</script>
+<title>lmao.tcl — eggdrop channel management</title>
+<meta name="description" content="lmao.tcl: channel management for eggdrop, built for UnderNet. Every reply by notice, per-channel modules, access levels, ActiveVoice and an audit trail.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z' fill='%23ff7a1a'/%3E%3Cpath d='M18 24q4-5 8 0M38 24q4-5 8 0' stroke='%23140800' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M18 31h28q-2 10-14 10t-14-10z' fill='%23140800'/%3E%3C/svg%3E">
+<script>
+  // Pick the language before first paint so nothing flashes in the wrong one
+  (function () {
+    var l = null;
+    try { l = localStorage.getItem("lang"); } catch (e) {}
+    if (l !== "en" && l !== "fr") l = (navigator.language || "en").toLowerCase().indexOf("fr") === 0 ? "fr" : "en";
+    document.documentElement.lang = l;
+  })();
+</script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #090c11;
+  --bg2: #0d1118;
+  --panel: rgba(16, 21, 30, 0.84);
+  --panel-solid: #10151e;
+  --panel2: #161d29;
+  --line: #222b39;
+  --line2: #2d3949;
+  --ink: #dfe6ef;
+  --muted: #9aa7b8;
+  --faint: #7d8a9e;
+  --orange: #ff7a1a;
+  --orange-soft: #ffa25c;
+  --green: #7ed957;
+  --blue: #4cc3ff;
+  --red: #ff5236;
+  --amber: #ffb020;
+  --steel: #a9c2d6;
+  --code-bg: #0a0e14;
+  --radius: 12px;
+  --side: 256px;
+  --nav-h: 64px;
+  --mono: "Cascadia Code", "JetBrains Mono", Consolas, "SF Mono", ui-monospace, monospace;
+  --sans: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  --cur: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M3 2l17 9-7.5 2L9 21z' fill='%23ff7a1a' stroke='%23090c11' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 3 2, auto;
+  --cur-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M3 2l17 9-7.5 2L9 21z' fill='%237ed957' stroke='%23090c11' stroke-width='1.6' stroke-linejoin='round'/%3E%3Ccircle cx='20' cy='20' r='3.2' fill='%237ed957' stroke='%23090c11' stroke-width='1.2'/%3E%3C/svg%3E") 3 2, pointer;
+}
+
+/* One page, two languages: everything bilingual carries data-l */
+html[lang="fr"] [data-l="en"], html[lang="en"] [data-l="fr"] { display: none !important; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 16px); }
+body { background: var(--bg); color: var(--ink); font: 15px/1.65 var(--sans); cursor: var(--cur); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a, button, summary { cursor: var(--cur-link); }
+input, pre, code { cursor: text; }
+::selection { background: rgba(255, 122, 26, 0.35); }
+:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 4px; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+code { font-family: var(--mono); font-size: 0.86em; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--orange-soft); }
+kbd { font: 11px var(--mono); color: var(--muted); border: 1px solid var(--line2); border-bottom-width: 2px; border-radius: 5px; padding: 0 6px; }
+.ico { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--amber); color: #0b0e13; font-weight: 700; padding: 9px 14px; border-radius: 8px; }
+.skip:focus { top: 10px; text-decoration: none; }
+main:focus { outline: none; }
+
+/* ---------- IRC text background ---------- */
+#bg {
+  position: fixed; inset: 0; z-index: -1; overflow: hidden;
+  display: flex; gap: 48px; padding: 0 24px;
+  font: 13px/1.9 var(--mono); color: #2c3644; opacity: 0.16; filter: blur(0.4px);
+  pointer-events: none; user-select: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+}
+#bg .col { flex: 1; min-width: 0; white-space: nowrap; animation: scrollup linear infinite; }
+#bg .col:nth-child(2) { margin-top: -400px; }
+#bg .col:nth-child(3) { margin-top: -900px; }
+@keyframes scrollup { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+#bg::after {
+  content: ""; position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255, 122, 26, 0.10), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(76, 195, 255, 0.07), transparent 70%),
+    linear-gradient(to right, rgba(9, 12, 17, 0.2), rgba(9, 12, 17, 0.6) 50%, rgba(9, 12, 17, 0.2));
+}
+body.paused #bg .col, body.paused .hero h1 .caret { animation-play-state: paused; }
+.n1 { color: #6b4a33; } .n2 { color: #3f5f34; } .n3 { color: #345a6c; } .n4 { color: #5f5434; } .n5 { color: #5c3f49; } .n6 { color: #3f4b5e; }
+.bgsys { color: #2a4a45; } .bgbot { color: #55442e; }
+
+/* ---------- navbar ---------- */
+.top {
+  position: sticky; top: 0; z-index: 40; height: var(--nav-h);
+  background: rgba(9, 12, 17, 0.86);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.top-in { height: 100%; max-width: 1360px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 0 20px; }
+.logo { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; }
+.logo:hover { text-decoration: none; }
+.logo svg { width: 32px; height: 32px; filter: drop-shadow(0 0 10px rgba(255, 122, 26, 0.5)); transition: transform 0.3s ease; }
+.logo:hover svg { transform: rotate(-8deg) scale(1.08); }
+.logo b { font-family: var(--mono); }
+.logo b span { color: var(--orange); }
+.ver { font: 600 11px var(--mono); color: var(--green); background: rgba(126, 217, 87, 0.1); border: 1px solid rgba(126, 217, 87, 0.3); padding: 2px 8px; border-radius: 99px; }
+.navlinks { display: flex; align-items: center; gap: 2px; margin-left: 18px; }
+.navlinks a {
+  display: inline-flex; align-items: center; gap: 7px;
+  color: var(--muted); font-size: 13.5px; font-weight: 600;
+  padding: 8px 11px; border-radius: 8px;
+}
+.navlinks a .ico { width: 15px; height: 15px; opacity: 0.8; }
+.navlinks a:hover { color: var(--ink); background: var(--panel2); text-decoration: none; }
+.navlinks a.active { color: var(--orange-soft); background: rgba(255, 122, 26, 0.09); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nbtn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font: 600 13.5px var(--sans); padding: 8px 13px; border-radius: 9px;
+  border: 1px solid var(--line2); color: var(--ink); background: var(--panel-solid);
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.nbtn:hover { text-decoration: none; border-color: var(--faint); transform: translateY(-1px); }
+.nbtn.cta { color: #140800; background: var(--orange); border-color: transparent; box-shadow: 0 6px 20px rgba(255, 122, 26, 0.3); }
+.nbtn.cta:hover { background: var(--orange-soft); }
+.lang { display: inline-flex; border: 1px solid var(--line2); background: var(--panel-solid); border-radius: 9px; padding: 3px; }
+.lang button { font: 700 12px var(--mono); color: var(--faint); background: none; border: 0; padding: 5px 10px; border-radius: 6px; letter-spacing: 0.5px; }
+.lang button[aria-pressed="true"] { background: var(--orange); color: #140800; }
+.menu-btn { display: none; background: none; border: 1px solid var(--line2); color: var(--ink); border-radius: 9px; padding: 7px 9px; }
+
+/* ---------- layout ---------- */
+.layout { display: flex; max-width: 1360px; margin: 0 auto; }
+.sidebar {
+  width: var(--side); flex-shrink: 0;
+  position: sticky; top: var(--nav-h); height: calc(100vh - var(--nav-h)); overflow-y: auto;
+  padding: 22px 14px 40px;
+  background: rgba(9, 12, 17, 0.86); border-right: 1px solid var(--line);
+  scrollbar-width: thin; scrollbar-color: var(--line2) transparent;
+}
+.main { flex: 1; min-width: 0; padding: 0 40px 60px; }
+.wrap { max-width: 960px; margin: 0 auto; }
+
+/* ---------- sidebar ---------- */
+.search { position: relative; margin-bottom: 4px; }
+.search .ico { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--faint); width: 16px; height: 16px; }
+#search { width: 100%; background: var(--panel-solid); border: 1px solid var(--line2); border-radius: 9px; color: var(--ink); padding: 9px 36px 9px 34px; font: 13px var(--sans); outline: none; }
+#search:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255, 122, 26, 0.18); }
+#search::placeholder { color: var(--faint); }
+.search kbd { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); }
+.search-hint { font-size: 11.5px; color: var(--orange-soft); padding: 4px 6px 6px; min-height: 22px; font-weight: 600; }
+.nav h2 { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--faint); margin: 14px 10px 6px; }
+.nav a { display: flex; align-items: center; gap: 10px; padding: 5px 10px; border-radius: 7px; color: var(--muted); font-size: 13.5px; border-left: 2px solid transparent; }
+.nav a .ico { width: 15px; height: 15px; opacity: 0.7; }
+.nav a:hover { color: var(--ink); background: var(--panel2); text-decoration: none; }
+.nav a.active { color: var(--orange-soft); background: rgba(255, 122, 26, 0.08); border-left-color: var(--orange); }
+.nav a.active .ico { opacity: 1; }
+
+/* ---------- hero ---------- */
+.hero { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 34px; align-items: center; padding: 52px 0 38px; }
+.hero h1 { font: 800 clamp(40px, 6vw, 64px)/1 var(--mono); letter-spacing: -1.5px; }
+.hero h1 span { color: var(--orange); text-shadow: 0 0 30px rgba(255, 122, 26, 0.45); }
+.hero h1 .caret { display: inline-block; width: 0.5em; height: 0.9em; background: var(--green); margin-left: 6px; vertical-align: -0.08em; animation: blink 1.1s steps(1) infinite; box-shadow: 0 0 14px rgba(126, 217, 87, 0.6); }
+@keyframes blink { 50% { opacity: 0; } }
+.hero .tagline { color: var(--muted); font-size: 18px; margin-top: 16px; max-width: 34em; }
+.hero .tagline em { color: var(--ink); font-style: normal; font-weight: 600; }
+.badges { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 20px; }
+.badge { font: 600 11.5px var(--mono); padding: 4px 11px; border-radius: 99px; background: var(--panel); border: 1px solid var(--line2); color: var(--muted); }
+.badge.o { color: var(--orange-soft); border-color: rgba(255, 122, 26, 0.4); background: rgba(255, 122, 26, 0.08); }
+.badge.g { color: var(--green); border-color: rgba(126, 217, 87, 0.35); background: rgba(126, 217, 87, 0.07); }
+.badge.b { color: var(--blue); border-color: rgba(76, 195, 255, 0.35); background: rgba(76, 195, 255, 0.07); }
+.install { margin-top: 24px; display: flex; align-items: center; gap: 10px; background: var(--code-bg); border: 1px solid var(--line2); border-radius: 10px; padding: 10px 10px 10px 16px; font: 13px var(--mono); max-width: 600px; }
+.install .p { color: var(--green); }
+.install code { all: unset; flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; color: #c9d1d9; scrollbar-width: none; cursor: text; }
+.hero-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--sans); padding: 10px 18px; border-radius: 10px; border: 1px solid var(--line2); color: var(--ink); background: var(--panel); transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
+.btn:hover { text-decoration: none; transform: translateY(-1px); border-color: var(--faint); }
+.btn.primary { background: linear-gradient(135deg, #ff7a1a, #ff5236); border-color: transparent; color: #140800; box-shadow: 0 8px 26px rgba(255, 122, 26, 0.3); }
+.btn.primary:hover { box-shadow: 0 10px 32px rgba(255, 122, 26, 0.45); }
+.tip-day { margin-top: 18px; font-size: 13px; color: var(--faint); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.tip-day b { color: var(--amber); font-weight: 600; }
+.tip-day button { background: none; border: 0; color: var(--faint); font: inherit; text-decoration: underline dotted; }
+.tip-day button:hover { color: var(--ink); }
+
+/* ---------- fake IRC client ---------- */
+.irc { background: rgba(10, 14, 20, 0.94); border: 1px solid var(--line2); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55), 0 0 60px rgba(255, 122, 26, 0.08); font: 12.5px/1.6 var(--mono); }
+.irc-bar { display: flex; align-items: center; gap: 7px; padding: 7px 8px 7px 12px; background: #121924; border-bottom: 1px solid var(--line); }
+.irc-bar i { width: 11px; height: 11px; border-radius: 50%; }
+.irc-bar i:nth-child(1) { background: #ff5f57; } .irc-bar i:nth-child(2) { background: #febc2e; } .irc-bar i:nth-child(3) { background: #28c840; }
+.irc-bar span { margin-left: 8px; color: var(--muted); font-size: 11.5px; }
+.pause { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; background: var(--panel2); border: 1px solid var(--line2); color: var(--muted); font: 600 11px var(--sans); padding: 4px 9px; border-radius: 7px; }
+.pause:hover { color: var(--ink); border-color: var(--faint); }
+.pause .ico { width: 12px; height: 12px; }
+.irc-tabs { display: flex; gap: 2px; padding: 6px 8px 0; background: #0e141d; border-bottom: 1px solid var(--line); font-size: 11.5px; }
+.irc-tabs b { padding: 4px 10px; border-radius: 6px 6px 0 0; color: var(--faint); font-weight: 500; }
+.irc-tabs b.on { color: var(--ink); background: rgba(10, 14, 20, 0.92); border: 1px solid var(--line); border-bottom: 0; }
+.irc-tabs b.hl { color: var(--orange-soft); }
+.irc-body { display: grid; grid-template-columns: 1fr 98px; height: 290px; }
+.irc-log { padding: 8px 10px; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; border-right: 1px solid var(--line); }
+.irc-log div { white-space: pre-wrap; word-break: break-word; animation: pop 0.25s ease; }
+@keyframes pop { from { opacity: 0; transform: translateY(6px); } }
+.irc-log .ts { color: #4a576a; }
+.irc-log .sys { color: #3fa894; }
+.irc-log .notice { color: var(--orange-soft); }
+.irc-log .mode { color: #b48ae8; }
+.irc-log .kick { color: var(--red); }
+.nk1 { color: var(--blue); } .nk2 { color: var(--green); } .nk3 { color: var(--amber); } .nk4 { color: #ff7eb6; } .nk5 { color: var(--steel); }
+.irc-nicks { padding: 8px 10px; color: var(--muted); font-size: 12px; }
+.irc-nicks .op { color: var(--green); }
+.irc-nicks .vc { color: var(--amber); }
+.irc-input { display: flex; gap: 8px; padding: 8px 12px; border-top: 1px solid var(--line); background: #0d131b; color: var(--muted); }
+.irc-input .me { color: var(--blue); }
+.irc-input .typed { color: var(--ink); }
+.irc-input .typed::after { content: ""; display: inline-block; width: 7px; height: 14px; background: var(--ink); margin-left: 1px; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
+.irc-status { display: flex; justify-content: space-between; padding: 4px 12px; background: #121924; border-top: 1px solid var(--line); color: var(--faint); font-size: 10.5px; }
+.irc-status .lag { color: var(--green); }
+
+/* ---------- stats + features ---------- */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 6px 0 30px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+.stat b { display: block; font: 800 30px/1.1 var(--mono); color: var(--orange); }
+.stat:nth-child(2) b { color: var(--green); } .stat:nth-child(3) b { color: var(--blue); } .stat:nth-child(4) b { color: var(--amber); }
+.stat span { font-size: 12.5px; color: var(--muted); }
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 56px; }
+.feat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; transition: border-color 0.2s ease, transform 0.2s ease; }
+.feat:hover { border-color: color-mix(in srgb, var(--c) 45%, transparent); transform: translateY(-2px); }
+.feat .fi { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); margin-bottom: 12px; }
+.feat .ft { font-size: 15px; margin-bottom: 4px; }
+.feat p { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin: 0; }
+
+/* ---------- sections ---------- */
+section { margin-bottom: 64px; }
+section > h2 { display: flex; align-items: center; gap: 12px; font-size: 26px; letter-spacing: -0.3px; padding-bottom: 12px; margin-bottom: 10px; border-bottom: 1px solid var(--line); }
+section > h2 .hi { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--orange); background: rgba(255, 122, 26, 0.1); border: 1px solid rgba(255, 122, 26, 0.28); }
+section > h2 .hi .ico { width: 19px; height: 19px; }
+.sec-intro { color: var(--muted); margin-bottom: 22px; max-width: 74ch; }
+.sec-intro strong { color: var(--ink); }
+h3.sub { font-size: 17px; margin: 32px 0 12px; color: var(--amber); display: flex; align-items: center; gap: 8px; }
+h3.sub::before { content: "#"; color: var(--faint); font-family: var(--mono); }
+p { margin-bottom: 10px; }
+.note, .warn, .tip { display: flex; gap: 12px; border-radius: 10px; padding: 12px 16px; margin: 16px 0; font-size: 14px; background: color-mix(in srgb, var(--c) 6%, var(--panel-solid)); border: 1px solid color-mix(in srgb, var(--c) 28%, transparent); border-left: 3px solid var(--c); }
+.note { --c: var(--blue); } .warn { --c: var(--amber); } .tip { --c: var(--green); }
+.note > .ico, .warn > .ico, .tip > .ico { color: var(--c); margin-top: 2px; }
+.note b, .warn b, .tip b { color: var(--ink); }
+.cmd { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 20px 14px; margin: 12px 0; transition: border-color 0.15s ease; }
+.cmd:hover { border-color: var(--line2); }
+.cmd.hidden { display: none; }
+.cmd-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.cmd-head h4 { font: 600 16px var(--mono); color: #fff; margin-right: 4px; }
+.cmd-head h4 .amp { color: var(--orange); }
+.cmd p { color: var(--muted); font-size: 14px; max-width: 80ch; }
+.cmd p strong { color: var(--ink); }
+.lvl { font: 700 10px var(--sans); letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 9%, transparent); white-space: nowrap; }
+.lvl.owner { --c: var(--red); } .lvl.master { --c: var(--orange); } .lvl.op { --c: var(--blue); } .lvl.mod { --c: var(--amber); }
+.lvl.voice { --c: var(--green); } .lvl.user { --c: var(--steel); } .lvl.all { --c: var(--muted); } .lvl.msg { --c: #5ee0d0; }
+.code { position: relative; margin: 10px 0; }
+.code pre { background: var(--code-bg); border: 1px solid var(--line); border-left: 3px solid var(--c, var(--line2)); border-radius: 9px; padding: 12px 96px 12px 15px; overflow-x: auto; font: 13px/1.75 var(--mono); color: #c9d1d9; scrollbar-width: thin; }
+.code.syntax { --c: var(--orange); } .code.example { --c: var(--green); } .code.reply { --c: var(--blue); }
+.code .tag { position: absolute; top: 10px; right: 44px; font: 700 9.5px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--faint); user-select: none; }
+.copy { position: absolute; top: 6px; right: 8px; display: grid; place-items: center; background: var(--panel2); border: 1px solid var(--line2); border-radius: 7px; color: var(--muted); width: 28px; height: 26px; }
+.copy .ico { width: 14px; height: 14px; }
+.copy:hover { color: var(--ink); border-color: var(--faint); }
+.copy.ok { color: var(--green); border-color: var(--green); }
+.install .copy { position: static; }
+pre .c { color: #6b7a8f; font-style: italic; }
+pre .t { color: var(--orange-soft); font-weight: 600; }
+pre .a { color: #79c0ff; }
+pre .o { color: #9aa7b8; }
+pre .n { color: var(--green); }
+pre .r { color: var(--red); font-weight: 600; }
+.table-scroll { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+th { text-align: left; padding: 9px 14px; background: rgba(255, 255, 255, 0.025); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--line); }
+td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td, tr:last-child th { border-bottom: 0; }
+td code { white-space: nowrap; }
+.kv th { width: 230px; text-transform: none; letter-spacing: 0; font-size: 13.5px; color: var(--ink); font-weight: 600; background: rgba(255, 255, 255, 0.02); vertical-align: top; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+.pill { font: 12px var(--mono); background: var(--panel2); border: 1px solid var(--line); padding: 3px 10px; border-radius: 6px; color: var(--muted); }
+.on { color: var(--green); font-weight: 700; font-family: var(--mono); }
+.off { color: var(--red); font-weight: 700; font-family: var(--mono); }
+.steps { counter-reset: s; display: grid; gap: 10px; margin: 14px 0; padding: 0; list-style: none; }
+.steps li { counter-increment: s; display: flex; gap: 14px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; font-size: 14px; }
+.steps li::before { content: counter(s); flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--mono); color: #140800; background: var(--orange); }
+
+/* ---------- footer ---------- */
+footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9); margin-top: 20px; }
+.foot-in { max-width: 1360px; margin: 0 auto; padding: 36px 20px 28px; }
+.foot-grid { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 26px; }
+.foot-grid h2 { font-size: 11px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; }
+.foot-grid a { display: block; color: var(--muted); font-size: 13.5px; padding: 3px 0; }
+.foot-grid a:hover { color: var(--orange-soft); }
+.foot-brand p { color: var(--faint); font-size: 13px; margin-top: 10px; max-width: 30ch; }
+.foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--faint); font-size: 12.5px; }
+.foot-bottom .up { font-family: var(--mono); color: var(--green); }
+
+/* ---------- notice + misc ---------- */
+.notice-bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 80; width: min(680px, calc(100% - 24px)); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--panel-solid); border: 1px solid var(--line2); border-left: 3px solid var(--green); border-radius: 12px; padding: 14px 16px; box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6); font-size: 14px; }
+.notice-bar p { margin: 0; flex: 1; min-width: 220px; color: var(--muted); }
+.notice-bar p b { color: var(--ink); }
+.notice-bar .acts { display: flex; align-items: center; gap: 12px; }
+#top-btn { position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px; border-radius: 50%; display: none; place-items: center; background: var(--panel2); border: 1px solid var(--line2); color: var(--muted); z-index: 50; }
+#top-btn.show { display: grid; }
+#top-btn:hover { color: var(--orange); border-color: var(--orange); }
+.toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 16px); opacity: 0; pointer-events: none; background: var(--panel-solid); border: 1px solid rgba(255, 122, 26, 0.5); padding: 9px 16px; border-radius: 10px; font-size: 13.5px; transition: opacity 0.2s, transform 0.2s; z-index: 90; }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.lol { position: fixed; z-index: 70; pointer-events: none; font-size: 28px; animation: lol 2.4s ease-out forwards; }
+@keyframes lol { to { transform: translate(var(--dx), -110vh) rotate(var(--r)); opacity: 0.2; } }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1240px) {
+  .navlinks .opt { display: none; }
+}
+@media (max-width: 1180px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .irc { max-width: 560px; }
+}
+@media (max-width: 1040px) {
+  .navlinks { display: none; }
+  .menu-btn { display: inline-flex; }
+  .sidebar { position: fixed; left: 0; top: var(--nav-h); z-index: 45; background: var(--bg2); transform: translateX(-100%); visibility: hidden; transition: transform 0.25s ease, visibility 0.25s; }
+  body.nav-open .sidebar { transform: none; visibility: visible; box-shadow: 20px 0 60px rgba(0, 0, 0, 0.6); }
+  .main { padding: 0 16px 50px; }
+  .features { grid-template-columns: repeat(2, 1fr); }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .foot-grid { grid-template-columns: repeat(2, 1fr); }
+  #bg .col:nth-child(3) { display: none; }
+}
+@media (max-width: 640px) {
+  .top-in { padding: 0 12px; gap: 8px; }
+  .ver, .nbtn .lbl { display: none; }
+  .features { grid-template-columns: 1fr; }
+  .irc-body { grid-template-columns: 1fr; }
+  .irc-nicks { display: none; }
+  .hero { padding-top: 30px; }
+  #bg .col:nth-child(2) { display: none; }
+  .code pre { padding-right: 15px; padding-top: 34px; }
+  .foot-grid { grid-template-columns: 1fr 1fr; }
+  .foot-brand { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #bg .col, .hero h1 .caret, .irc-input .typed::after { animation: none; }
+  html { scroll-behavior: auto; }
+}
+</style>
 </head>
 <body>
-<p>lmao.tcl has moved to <a href="https://lmao-tcl.github.io/">lmao-tcl.github.io</a>.<br>
-<span lang="fr">lmao.tcl a déménagé à <a href="https://lmao-tcl.github.io/">lmao-tcl.github.io</a>.</span></p>
+<a class="skip" href="#main"><span data-l="en">Skip to content</span><span data-l="fr">Aller au contenu</span></a>
+<span id="newtab-hint" hidden><span data-l="en">(opens in a new tab)</span><span data-l="fr">(s'ouvre dans un nouvel onglet)</span></span>
+
+<!-- ======================= ICONS ======================= -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-ladder" viewBox="0 0 24 24"><path d="M7 2v20M17 2v20M7 6h10M7 11h10M7 16h10"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="M11.5 11.5L21 2M16 7l3 3M18 5l2 2"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-hammer" viewBox="0 0 24 24"><path d="M15 12l-8.5 8.5a2.1 2.1 0 0 1-3-3L12 9"/><path d="M17.6 15L22 10.6M20.9 11.7l-6.6-6.6a5 5 0 0 0-3.5-1.5H8l1 1a6 6 0 0 1 1.8 4.2v1.7l2 2h1.4l2.3 2.3"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M2 7l5 5 5-8 5 8 5-5-2 12H4z"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-hash" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M5.5 17a4 4 0 0 1 7 0M15 9h3M15 13h3"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/></symbol>
+  <symbol id="i-puzzle" viewBox="0 0 24 24"><path d="M19.4 14.5a2.5 2.5 0 1 0 0-5H18V6a2 2 0 0 0-2-2h-3.5v1.5a2.5 2.5 0 1 1-5 0V4H4a2 2 0 0 0-2 2v3.5h1.5a2.5 2.5 0 1 1 0 5H2V18a2 2 0 0 0 2 2h3.5v-1.5a2.5 2.5 0 1 1 5 0V20H16a2 2 0 0 0 2-2v-3.5z"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v6M15 2v6M6 8h12v4a6 6 0 0 1-12 0zM12 18v4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l3 3"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></symbol>
+  <symbol id="i-git" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3.1-.4 6.4-1.5 6.4-7a5.4 5.4 0 0 0-1.5-3.7 5 5 0 0 0-.1-3.8s-1.2-.3-3.9 1.5a13.4 13.4 0 0 0-7 0C6.3 1.7 5.1 2 5.1 2a5 5 0 0 0-.1 3.8 5.4 5.4 0 0 0-1.5 3.7c0 5.4 3.3 6.6 6.4 7a3.4 3.4 0 0 0-.9 2.6V22"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4zM23 9l-6 6M17 9l6 6"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="1"/><circle cx="17.5" cy="10.5" r="1"/><circle cx="8.5" cy="7.5" r="1"/><circle cx="6.5" cy="12.5" r="1"/><path d="M12 2a10 10 0 0 0 0 20c1 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7h2A5.6 5.6 0 0 0 22 11c0-5-4.5-9-10-9z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 100 100"><path fill="currentColor" stroke="none" d="M50 4l4 16 9-4-3 14 16-5-4 9 20-2-7 9 12 7-31 8 6 18-16-4-2 6 1 11h-8l1-11-2-6-16 4 6-18-31-8 12-7-7-9 20 2-4-9 16 5-3-14 9 4z"/></symbol>
+</svg>
+
+<div id="bg" aria-hidden="true"><div class="col"></div><div class="col"></div><div class="col"></div></div>
+
+<!-- ======================= NAVBAR ======================= -->
+<header class="top">
+  <div class="top-in">
+    <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="sidebar"><svg class="ico" aria-hidden="true"><use href="#i-menu"/></svg><span class="sr-only">Menu</span></button>
+    <a class="logo" href="#top" id="logo">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/><path d="M14 30q-3 4 0 7M50 30q3 4 0 7" stroke="#4cc3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
+      <b>lmao<span>.tcl</span></b>
+    </a>
+    <span class="ver">v6.6.0</span>
+    <nav class="navlinks" aria-label="Main">
+      <a href="#features"><svg class="ico" aria-hidden="true"><use href="#i-home"/></svg><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a>
+      <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span data-l="en">Install</span><span data-l="fr">Installer</span></a>
+      <a href="#levels"><svg class="ico" aria-hidden="true"><use href="#i-ladder"/></svg><span data-l="en">Access</span><span data-l="fr">Accès</span></a>
+      <a href="#cmd-access"><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg><span data-l="en">Commands</span><span data-l="fr">Commandes</span></a>
+      <a class="opt" href="#modules"><svg class="ico" aria-hidden="true"><use href="#i-puzzle"/></svg>Modules</a>
+      <a class="opt" href="#changelog"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg><span data-l="en">Changelog</span><span data-l="fr">Versions</span></a>
+    </nav>
+    <div class="nav-right">
+      <a class="nbtn" href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-git"/></svg><span class="lbl">GitHub</span><span class="sr-only">GitHub</span></a>
+      <a class="nbtn cta" href="https://lmao-tcl.github.io/lmao.tcl" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span class="lbl"><span data-l="en">Download</span><span data-l="fr">Télécharger</span></span><span class="sr-only">lmao.tcl</span></a>
+      <div class="lang" role="group" aria-label="Language / Langue">
+        <button type="button" lang="en" data-lang="en" aria-label="English" aria-pressed="false">EN</button>
+        <button type="button" lang="fr" data-lang="fr" aria-label="Français" aria-pressed="false">FR</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout" id="top">
+
+<!-- ======================= SIDEBAR ======================= -->
+<aside class="sidebar" id="sidebar">
+  <div class="search" role="search">
+    <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+    <label class="sr-only" for="search"><span data-l="en">Filter commands</span><span data-l="fr">Filtrer les commandes</span></label>
+    <input id="search" type="search" autocomplete="off">
+    <kbd aria-hidden="true">/</kbd>
+  </div>
+  <div class="search-hint" id="search-count" role="status" aria-live="polite"></div>
+  <nav class="nav" id="nav" aria-label="Documentation">
+    <h2><span data-l="en">Start here</span><span data-l="fr">Pour commencer</span></h2>
+    <a href="#overview"><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg><span data-l="en">Overview</span><span data-l="fr">Aperçu</span></a>
+    <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Installation</a>
+    <a href="#config"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>Configuration</a>
+    <a href="#levels"><svg class="ico" aria-hidden="true"><use href="#i-ladder"/></svg><span data-l="en">Access levels</span><span data-l="fr">Niveaux d'accès</span></a>
+    <a href="#help"><svg class="ico" aria-hidden="true"><use href="#i-help"/></svg><span data-l="en">The help system</span><span data-l="fr">L'aide</span></a>
+    <h2><span data-l="en">Commands</span><span data-l="fr">Commandes</span></h2>
+    <a href="#cmd-access"><svg class="ico" aria-hidden="true"><use href="#i-key"/></svg><span data-l="en">Access &amp; users</span><span data-l="fr">Accès et utilisateurs</span></a>
+    <a href="#cmd-everyone"><svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg><span data-l="en">Everyone</span><span data-l="fr">Tout le monde</span></a>
+    <a href="#cmd-users"><svg class="ico" aria-hidden="true"><use href="#i-user"/></svg><span data-l="en">Registered users</span><span data-l="fr">Utilisateurs inscrits</span></a>
+    <a href="#cmd-ops"><svg class="ico" aria-hidden="true"><use href="#i-hammer"/></svg><span data-l="en">Mods &amp; ops</span><span data-l="fr">Mods et ops</span></a>
+    <a href="#cmd-master"><svg class="ico" aria-hidden="true"><use href="#i-bolt"/></svg><span data-l="en">Masters</span><span data-l="fr">Maîtres</span></a>
+    <a href="#cmd-owner"><svg class="ico" aria-hidden="true"><use href="#i-crown"/></svg><span data-l="en">Bot owner</span><span data-l="fr">Propriétaire</span></a>
+    <a href="#cmd-msg"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg><span data-l="en">Private messages</span><span data-l="fr">Messages privés</span></a>
+    <h2><span data-l="en">Users &amp; logging</span><span data-l="fr">Utilisateurs et journal</span></h2>
+    <a href="#register"><svg class="ico" aria-hidden="true"><use href="#i-badge"/></svg><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></a>
+    <a href="#chanlog"><svg class="ico" aria-hidden="true"><use href="#i-log"/></svg><span data-l="en">Channel logging</span><span data-l="fr">Journal du canal</span></a>
+    <h2><span data-l="en">Features</span><span data-l="fr">Fonctions</span></h2>
+    <a href="#modules"><svg class="ico" aria-hidden="true"><use href="#i-puzzle"/></svg>Modules</a>
+    <a href="#activevoice"><svg class="ico" aria-hidden="true"><use href="#i-mic"/></svg>ActiveVoice</a>
+    <a href="#idledeop"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></a>
+    <a href="#topicsys"><svg class="ico" aria-hidden="true"><use href="#i-hash"/></svg><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></a>
+    <a href="#protections"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>Protections</a>
+    <h2><span data-l="en">Reference</span><span data-l="fr">Référence</span></h2>
+    <a href="#ctcp"><svg class="ico" aria-hidden="true"><use href="#i-plug"/></svg>CTCP &amp; DCC</a>
+    <a href="#gotchas"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></a>
+    <a href="#changelog"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></a>
+  </nav>
+</aside>
+
+<!-- ======================= MAIN ======================= -->
+<main class="main" id="main" tabindex="-1"><div class="wrap">
+
+<div class="hero">
+  <div>
+    <h1>lmao<span>.tcl</span><i class="caret" aria-hidden="true"></i></h1>
+    <p class="tagline" data-l="en">Channel management for eggdrop, built for UnderNet. <em>Every reply by notice, never in your channel.</em></p>
+    <p class="tagline" data-l="fr">La gestion de canal pour eggdrop, pensée pour UnderNet. <em>Chaque réponse par notice, jamais dans ton canal.</em></p>
+    <div class="badges">
+      <span class="badge o">v6.6.0</span>
+      <span class="badge g">eggdrop ≥ 1.8</span>
+      <span class="badge b">Tcl ≥ 8.5</span>
+      <span class="badge">UnderNet · ircu · X</span>
+      <span class="badge">GPLv3</span>
+    </div>
+    <div class="install">
+      <span class="p" aria-hidden="true">$</span>
+      <code id="one-liner">wget https://lmao-tcl.github.io/lmao.tcl</code>
+      <button class="copy" data-copy="one-liner"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only"><span data-l="en">Copy</span><span data-l="fr">Copier</span></span></button>
+    </div>
+    <div class="hero-btns">
+      <a class="btn primary" href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span data-l="en">Get started</span><span data-l="fr">Commencer</span></a>
+      <a class="btn" href="#cmd-access"><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg><span data-l="en">Browse commands</span><span data-l="fr">Voir les commandes</span></a>
+      <a class="btn" href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-git"/></svg><span data-l="en">Source</span><span data-l="fr">Code source</span></a>
+    </div>
+    <p class="tip-day"><b data-l="en">Tip:</b><b data-l="fr">Astuce :</b> <span id="tip"></span> <button type="button" id="tip-next"><span data-l="en">another</span><span data-l="fr">une autre</span></button></p>
+  </div>
+
+  <div class="irc">
+    <div class="irc-bar">
+      <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i><span aria-hidden="true">irc.undernet.org — #canada</span>
+      <button type="button" class="pause" id="pause" aria-pressed="false" title="Animations">
+        <svg class="ico" aria-hidden="true"><use href="#i-pause"/></svg><span data-l="en">Pause</span><span data-l="fr">Pause</span>
+      </button>
+    </div>
+    <p class="sr-only" data-l="en">Animated demo: a user joins #canada, gets voiced, is promoted to Mod by an op, bans a spammer, and the bot answers every command by notice.</p>
+    <p class="sr-only" data-l="fr">Démo animée : une personne arrive dans #canada, reçoit le voice, devient Mod grâce à un op, bannit un spammeur, et le robot répond à chaque commande par notice.</p>
+    <div aria-hidden="true">
+      <div class="irc-tabs"><b>Status</b><b class="on">#canada</b><b class="hl" id="tab-ops">#ops</b><b>lmao</b></div>
+      <div class="irc-body">
+        <div class="irc-log" id="irc-log"></div>
+        <div class="irc-nicks" id="irc-nicks"></div>
+      </div>
+      <div class="irc-input"><span class="me" id="irc-me">[boss]</span><span class="typed" id="irc-typed"></span></div>
+      <div class="irc-status"><span>#canada [+tnR] · 6 users</span><span>Lag: <span class="lag" id="lag">0.08</span>s</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="stats" id="features">
+  <div class="stat"><b data-count="60">60</b><span data-l="en">commands, one help table</span><span data-l="fr">commandes, une seule table d'aide</span></div>
+  <div class="stat"><b data-count="5">5</b><span data-l="en">per-channel modules</span><span data-l="fr">modules par canal</span></div>
+  <div class="stat"><b data-count="0">0</b><span data-l="en">colour codes sent, ever</span><span data-l="fr">code de couleur envoyé, jamais</span></div>
+  <div class="stat"><b data-count="100" data-suffix="%">100%</b><span data-l="en">replies by notice</span><span data-l="fr">des réponses par notice</span></div>
+</div>
+
+<div class="features">
+  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-mute"/></svg></div>
+    <h2 class="ft"><span data-l="en">No channel spam</span><span data-l="fr">Aucun spam dans le canal</span></h2>
+    <p data-l="en">Every reply is a notice to whoever asked. The bot only talks in the channel when you tell it to.</p>
+    <p data-l="fr">Chaque réponse est une notice à la personne qui a demandé. Le robot ne parle dans le canal que si tu le lui demandes.</p></div>
+  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-help"/></svg></div>
+    <h2 class="ft"><span data-l="en">One help table</span><span data-l="fr">Une seule table d'aide</span></h2>
+    <p data-l="en"><code>!help</code> and <code>/msg bot help</code> read the same source, so docs never drift from the commands.</p>
+    <p data-l="fr"><code>!help</code> et <code>/msg bot help</code> lisent la même source : l'aide ne peut jamais contredire les commandes.</p></div>
+  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-puzzle"/></svg></div>
+    <h2 class="ft"><span data-l="en">Per-channel modules</span><span data-l="fr">Modules par canal</span></h2>
+    <p data-l="en">Flip features with <code>!enable</code> / <code>!disable</code>, live, without touching the config.</p>
+    <p data-l="fr">Active ou désactive des fonctions avec <code>!enable</code> / <code>!disable</code>, en direct, sans toucher à la config.</p></div>
+  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-ladder"/></svg></div>
+    <h2 class="ft"><span data-l="en">Real access levels</span><span data-l="fr">De vrais niveaux d'accès</span></h2>
+    <p data-l="en">Voice, Mod, Op, Master, Owner. One rung at a time, and you can only reach below yourself.</p>
+    <p data-l="fr">Voice, Mod, Op, Maître, Propriétaire. Un échelon à la fois, et tu n'agis que sur ceux en dessous de toi.</p></div>
+  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-mic"/></svg></div>
+    <h2 class="ft">ActiveVoice</h2>
+    <p data-l="en">Voices people who actually talk, takes it back when they go idle. Regulars are never touched.</p>
+    <p data-l="fr">Donne le voice à ceux qui parlent vraiment et le reprend quand ils deviennent inactifs. Les habitués ne sont jamais touchés.</p></div>
+  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-log"/></svg></div>
+    <h2 class="ft"><span data-l="en">One audit trail</span><span data-l="fr">Un seul journal</span></h2>
+    <p data-l="en">Access changes, sanctions, registrations and refused attempts land in your ops channel.</p>
+    <p data-l="fr">Changements d'accès, sanctions, inscriptions et tentatives refusées arrivent dans ton canal d'ops.</p></div>
+  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-badge"/></svg></div>
+    <h2 class="ft"><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></h2>
+    <p data-l="en">Typed-back confirmation code, every check run twice, and a nudge to hide your host with X first.</p>
+    <p data-l="fr">Un code de confirmation à retaper, chaque vérification faite deux fois, et un rappel de cacher ton hôte avec X d'abord.</p></div>
+  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-shield"/></svg></div>
+    <h2 class="ft"><span data-l="en">Flag protection</span><span data-l="fr">Protection par drapeaux</span></h2>
+    <p data-l="en">Owners, masters and the X / W services can't be deopped, kicked or banned through the bot.</p>
+    <p data-l="fr">Les propriétaires, les maîtres et les services X / W ne peuvent pas être deop, expulsés ou bannis par le robot.</p></div>
+  <div class="feat" style="--c:var(--steel)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-palette"/></svg></div>
+    <h2 class="ft"><span data-l="en">No colour codes</span><span data-l="fr">Aucun code de couleur</span></h2>
+    <p data-l="en">Plain text reads the same in every client and on every theme. Tags like <code>[OK]</code> carry the meaning.</p>
+    <p data-l="fr">Le texte brut se lit pareil dans tous les clients et avec tous les thèmes. Des étiquettes comme <code>[OK]</code> portent le sens.</p></div>
+</div>
+
+<div class="note" data-l="fr"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg><div><b>Le robot parle anglais.</b> Le script envoie ses réponses en anglais : les exemples de sortie ci-dessous sont donc laissés tels quels. Les commandes, elles, sont les mêmes dans toutes les langues.</div></div>
+
+<!-- ================= OVERVIEW ================= -->
+<section id="overview">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-book"/></svg></span><span data-l="en">Overview</span><span data-l="fr">Aperçu</span></h2>
+  <p class="sec-intro" data-l="en">lmao.tcl gives your eggdrop the public commands people actually expect in a channel —
+    ops, voices, bans, topic and user management — plus an <strong>auto-voice system</strong>
+    for people who talk and <strong>idle cleanup</strong> for ops and voices who don't.
+    Everything is <strong>per channel</strong> and every command reply is a
+    <strong>notice</strong>, so the bot never floods the channel it's supposed to be protecting.</p>
+  <p class="sec-intro" data-l="fr">lmao.tcl donne à ton eggdrop les commandes publiques qu'on s'attend à trouver dans un canal —
+    op, voice, bannissements, sujet et gestion des utilisateurs — plus un <strong>système de voice automatique</strong>
+    pour ceux qui parlent et un <strong>nettoyage des inactifs</strong> pour les ops et les voices qui ne parlent pas.
+    Tout se règle <strong>canal par canal</strong> et chaque réponse est une <strong>notice</strong> :
+    le robot n'inonde jamais le canal qu'il est censé protéger.</p>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th>Script</th><td>lmao.tcl v6.6.0</td></tr>
+    <tr><th><span data-l="en">Repository</span><span data-l="fr">Dépôt</span></th><td><a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer">github.com/lmao-tcl/lmao-tcl.github.io</a></td></tr>
+    <tr><th><span data-l="en">Requirements</span><span data-l="fr">Prérequis</span></th><td><span data-l="en">Eggdrop 1.8 or newer (tested on 1.10.1) · Tcl 8.5 or newer</span><span data-l="fr">Eggdrop 1.8 ou plus récent (testé sur 1.10.1) · Tcl 8.5 ou plus récent</span></td></tr>
+    <tr><th><span data-l="en">Network</span><span data-l="fr">Réseau</span></th><td><span data-l="en">Written for UnderNet ircu — aware of the <code>X</code> and <code>W</code> services</span><span data-l="fr">Écrit pour ircu d'UnderNet — tient compte des services <code>X</code> et <code>W</code></span></td></tr>
+    <tr><th><span data-l="en">Trigger</span><span data-l="fr">Déclencheur</span></th><td><code>!</code> <span data-l="en">by default</span><span data-l="fr">par défaut</span> — <code>cc(cmdchar)</code></td></tr>
+    <tr><th><span data-l="en">Commands</span><span data-l="fr">Commandes</span></th><td><span data-l="en">60, documented in one shared help table</span><span data-l="fr">60, documentées dans une seule table d'aide partagée</span></td></tr>
+    <tr><th>Modules</th><td><code>topic</code> · <code>activevoice</code> · <code>idledevoice</code> · <code>idledeop</code> · <code>chanlog</code></td></tr>
+    <tr><th><span data-l="en">License</span><span data-l="fr">Licence</span></th><td>GPLv3</td></tr>
+  </table>
+  </div>
+  <div class="tip"><svg class="ico" aria-hidden="true"><use href="#i-help"/></svg>
+    <div data-l="en"><b>The two commands to remember:</b> <code>!help</code> lists what's available and <code>!help &lt;command&gt;</code> gives you usage, description and an example — always by notice. <code>!showcommands</code> dumps every command name at once.</div>
+    <div data-l="fr"><b>Les deux commandes à retenir :</b> <code>!help</code> liste ce qui est disponible et <code>!help &lt;commande&gt;</code> donne l'usage, la description et un exemple — toujours par notice. <code>!showcommands</code> affiche tous les noms de commandes d'un coup.</div></div>
+</section>
+
+<!-- ================= INSTALL ================= -->
+<section id="install">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-download"/></svg></span>Installation</h2>
+  <p class="sec-intro" data-l="en">Drop the script in, source it, rehash. No data files, no dependencies.</p>
+  <p class="sec-intro" data-l="fr">Dépose le script, ajoute-le à la config, recharge. Aucun fichier de données, aucune dépendance.</p>
+
+  <div class="code syntax"><span class="tag">shell</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="c" data-l="en"># 1. put the script in your scripts directory</span><span class="c" data-l="fr"># 1. mets le script dans ton dossier scripts</span>
+cd ~/eggdrop/scripts
+wget https://lmao-tcl.github.io/lmao.tcl</pre></div>
+
+  <div class="code syntax"><span class="tag">eggdrop.conf</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="c" data-l="en"># 2. source it from eggdrop.conf</span><span class="c" data-l="fr"># 2. charge-le depuis eggdrop.conf</span>
+source scripts/lmao.tcl</pre></div>
+
+  <div class="code example"><span class="tag">partyline</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="c" data-l="en"># 3. reload</span><span class="c" data-l="fr"># 3. recharge</span>
+.rehash</pre></div>
+
+  <p data-l="en">You should see this in the partyline and the log:</p>
+  <p data-l="fr">Tu devrais voir ceci dans la partyline et le journal :</p>
+  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.6.0] - Complete production ready version</span>
+<span class="n">Loaded successfully - ready to serve!</span></pre></div>
+
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
+    <div data-l="en"><b>Edit the config first.</b> <code>cc(mainchan)</code> and <code>cc(backchan)</code> ship as <code>#mainchan</code> and <code>#secretchan</code> placeholders — set them to your real channels before you rely on <code>!ops</code>.</div>
+    <div data-l="fr"><b>Modifie la config d'abord.</b> <code>cc(mainchan)</code> et <code>cc(backchan)</code> arrivent avec les valeurs bidon <code>#mainchan</code> et <code>#secretchan</code> — mets tes vrais canaux avant de compter sur <code>!ops</code>.</div></div>
+</section>
+
+<!-- ================= CONFIG ================= -->
+<section id="config">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-gear"/></svg></span>Configuration</h2>
+  <p class="sec-intro" data-l="en">Everything lives in the <code>CONFIGURATION SECTION</code> at the top of the script. Change it, then <code>.rehash</code>.</p>
+  <p class="sec-intro" data-l="fr">Tout se trouve dans la <code>CONFIGURATION SECTION</code> en haut du script. Modifie, puis fais <code>.rehash</code>.</p>
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:290px"><span data-l="en">Setting</span><span data-l="fr">Réglage</span></th><th scope="col" style="width:110px"><span data-l="en">Default</span><span data-l="fr">Défaut</span></th><th scope="col"><span data-l="en">What it does</span><span data-l="fr">À quoi ça sert</span></th></tr>
+    <tr><td><code>cc(cmdchar)</code></td><td><code>!</code></td><td><span data-l="en">Command trigger character</span><span data-l="fr">Caractère qui déclenche les commandes</span></td></tr>
+    <tr><td><code>cc(mainchan)</code></td><td><code>#mainchan</code></td><td><span data-l="en">Main public channel, initialised at load</span><span data-l="fr">Canal public principal, initialisé au chargement</span></td></tr>
+    <tr><td><code>cc(backchan)</code></td><td><code>#secretchan</code></td><td><span data-l="en">Ops channel that <code>!ops</code> alerts</span><span data-l="fr">Canal des ops qu'alerte <code>!ops</code></span></td></tr>
+    <tr><td><code>cc(backmode)</code></td><td><code>+snt</code></td><td><span data-l="en">Modes for the back channel</span><span data-l="fr">Modes du canal des ops</span></td></tr>
+    <tr><td><code>cc(away_enabled)</code></td><td><code>0</code></td><td><span data-l="en">Set the bot away with <code>cc(away_message)</code> on every connect and rehash</span><span data-l="fr">Mettre le robot absent avec <code>cc(away_message)</code> à chaque connexion et rehash</span></td></tr>
+    <tr><td><code>cc(away_message)</code></td><td><em><span data-l="en">text</span><span data-l="fr">texte</span></em></td><td><span data-l="en">The default away message</span><span data-l="fr">Le message d'absence par défaut</span></td></tr>
+    <tr><td><code>cc(away_file)</code></td><td><code>lmao-away.txt</code></td><td><span data-l="en">Where <code>!away</code> / <code>!back</code> save their setting, so it survives reboots and takes over from the two above</span><span data-l="fr">Où <code>!away</code> / <code>!back</code> enregistrent leur réglage : il survit aux redémarrages et remplace les deux ci-dessus</span></td></tr>
+    <tr><td><code>cc(idledeop_enabled)</code></td><td><code>1</code></td><td><span data-l="en">Master switch for idle deop. The <code>idledeop</code> module itself still starts off on each channel</span><span data-l="fr">Interrupteur général du deop des inactifs. Le module <code>idledeop</code> reste éteint au départ dans chaque canal</span></td></tr>
+    <tr><td><code>cc(idledeop_default_minutes)</code></td><td><code>180</code></td><td><span data-l="en">Minutes before an idle op is deopped</span><span data-l="fr">Minutes avant qu'un op inactif perde son op</span></td></tr>
+    <tr><td><code>cc(idledeop_check_interval)</code></td><td><code>5</code></td><td><span data-l="en">Seconds between idle-deop sweeps</span><span data-l="fr">Secondes entre deux vérifications du deop des inactifs</span></td></tr>
+    <tr><td><code>cc(activevoice_idle_minutes)</code></td><td><code>180</code></td><td><span data-l="en">Minutes before an idle voice is removed</span><span data-l="fr">Minutes avant qu'un voice inactif soit retiré</span></td></tr>
+    <tr><td><code>cc(activevoice_check_interval)</code></td><td><code>10</code></td><td><span data-l="en">Seconds between devoice sweeps</span><span data-l="fr">Secondes entre deux vérifications du devoice</span></td></tr>
+    <tr><td><code>cc(access_welcome_delay)</code></td><td><code>3</code></td><td><span data-l="en">Seconds between welcome notices. They are queued and sent one line at a time across every access change, so a burst of grants can't flood the network</span><span data-l="fr">Secondes entre deux notices de bienvenue. Elles sont mises en file et envoyées une ligne à la fois pour tous les changements d'accès, pour ne pas inonder le réseau</span></td></tr>
+    <tr><td><code>cc(activevoice_exempt_flags)</code></td><td><code>n m M v</code></td><td><span data-l="en">Flags that make a user invisible to ActiveVoice</span><span data-l="fr">Drapeaux qui rendent un utilisateur invisible pour ActiveVoice</span></td></tr>
+    <tr><td><code>cc(protected_bots)</code></td><td><code>X W</code></td><td><span data-l="en">Nicks the bot will never deop or ban</span><span data-l="fr">Pseudos que le robot ne deop ni ne bannit jamais</span></td></tr>
+    <tr><td><code>cc(protected_flags)</code></td><td><code>n m</code></td><td><span data-l="en">Flags that protect a user from deop/devoice/ban</span><span data-l="fr">Drapeaux qui protègent du deop, du devoice et du ban</span></td></tr>
+    <tr><td><code>cc(deop_exempt)</code></td><td><code>Secoupe Seb offline</code></td><td><span data-l="en">Nicks or handles the idle-deop sweep never touches</span><span data-l="fr">Pseudos ou handles que le deop des inactifs ne touche jamais</span></td></tr>
+    <tr><td><code>cc(register_enabled)</code></td><td><code>1</code></td><td><span data-l="en">Master switch for self-registration</span><span data-l="fr">Interrupteur général de l'auto-inscription</span></td></tr>
+    <tr><td><code>cc(register_token_life)</code></td><td><code>300</code></td><td><span data-l="en">Seconds a registration code stays valid</span><span data-l="fr">Secondes de validité d'un code d'inscription</span></td></tr>
+    <tr><td><code>cc(register_cooldown)</code></td><td><code>600</code></td><td><span data-l="en">Seconds between registration attempts from one host</span><span data-l="fr">Secondes entre deux tentatives d'inscription d'un même hôte</span></td></tr>
+    <tr><td><code>cc(register_handle_max)</code></td><td><code>9</code></td><td><span data-l="en">Longest handle a registration may claim — must not exceed <code>handlen</code></span><span data-l="fr">Longueur maximale d'un handle — ne doit pas dépasser <code>handlen</code></span></td></tr>
+    <tr><td><code>cc(register_flags)</code></td><td><em><span data-l="en">empty</span><span data-l="fr">vide</span></em></td><td><span data-l="en">Flags a self-registered user gets. Leave empty</span><span data-l="fr">Drapeaux donnés à l'inscription. Laisse vide</span></td></tr>
+    <tr><td><code>hopondeop</code> / <code>kickondeop</code></td><td><code>1</code></td><td><span data-l="en">React when the bot itself is deopped</span><span data-l="fr">Réagir quand le robot lui-même perd son op</span></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ================= LEVELS ================= -->
+<section id="levels">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-ladder"/></svg></span><span data-l="en">Access levels</span><span data-l="fr">Niveaux d'accès</span></h2>
+  <p class="sec-intro" data-l="en">Access is a <strong>position</strong>, not a pile of flags: every user sits on exactly one rung. The
+    <code>!add…</code> and <code>!del…</code> commands move people between rungs and clear whatever they held before.
+    Underneath it is still plain eggdrop flags, global or set on a single channel. Bind masks read
+    <code>global|channel</code> — <code>n|o</code> means "global owner <em>or</em> channel op".</p>
+  <p class="sec-intro" data-l="fr">L'accès est une <strong>position</strong>, pas une pile de drapeaux : chaque utilisateur est sur un seul
+    échelon. Les commandes <code>!add…</code> et <code>!del…</code> déplacent les gens d'un échelon à l'autre et effacent ce qu'ils
+    avaient avant. En dessous, ce sont toujours des drapeaux eggdrop, globaux ou propres à un canal. Les masques se lisent
+    <code>global|canal</code> — <code>n|o</code> veut dire « propriétaire global <em>ou</em> op du canal ».</p>
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:100px"><span data-l="en">Flag</span><span data-l="fr">Drapeau</span></th><th scope="col" style="width:160px"><span data-l="en">Level</span><span data-l="fr">Niveau</span></th><th scope="col"><span data-l="en">Can do</span><span data-l="fr">Peut faire</span></th></tr>
+    <tr><td><code>n</code></td><td><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span></td><td><span data-l="en">Everything, including bot control (<code>!restart</code>, <code>!addchan</code>, <code>!botnick</code>). Granted on DCC with <code>.chattr</code>, never by command</span><span data-l="fr">Tout, y compris le contrôle du robot (<code>!restart</code>, <code>!addchan</code>, <code>!botnick</code>). Donné en DCC avec <code>.chattr</code>, jamais par commande</span></td></tr>
+    <tr><td><code>m</code></td><td><span class="lvl master"><span data-l="en">Master</span><span data-l="fr">Maître</span></span></td><td><span data-l="en">Modes, blacklist, flags, users, modules, chanlog, <code>!say</code> / <code>!act</code>, <code>!addop</code></span><span data-l="fr">Modes, liste noire, drapeaux, utilisateurs, modules, chanlog, <code>!say</code> / <code>!act</code>, <code>!addop</code></span></td></tr>
+    <tr><td><code>o</code></td><td><span class="lvl op">Op</span></td><td><span data-l="en">Channel <code>+o</code>, topic, <code>!addmod</code> — everything a Mod can do, plus op and deop</span><span data-l="fr"><code>+o</code> dans le canal, sujet, <code>!addmod</code> — tout ce qu'un Mod peut faire, plus op et deop</span></td></tr>
+    <tr><td><code>M</code></td><td><span class="lvl mod">Mod</span></td><td><span data-l="en">Kick, ban, unban, bans, invite, voice, devoice — <strong>no channel <code>+o</code></strong>. A custom flag, so it never collides with eggdrop's own <code>m</code></span><span data-l="fr">Kick, ban, unban, bans, invite, voice, devoice — <strong>sans <code>+o</code> dans le canal</strong>. Un drapeau maison, qui n'entre jamais en conflit avec le <code>m</code> d'eggdrop</span></td></tr>
+    <tr><td><code>v</code></td><td><span class="lvl voice">Voice</span></td><td><span data-l="en"><code>!voice</code> / <code>!devoice</code>, autovoice, and exempt from ActiveVoice</span><span data-l="fr"><code>!voice</code> / <code>!devoice</code>, voice automatique, et exempté d'ActiveVoice</span></td></tr>
+    <tr><td><code>-</code></td><td><span class="lvl user"><span data-l="en">Registered</span><span data-l="fr">Inscrit</span></span></td><td><span data-l="en">Any user in the bot's userfile: <code>!info</code>, <code>!whois</code>, <code>!ops</code>, <code>!bot</code></span><span data-l="fr">Toute personne dans le userfile du robot : <code>!info</code>, <code>!whois</code>, <code>!ops</code>, <code>!bot</code></span></td></tr>
+    <tr><td><span data-l="en">none</span><span data-l="fr">aucun</span></td><td><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span></td><td><code>!help</code>, <code>!showcommands</code>, <code>!verify</code>, <code>!version</code></td></tr>
+  </table>
+  </div>
+  <div class="tip"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg>
+    <div data-l="en"><b>Check your own level:</b> <code>!verify</code> shows your handle, level, flags and registered hostmasks. <code>!verify nickname</code> does the same for someone else. <code>!access</code> lists everyone who has a level on the channel.</div>
+    <div data-l="fr"><b>Vérifie ton niveau :</b> <code>!verify</code> affiche ton handle, ton niveau, tes drapeaux et tes masques d'hôte. <code>!verify pseudo</code> fait pareil pour quelqu'un d'autre. <code>!access</code> liste tous ceux qui ont un niveau dans le canal.</div></div>
+</section>
+
+<!-- ================= HELP SYSTEM ================= -->
+<section id="help">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-help"/></svg></span><span data-l="en">The help system</span><span data-l="fr">L'aide</span></h2>
+  <p class="sec-intro" data-l="en">Help is driven by a single table inside the script, so <code>!help</code> in the channel and <code>/msg &lt;bot&gt; help</code> always say the same thing. <strong>Both reply by notice</strong> — nothing is ever printed into the channel.</p>
+  <p class="sec-intro" data-l="fr">L'aide vient d'une seule table dans le script : <code>!help</code> dans le canal et <code>/msg &lt;robot&gt; help</code> disent toujours la même chose. <strong>Les deux répondent par notice</strong> — rien n'est jamais écrit dans le canal.</p>
+
+  <div class="cmd" data-k="help commands list notice aide">
+    <div class="cmd-head"><h4><span class="amp">!</span>help</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">With no argument it gives you the short orientation. With a command name it gives you usage, description, an example, and the <code>/msg</code> form where one exists.</p>
+    <p data-l="fr">Sans argument, elle donne un court survol. Avec un nom de commande, elle donne l'usage, la description, un exemple et la forme <code>/msg</code> quand elle existe.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!help</span> <span class="o">[command]</span>
+<span class="t">/msg BotNick help</span> <span class="o">[command]</span></pre></div>
+    <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">Quick Help:</span> Type !help &lt;command&gt; for details - (To prevent spam, you can use /msg BotNick help &lt;command&gt;)
+<span class="n">Common:</span> op deop voice devoice invite kick ban unban bans topic mode verify whois info ops
+<span class="n">Access:</span> !access - !addvoice !addmod !addop !addmaster - !delvoice !delmod !delop !delmaster !delaccess
+<span class="n">Modules:</span> !module list - !enable &lt;module&gt; - !disable &lt;module&gt; (available: activevoice, chanlog, idledeop, idledevoice, topic)
+Or try !showcommands for the full list</pre></div>
+    <div class="code reply"><span class="tag">!help ban</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">Command:</span> !ban &lt;nick&gt; [reason]
+Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
+<span class="n">Example:</span> !ban baduser being annoying</pre></div>
+  </div>
+
+  <div class="cmd" data-k="showcommands all commands list liste">
+    <div class="cmd-head"><h4><span class="amp">!</span>showcommands</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Every command name in one notice, built from the same help table so it can never drift out of sync with what the bot actually knows.</p>
+    <p data-l="fr">Tous les noms de commandes dans une notice, construite à partir de la même table d'aide : elle ne peut jamais être en retard sur ce que le robot connaît.</p>
+  </div>
+</section>
+
+<!-- ================= ACCESS COMMANDS ================= -->
+<section id="cmd-access">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-key"/></svg></span><span data-l="en">Access &amp; users</span><span data-l="fr">Accès et utilisateurs</span></h2>
+  <p class="sec-intro" data-l="en">One command per rung. Granting a level <strong>replaces</strong> whatever the user had, globally and on the channel, so nothing is ever left behind: <code>!addop</code> on someone who was only voiced moves them up, and <code>!addvoice</code> on an op moves them back down. The bot always says which way it went, and sets the matching mode in the channel.</p>
+  <p class="sec-intro" data-l="fr">Une commande par échelon. Donner un niveau <strong>remplace</strong> ce que la personne avait, globalement et dans le canal : rien ne reste derrière. <code>!addop</code> sur quelqu'un qui n'avait que le voice le fait monter, et <code>!addvoice</code> sur un op le fait redescendre. Le robot dit toujours dans quel sens ça s'est fait, et applique le mode correspondant dans le canal.</p>
+
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Only below yourself</span><span data-l="fr">Seulement en dessous de toi</span></th><td><span data-l="en">You can never grant a level at or above your own, never change somebody level with you or above you, and never change your own access.</span><span data-l="fr">Tu ne peux jamais donner un niveau égal ou supérieur au tien, jamais modifier quelqu'un de ton niveau ou au-dessus, et jamais modifier ton propre accès.</span></td></tr>
+    <tr><th><span data-l="en">Exact level to remove</span><span data-l="fr">Retirer le bon niveau</span></th><td><span data-l="en"><code>!delop</code> only removes an Op. Pointed at a master it tells you so instead of quietly knocking them down — use <code>!delaccess</code> when you do not care which level it is.</span><span data-l="fr"><code>!delop</code> ne retire qu'un Op. Visé sur un maître, il te le dit au lieu de le rétrograder en silence — utilise <code>!delaccess</code> quand le niveau importe peu.</span></td></tr>
+    <tr><th><span data-l="en">Modes follow access</span><span data-l="fr">Les modes suivent l'accès</span></th><td><span data-l="en"><code>!addop</code> and <code>!addmaster</code> op the user, <code>!addvoice</code> and <code>!addmod</code> voice them, and the <code>!del…</code> commands take those modes back. A demotion from Op to Mod goes out as one <code>-o+v</code>.</span><span data-l="fr"><code>!addop</code> et <code>!addmaster</code> donnent l'op, <code>!addvoice</code> et <code>!addmod</code> donnent le voice, et les commandes <code>!del…</code> les retirent. Passer d'Op à Mod se fait en un seul <code>-o+v</code>.</span></td></tr>
+    <tr><th><span data-l="en">A welcome notice</span><span data-l="fr">Une notice de bienvenue</span></th><td><span data-l="en">The person who got access is told by notice who gave it to them. Welcomes are queued and sent one line every <code>cc(access_welcome_delay)</code> seconds.</span><span data-l="fr">La personne qui reçoit un accès est avisée par notice de qui le lui a donné. Les bienvenues sont mises en file et envoyées une ligne toutes les <code>cc(access_welcome_delay)</code> secondes.</span></td></tr>
+    <tr><th><span data-l="en">Unknown nicks</span><span data-l="fr">Pseudos inconnus</span></th><td><span data-l="en">A nick with no user record gets one made on the spot from the host the bot can see, and the bot warns you if it is an ISP host instead of a hidden <code>*.users.undernet.org</code> one.</span><span data-l="fr">Un pseudo sans fiche en reçoit une sur-le-champ à partir de l'hôte que voit le robot, qui t'avertit si c'est un hôte de fournisseur au lieu d'un hôte caché <code>*.users.undernet.org</code>.</span></td></tr>
+    <tr><th><span data-l="en">Logged</span><span data-l="fr">Journalisé</span></th><td><span data-l="en">Every grant, removal and refused attempt goes to <a href="#chanlog">chanlog</a> and the bot's log.</span><span data-l="fr">Chaque ajout, retrait et tentative refusée va dans le <a href="#chanlog">chanlog</a> et le journal du robot.</span></td></tr>
+  </table>
+  </div>
+
+  <div class="cmd" data-k="addvoice add voice grant access level ajouter">
+    <div class="cmd-head"><h4><span class="amp">!</span>addvoice</h4><span class="lvl mod">Mod+</span></div>
+    <p data-l="en">Puts someone on the Voice rung (<code>+v</code>) and voices them if they are here: autovoice, and exempt from ActiveVoice's idle devoicer. Replaces any level they already had.</p>
+    <p data-l="fr">Met quelqu'un à l'échelon Voice (<code>+v</code>) et lui donne le voice s'il est là : voice automatique, et exempté du devoice d'ActiveVoice. Remplace le niveau qu'il avait.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!addvoice</span> <span class="a">&lt;nick|handle&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="addmod add mod moderator kick ban no op moderateur">
+    <div class="cmd-head"><h4><span class="amp">!</span>addmod</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Puts someone on the Mod rung (<code>+Mv</code>): kick, ban, unban, bans, invite, voice and devoice, but <strong>no channel <code>+o</code></strong>. Voices them, and takes <code>+o</code> off if they had it.</p>
+    <p data-l="fr">Met quelqu'un à l'échelon Mod (<code>+Mv</code>) : kick, ban, unban, bans, invite, voice et devoice, mais <strong>sans <code>+o</code> dans le canal</strong>. Lui donne le voice et retire son <code>+o</code> s'il l'avait.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!addmod</span> <span class="a">&lt;nick|handle&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="addop add op grant channel operator">
+    <div class="cmd-head"><h4><span class="amp">!</span>addop</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Puts someone on the Op rung (<code>+ov</code>) and ops them if they are here. A Voice or a Mod is moved up; the old level comes off in the same step.</p>
+    <p data-l="fr">Met quelqu'un à l'échelon Op (<code>+ov</code>) et lui donne l'op s'il est là. Un Voice ou un Mod monte ; l'ancien niveau disparaît du même coup.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!addop</span> <span class="a">&lt;nick|handle&gt;</span></pre></div>
+    <div class="code example"><span class="tag">examples</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!addvoice</span> dave
+<span class="n">[OK] dave is now Voice on #mainchan (flags: -|v)</span>
+<span class="t">!addmod</span> dave
+<span class="n">[OK] dave moves up from Voice to Mod on #mainchan (flags: -|Mv)</span>
+<span class="t">!addop</span> dave
+<span class="n">[OK] dave moves up from Mod to Op on #mainchan (flags: -|ov)</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="addmaster add master grant maitre">
+    <div class="cmd-head"><h4><span class="amp">!</span>addmaster</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span></div>
+    <p data-l="en">Puts someone on the Master rung (<code>+mov</code>) and ops them. Owner is deliberately not grantable by command — that stays a <code>.chattr</code> job on the party line.</p>
+    <p data-l="fr">Met quelqu'un à l'échelon Maître (<code>+mov</code>) et lui donne l'op. Le niveau Propriétaire ne se donne volontairement pas par commande — ça reste un <code>.chattr</code> sur la partyline.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!addmaster</span> <span class="a">&lt;nick|handle&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="delvoice delmod delop delmaster remove access level retirer">
+    <div class="cmd-head"><h4><span class="amp">!</span>delvoice <span class="amp">!</span>delmod <span class="amp">!</span>delop <span class="amp">!</span>delmaster</h4><span class="lvl mod">Mod+</span></div>
+    <p data-l="en">Takes that exact level away, leaves the user with no access, and removes their <code>+o</code> / <code>+v</code>. The user record itself stays — use <code>!deluser</code> to remove that. Each one needs the same level as the matching <code>!add</code>: Mod+ for <code>!delvoice</code>, Op+ for <code>!delmod</code>, Master+ for <code>!delop</code>, Owner for <code>!delmaster</code>.</p>
+    <p data-l="fr">Retire ce niveau précis, laisse la personne sans accès et enlève son <code>+o</code> / <code>+v</code>. La fiche elle-même reste — utilise <code>!deluser</code> pour la supprimer. Chacune demande le même niveau que le <code>!add</code> correspondant : Mod+ pour <code>!delvoice</code>, Op+ pour <code>!delmod</code>, Maître+ pour <code>!delop</code>, Propriétaire pour <code>!delmaster</code>.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!delmod</span> <span class="a">&lt;nick|handle&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="delaccess remove all access strip level">
+    <div class="cmd-head"><h4><span class="amp">!</span>delaccess</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Removes whichever level somebody holds, without having to know which one it is, and takes <code>+o</code> / <code>+v</code> off them. Still bound by the same rule: you cannot touch anyone at or above your own level.</p>
+    <p data-l="fr">Retire le niveau que la personne a, sans avoir à savoir lequel, et enlève son <code>+o</code> / <code>+v</code>. Même règle : tu ne peux toucher personne de ton niveau ou au-dessus.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!delaccess</span> <span class="a">&lt;nick|handle&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="access list users levels who has access liste">
+    <div class="cmd-head"><h4><span class="amp">!</span>access</h4><span class="lvl mod">Mod+</span></div>
+    <p data-l="en">Lists everyone with a level on this channel, highest rung first. Names marked <code>[*]</code> are on the channel right now. Add a level name to list just that rung.</p>
+    <p data-l="fr">Liste tous ceux qui ont un niveau dans le canal, du plus haut au plus bas. Les noms marqués <code>[*]</code> sont dans le canal en ce moment. Ajoute un nom de niveau pour ne lister que celui-là.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!access</span> <span class="o">[voice|mod|op|master|owner]</span></pre></div>
+    <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">Access list for #mainchan - 4 with access:</span>
+  Owner (n): boss[*]
+  Master (m): bigop[*]
+  Op (o): chanop[*]
+  Mod (M): dave</pre></div>
+  </div>
+</section>
+
+<!-- ================= EVERYONE ================= -->
+<section id="cmd-everyone">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-globe"/></svg></span><span data-l="en">Everyone</span><span data-l="fr">Tout le monde</span></h2>
+  <p class="sec-intro" data-l="en">No flags required — anyone in the channel can use these.</p>
+  <p class="sec-intro" data-l="fr">Aucun drapeau requis — n'importe qui dans le canal peut les utiliser.</p>
+
+  <div class="cmd" data-k="verify access level flags hosts handle verifier">
+    <div class="cmd-head"><h4><span class="amp">!</span>verify</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Shows a user's handle, access level, flags and registered hostmasks. With no nick it checks you. Given a registration code instead, it finishes your registration.</p>
+    <p data-l="fr">Affiche le handle, le niveau, les drapeaux et les masques d'hôte d'une personne. Sans pseudo, c'est toi qui es vérifié. Avec un code d'inscription, elle termine ton inscription.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!verify</span> <span class="o">[nick]</span>
+<span class="t">/msg BotNick verify</span> <span class="o">[nick]</span></pre></div>
+    <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">Access Info for JohnDoe:</span>
+  Handle: JohnDoe
+  Level: Op (o)
+  Flags: -o
+  Hosts: *!*@his.host.com</pre></div>
+  </div>
+
+  <div class="cmd" data-k="register signup self register account handle host inscription">
+    <div class="cmd-head"><h4><span class="amp">/msg</span> register</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Registers you with the bot using the host you are on. You get a one-time code to type back, and the bot re-checks everything before it saves anything. Full walkthrough in <a href="#register">self-registration</a>.</p>
+    <p data-l="fr">T'inscrit auprès du robot avec l'hôte que tu utilises. Tu reçois un code unique à retaper, et le robot revérifie tout avant d'enregistrer quoi que ce soit. Tout le détail dans <a href="#register">auto-inscription</a>.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">/msg BotNick register</span> <span class="o">[handle]</span>
+<span class="t">/msg BotNick verify</span> <span class="a">&lt;code&gt;</span></pre></div>
+    <div class="tip"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>
+      <div data-l="en"><b>Hide your host first.</b> Auth with X and set <code>+x</code> before registering, so the bot stores <code>&lt;account&gt;.users.undernet.org</code> instead of your ISP host.</div>
+      <div data-l="fr"><b>Cache ton hôte d'abord.</b> Authentifie-toi auprès de X et mets <code>+x</code> avant de t'inscrire : le robot gardera <code>&lt;compte&gt;.users.undernet.org</code> au lieu de l'hôte de ton fournisseur.</div></div>
+  </div>
+
+  <div class="cmd" data-k="version script github repo">
+    <div class="cmd-head"><h4><span class="amp">!</span>version</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span></div>
+    <p data-l="en">Version number and repository link.</p>
+    <p data-l="fr">Le numéro de version et le lien du dépôt.</p>
+  </div>
+</section>
+
+<!-- ================= REGISTERED ================= -->
+<section id="cmd-users">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-user"/></svg></span><span data-l="en">Registered users</span><span data-l="fr">Utilisateurs inscrits</span></h2>
+  <p class="sec-intro" data-l="en">For anyone with a user record in the bot.</p>
+  <p class="sec-intro" data-l="fr">Pour toute personne qui a une fiche dans le robot.</p>
+
+  <div class="cmd" data-k="info infoline personal about me">
+    <div class="cmd-head"><h4><span class="amp">!</span>info</h4><span class="lvl user"><span data-l="en">Registered</span><span data-l="fr">Inscrit</span></span></div>
+    <p data-l="en">Sets your personal infoline for this channel. Used alone it shows what you currently have; <code>none</code> clears it.</p>
+    <p data-l="fr">Définit ta ligne d'info pour ce canal. Seule, elle affiche ce que tu as ; <code>none</code> l'efface.</p>
+    <div class="code example"><span class="tag">examples</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!info</span> Hello, I'm a channel regular!
+<span class="t">!info</span>
+<span class="t">!info</span> none</pre></div>
+  </div>
+
+  <div class="cmd" data-k="whois user access level flags">
+    <div class="cmd-head"><h4><span class="amp">!</span>whois</h4><span class="lvl user"><span data-l="en">Registered</span><span data-l="fr">Inscrit</span></span></div>
+    <p data-l="en">A user's handle, access level and flags. Shorter than <code>!verify</code> — no hostmasks.</p>
+    <p data-l="fr">Le handle, le niveau et les drapeaux d'une personne. Plus court que <code>!verify</code> — sans masques d'hôte.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!whois</span> <span class="a">&lt;nick&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="ops alert help call staff backchannel aide">
+    <div class="cmd-head"><h4><span class="amp">!</span>ops</h4><span class="lvl user"><span data-l="en">Registered</span><span data-l="fr">Inscrit</span></span></div>
+    <p data-l="en">Calls for help. Sends a message to the back channel (<code>cc(backchan)</code>) naming you, the channel you're in, and your reason — without announcing anything where you are.</p>
+    <p data-l="fr">Appelle à l'aide. Envoie un message au canal des ops (<code>cc(backchan)</code>) avec ton nom, le canal où tu es et ta raison — sans rien annoncer là où tu es.</p>
+    <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!ops</span> someone is flooding the channel</pre></div>
+  </div>
+
+  <div class="cmd" data-k="bot information trigger support channel">
+    <div class="cmd-head"><h4><span class="amp">!</span>bot</h4><span class="lvl user"><span data-l="en">Registered</span><span data-l="fr">Inscrit</span></span></div>
+    <p data-l="en">Basic bot information: the trigger character and the support channel.</p>
+    <p data-l="fr">L'info de base du robot : le caractère déclencheur et le canal de soutien.</p>
+  </div>
+</section>
+
+<!-- ================= MODS & OPS ================= -->
+<section id="cmd-ops">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hammer"/></svg></span><span data-l="en">Mods &amp; ops</span><span data-l="fr">Mods et ops</span></h2>
+  <p class="sec-intro" data-l="en">Kick, ban, unban, bans and invite are open to <span class="lvl mod">Mod</span> (<code>+M</code>) and up — a mod does all of that without ever holding channel <code>+o</code>. Op, deop and topic need <span class="lvl op">Op</span>. The bot has to be opped for any of these to take effect, and if your level is too low it tells you which one you are.</p>
+  <p class="sec-intro" data-l="fr">Kick, ban, unban, bans et invite sont ouverts aux <span class="lvl mod">Mod</span> (<code>+M</code>) et plus — un mod fait tout ça sans jamais avoir le <code>+o</code>. Op, deop et sujet demandent <span class="lvl op">Op</span>. Le robot doit être op pour que ça marche, et si ton niveau est trop bas, il te dit lequel tu as.</p>
+
+  <div class="cmd" data-k="op give ops mode +o">
+    <div class="cmd-head"><h4><span class="amp">!</span>op</h4><span class="lvl op">Op+</span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Gives op to yourself, or to the nick you name.</p>
+    <p data-l="fr">Te donne l'op, ou au pseudo que tu nommes.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!op</span> <span class="o">[nick]</span>
+<span class="t">/msg BotNick op</span> <span class="a">#channel</span> <span class="o">[nick]</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="deop remove ops mode -o protected">
+    <div class="cmd-head"><h4><span class="amp">!</span>deop</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Takes op away. <strong>Refuses</strong> to touch <code>+n</code> / <code>+m</code> users and the service bots in <code>cc(protected_bots)</code>. Deopping yourself always works.</p>
+    <p data-l="fr">Retire l'op. <strong>Refuse</strong> de toucher les <code>+n</code> / <code>+m</code> et les services de <code>cc(protected_bots)</code>. Te retirer ton propre op marche toujours.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!deop</span> <span class="o">[nick]</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="voice devoice give remove mode +v -v">
+    <div class="cmd-head"><h4><span class="amp">!</span>voice &nbsp;/&nbsp; <span class="amp">!</span>devoice</h4><span class="lvl voice">Voice+</span></div>
+    <p data-l="en">Gives or takes voice, for yourself or the nick you name. Will not devoice <code>+n</code> / <code>+m</code> users.</p>
+    <p data-l="fr">Donne ou retire le voice, à toi ou au pseudo que tu nommes. Ne retire jamais le voice aux <code>+n</code> / <code>+m</code>.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!voice</span> <span class="o">[nick]</span>
+<span class="t">!devoice</span> <span class="o">[nick]</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="invite bring user into channel inviter">
+    <div class="cmd-head"><h4><span class="amp">!</span>invite</h4><span class="lvl mod">Mod+</span></div>
+    <p data-l="en">Invites someone to the channel.</p>
+    <p data-l="fr">Invite quelqu'un dans le canal.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!invite</span> <span class="a">&lt;nick&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="kick remove user reason expulser">
+    <div class="cmd-head"><h4><span class="amp">!</span>kick</h4><span class="lvl mod">Mod+</span></div>
+    <p data-l="en">Kicks a user, with an optional reason.</p>
+    <p data-l="fr">Expulse quelqu'un, avec une raison facultative.</p>
+    <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!kick</span> spammer spam detected</pre></div>
+  </div>
+
+  <div class="cmd" data-k="ban kickban mask host protection bannir">
+    <div class="cmd-head"><h4><span class="amp">!</span>ban</h4><span class="lvl mod">Mod+</span></div>
+    <p data-l="en">Bans and kicks in one go. The mask is built from the user's host as <code>*!*@host</code>. Protected flags and service bots are refused.</p>
+    <p data-l="fr">Bannit et expulse d'un coup. Le masque est fait à partir de l'hôte : <code>*!*@hôte</code>. Les drapeaux protégés et les services sont refusés.</p>
+    <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!ban</span> baduser being annoying</pre></div>
+  </div>
+
+  <div class="cmd" data-k="unban bans remove ban mask banlist list">
+    <div class="cmd-head"><h4><span class="amp">!</span>unban &nbsp;/&nbsp; <span class="amp">!</span>bans</h4><span class="lvl mod">Mod+</span></div>
+    <p data-l="en">Removes a ban from the channel banlist, or lists the current bans with details, by notice.</p>
+    <p data-l="fr">Retire un bannissement de la liste du canal, ou liste les bannissements actuels en détail, par notice.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!unban</span> <span class="a">&lt;*!*@host&gt;</span>
+<span class="t">!bans</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="topic topicsync set channel topic store restore sujet">
+    <div class="cmd-head"><h4><span class="amp">!</span>topic &nbsp;/&nbsp; <span class="amp">!</span>topicsync</h4><span class="lvl op">Op+</span></div>
+    <p data-l="en">Sets the channel topic <strong>and stores it</strong>, so <code>!topicsync</code> can put it back after someone changes it. Needs the <code>topic</code> module.</p>
+    <p data-l="fr">Change le sujet du canal <strong>et le garde en mémoire</strong>, pour que <code>!topicsync</code> le remette quand quelqu'un le modifie. Demande le module <code>topic</code>.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!topic</span> <span class="a">&lt;new topic text&gt;</span>
+<span class="t">!topicsync</span></pre></div>
+  </div>
+</section>
+
+<!-- ================= MASTER ================= -->
+<section id="cmd-master">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-bolt"/></svg></span><span data-l="en">Masters</span><span data-l="fr">Maîtres</span></h2>
+  <p class="sec-intro" data-l="en">Flag <code>m</code> on the channel or globally, or global <code>n</code>.</p>
+  <p class="sec-intro" data-l="fr">Drapeau <code>m</code> dans le canal ou global, ou <code>n</code> global.</p>
+
+  <div class="cmd" data-k="mode channel modes set">
+    <div class="cmd-head"><h4><span class="amp">!</span>mode</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Sets channel modes.</p>
+    <p data-l="fr">Change les modes du canal.</p>
+    <div class="code example"><span class="tag">examples</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!mode</span> +nt
+<span class="t">!mode</span> -m</pre></div>
+  </div>
+
+  <div class="cmd" data-k="blacklist whitelist permanent ban perm liste noire">
+    <div class="cmd-head"><h4><span class="amp">!</span>blacklist &nbsp;/&nbsp; <span class="amp">!</span>whitelist</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Permanently bans a user (<code>*!*@host</code>) with an optional reason, or removes a mask from that blacklist.</p>
+    <p data-l="fr">Bannit quelqu'un pour de bon (<code>*!*@hôte</code>) avec une raison facultative, ou retire un masque de cette liste noire.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!blacklist</span> <span class="a">&lt;nick&gt;</span> <span class="o">[reason]</span>
+<span class="t">!whitelist</span> <span class="a">&lt;*!*@host&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="chattr flags access change user drapeaux">
+    <div class="cmd-head"><h4><span class="amp">!</span>chattr</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Changes a user's flags on this channel. Raw flags, no hierarchy — the access commands are the safer way.</p>
+    <p data-l="fr">Change les drapeaux d'une personne dans ce canal. Drapeaux bruts, sans hiérarchie — les commandes d'accès sont plus sûres.</p>
+    <div class="code example"><span class="tag">examples</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!chattr</span> john +o
+<span class="t">!chattr</span> john -v</pre></div>
+  </div>
+
+  <div class="cmd" data-k="adduser deluser add remove user handle hostmask">
+    <div class="cmd-head"><h4><span class="amp">!</span>adduser &nbsp;/&nbsp; <span class="amp">!</span>deluser</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Adds a user to the bot (without a hostmask, the nick's current host is used), or removes one completely.</p>
+    <p data-l="fr">Ajoute une personne au robot (sans masque, l'hôte actuel du pseudo est utilisé), ou la supprime complètement.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!adduser</span> <span class="a">&lt;handle&gt;</span> <span class="o">[*!*@host]</span>
+<span class="t">!deluser</span> <span class="a">&lt;handle&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="say act speak message action me emote channel parler">
+    <div class="cmd-head"><h4><span class="amp">!</span>say &nbsp;/&nbsp; <span class="amp">!</span>act</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Makes the bot say something, or perform an action (<code>/me</code>), in the channel. Among the few things it says out loud.</p>
+    <p data-l="fr">Fait dire quelque chose au robot, ou lui fait faire une action (<code>/me</code>), dans le canal. Une des rares fois où il parle à voix haute.</p>
+    <div class="code example"><span class="tag">examples</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!say</span> Hello everyone
+<span class="t">!act</span> waves at everyone</pre></div>
+  </div>
+
+  <div class="cmd" data-k="idledeop idle deop timer minutes module inactif">
+    <div class="cmd-head"><h4><span class="amp">!</span>idledeop</h4><span class="lvl master">Master+</span></div>
+    <p data-l="en">Sets the idle-deop limit for a channel, in <strong>minutes</strong>. Default is <code>cc(idledeop_default_minutes)</code> (180). The <code>idledeop</code> module is off by default — turn it on with <code>!enable idledeop</code>.</p>
+    <p data-l="fr">Règle la limite du deop des inactifs pour un canal, en <strong>minutes</strong>. Par défaut <code>cc(idledeop_default_minutes)</code> (180). Le module <code>idledeop</code> est éteint au départ — active-le avec <code>!enable idledeop</code>.</p>
+    <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!idledeop</span> #canada 120</pre></div>
+  </div>
+
+  <div class="cmd" data-k="chanlog log logging audit ops channel trail journal">
+    <div class="cmd-head"><h4><span class="amp">!</span>chanlog</h4><span class="lvl master">Master+</span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Shows or sets where this channel's audit trail goes. See <a href="#chanlog">channel logging</a>.</p>
+    <p data-l="fr">Affiche ou change l'endroit où va le journal de ce canal. Voir <a href="#chanlog">journal du canal</a>.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!chanlog</span>
+<span class="t">!chanlog</span> <span class="a">#ops</span>
+<span class="t">!chanlog</span> off
+<span class="t">!chanlog</span> on
+<span class="t">/msg BotNick chanlog</span> <span class="a">#chan #ops</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="module modules enable disable list per channel activer desactiver">
+    <div class="cmd-head"><h4><span class="amp">!</span>module &nbsp;/&nbsp; <span class="amp">!</span>enable &nbsp;/&nbsp; <span class="amp">!</span>disable</h4><span class="lvl master">Master+</span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Shows or changes which modules run <strong>on this channel</strong>. <code>!enable</code> and <code>!disable</code> are shortcuts for <code>!module enable</code> / <code>disable</code>.</p>
+    <p data-l="fr">Affiche ou change les modules actifs <strong>dans ce canal</strong>. <code>!enable</code> et <code>!disable</code> sont des raccourcis pour <code>!module enable</code> / <code>disable</code>.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!module</span> list
+<span class="t">!enable</span> <span class="a">&lt;module&gt;</span>
+<span class="t">!disable</span> <span class="a">&lt;module&gt;</span>
+<span class="t">/msg BotNick disable</span> <span class="a">#channel &lt;module&gt;</span></pre></div>
+    <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">Modules for #channel:</span>
+  [<span class="n">ON</span> ] activevoice - auto-voices non-registered users when they talk
+  [<span class="n">ON</span> ] chanlog - sends this channel's audit trail to the ops channel
+  [<span class="r">OFF</span>] idledeop - deops ops who have been idle past the channel limit
+  [<span class="r">OFF</span>] idledevoice - removes voice from non-registered users idle too long
+  [<span class="n">ON</span> ] topic - !topic / !topicsync - stores and re-applies the channel topic</pre></div>
+  </div>
+</section>
+
+<!-- ================= OWNER ================= -->
+<section id="cmd-owner">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-crown"/></svg></span><span data-l="en">Bot owner</span><span data-l="fr">Propriétaire du robot</span></h2>
+  <p class="sec-intro" data-l="en">Global flag <code>n</code> only. Commands marked <span class="lvl msg">/msg</span> also work by private message — the owner flag is re-checked there.</p>
+  <p class="sec-intro" data-l="fr">Drapeau <code>n</code> global seulement. Les commandes marquées <span class="lvl msg">/msg</span> marchent aussi en privé — le drapeau propriétaire y est revérifié.</p>
+
+  <h3 class="sub"><span data-l="en">Channels</span><span data-l="fr">Canaux</span></h3>
+  <div class="cmd" data-k="addchan add channel chanfile join save ajouter canal">
+    <div class="cmd-head"><h4><span class="amp">!</span>addchan</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Adds a channel, saves it to the chanfile and joins it. On a suspended channel it unsuspends it instead, and on one already set up it just asks for a join.</p>
+    <p data-l="fr">Ajoute un canal, l'enregistre dans le chanfile et le rejoint. Sur un canal suspendu, il le réactive plutôt, et sur un canal déjà configuré, il demande simplement à le rejoindre.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!addchan</span> <span class="a">&lt;#channel&gt;</span>
+<span class="t">/msg BotNick addchan</span> <span class="a">&lt;#channel&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="delchan delete remove channel chanfile supprimer canal">
+    <div class="cmd-head"><h4><span class="amp">!</span>delchan</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span></div>
+    <p data-l="en">Removes the channel from the bot and the chanfile. Users and their flags are kept.</p>
+    <p data-l="fr">Retire le canal du robot et du chanfile. Les utilisateurs et leurs drapeaux sont gardés.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!delchan</span> <span class="a">&lt;#channel&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="suschan unsuschan suspend channel leave pause suspendre">
+    <div class="cmd-head"><h4><span class="amp">!</span>suschan &nbsp;/&nbsp; <span class="amp">!</span>unsuschan</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span></div>
+    <p data-l="en">Suspends a channel: the bot leaves but keeps every channel setting and user. Unsuspend it and the bot joins again.</p>
+    <p data-l="fr">Suspend un canal : le robot part mais garde tous les réglages et utilisateurs. Réactive-le et le robot y retourne.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!suschan</span> <span class="a">&lt;#channel&gt;</span>
+<span class="t">!unsuschan</span> <span class="a">&lt;#channel&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="join part comeback add leave cycle hop rejoin channel">
+    <div class="cmd-head"><h4><span class="amp">!</span>join &nbsp;/&nbsp; <span class="amp">!</span>part &nbsp;/&nbsp; <span class="amp">!</span>comeback</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span></div>
+    <p data-l="en">Joins a channel <strong>and adds it</strong> to the channel list, leaves one <strong>and removes it</strong>, or parts and rejoins the current channel — useful to regain op from services.</p>
+    <p data-l="fr">Rejoint un canal <strong>et l'ajoute</strong> à la liste, en quitte un <strong>et le retire</strong>, ou sort et revient dans le canal actuel — pratique pour récupérer l'op des services.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!join</span> <span class="a">&lt;#channel&gt;</span>
+<span class="t">!part</span> <span class="a">&lt;#channel&gt;</span>
+<span class="t">!comeback</span></pre></div>
+  </div>
+
+  <h3 class="sub"><span data-l="en">The bot</span><span data-l="fr">Le robot</span></h3>
+  <div class="cmd" data-k="rehash restart jump save reload scripts config reboot server userfile">
+    <div class="cmd-head"><h4><span class="amp">!</span>rehash &nbsp;/&nbsp; <span class="amp">!</span>restart &nbsp;/&nbsp; <span class="amp">!</span>jump &nbsp;/&nbsp; <span class="amp">!</span>save</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span><span class="lvl msg">/msg</span></div>
+    <p data-l="en">Reload the config and scripts, restart the bot completely (you get the notice <em>before</em> it goes down), jump to another server, or write the userfile and channel file to disk.</p>
+    <p data-l="fr">Recharger la config et les scripts, redémarrer complètement le robot (tu reçois la notice <em>avant</em> qu'il tombe), changer de serveur, ou écrire le userfile et le fichier des canaux sur le disque.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!rehash</span>
+<span class="t">/msg BotNick restart</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="botnick away back global change nick afk announce broadcast">
+    <div class="cmd-head"><h4><span class="amp">!</span>botnick &nbsp;/&nbsp; <span class="amp">!</span>away &nbsp;/&nbsp; <span class="amp">!</span>back &nbsp;/&nbsp; <span class="amp">!</span>global</h4><span class="lvl owner"><span data-l="en">Owner</span><span data-l="fr">Propriétaire</span></span></div>
+    <p data-l="en">Change the bot's nick, send a <code>[GLOBAL]</code> message to every channel it is on, or manage its away message. <code>!away</code> with no text shows the current one. The away setting is <strong>saved</strong> in <code>cc(away_file)</code>, so it survives reboots and rehashes, and <code>!back</code> keeps it off. Both also work by <code>/msg</code>.</p>
+    <p data-l="fr">Changer le pseudo du robot, envoyer un message <code>[GLOBAL]</code> dans tous ses canaux, ou gérer son message d'absence. <code>!away</code> sans texte affiche le message actuel. Le réglage est <strong>enregistré</strong> dans <code>cc(away_file)</code> : il survit aux redémarrages et aux rehash, et <code>!back</code> le garde éteint. Les deux marchent aussi en <code>/msg</code>.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!botnick</span> <span class="a">&lt;newnick&gt;</span>
+<span class="t">!away</span> <span class="o">[message]</span>
+<span class="t">!back</span>
+<span class="t">/msg BotNick away</span> <span class="o">[message]</span>
+<span class="t">!global</span> <span class="a">&lt;message&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="chanset uptime channel setting youtube weather needhelp isup">
+    <div class="cmd-head"><h4><span class="amp">!</span>chanset &nbsp;/&nbsp; <span class="amp">!</span>uptime</h4><span class="lvl all"><span data-l="en">Anyone</span><span data-l="fr">Tous</span></span></div>
+    <p data-l="en">Toggles a channel setting (<code>youtube</code>, <code>weather</code>, <code>needhelp</code>, <code>isup</code>), or shows how long the bot has been running.</p>
+    <p data-l="fr">Bascule un réglage du canal (<code>youtube</code>, <code>weather</code>, <code>needhelp</code>, <code>isup</code>), ou affiche depuis combien de temps le robot tourne.</p>
+    <div class="code example"><span class="tag">example</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!chanset</span> +weather</pre></div>
+    <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+      <div data-l="en"><b>Heads up:</b> both are bound <code>n|-</code>, so the channel side requires <em>no flags at all</em> — anyone can toggle these settings. Change the bind to <code>n|m</code> to restrict <code>!chanset</code> to masters.</div>
+      <div data-l="fr"><b>Attention :</b> les deux sont liées en <code>n|-</code>, donc côté canal <em>aucun drapeau</em> n'est demandé — n'importe qui peut basculer ces réglages. Change le bind en <code>n|m</code> pour réserver <code>!chanset</code> aux maîtres.</div></div>
+  </div>
+</section>
+
+<!-- ================= MSG ================= -->
+<section id="cmd-msg">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-msg"/></svg></span><span data-l="en">Private messages</span><span data-l="fr">Messages privés</span></h2>
+  <p class="sec-intro" data-l="en">Anything that needs a channel takes it as the <strong>first argument</strong>. Access is checked against the channel you name, so channel-only ops and masters work by <code>/msg</code> too — not just global owners.</p>
+  <p class="sec-intro" data-l="fr">Tout ce qui a besoin d'un canal le prend en <strong>premier argument</strong>. L'accès est vérifié sur le canal nommé : les ops et maîtres d'un seul canal peuvent aussi utiliser <code>/msg</code> — pas seulement les propriétaires globaux.</p>
+  <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">/msg BotNick help</span> <span class="o">[command]</span>
+<span class="t">/msg BotNick showcommands</span>
+<span class="t">/msg BotNick verify</span> <span class="o">[nick]</span>
+<span class="t">/msg BotNick register</span> <span class="o">[handle]</span>
+<span class="t">/msg BotNick op</span> <span class="a">#channel</span> <span class="o">[nick]</span>
+<span class="t">/msg BotNick module</span> <span class="a">#channel</span> list
+<span class="t">/msg BotNick enable</span> <span class="a">#channel &lt;module&gt;</span>
+<span class="t">/msg BotNick disable</span> <span class="a">#channel &lt;module&gt;</span>
+<span class="t">/msg BotNick chanlog</span> <span class="a">#channel #ops</span>
+<span class="t">/msg BotNick addchan</span> <span class="a">#channel</span>
+<span class="t">/msg BotNick away</span> <span class="o">[message]</span> <span class="o">|</span> <span class="t">back</span>
+<span class="t">/msg BotNick rehash</span> <span class="o">|</span> <span class="t">restart</span> <span class="o">|</span> <span class="t">jump</span> <span class="o">|</span> <span class="t">save</span></pre></div>
+  <div class="tip"><svg class="ico" aria-hidden="true"><use href="#i-mute"/></svg>
+    <div data-l="en"><b>Why use <code>/msg</code>?</b> The channel never sees the command <em>or</em> the reply. For long output like <code>!showcommands</code>, it keeps the channel clean.</div>
+    <div data-l="fr"><b>Pourquoi <code>/msg</code> ?</b> Le canal ne voit ni la commande <em>ni</em> la réponse. Pour les longues sorties comme <code>!showcommands</code>, le canal reste propre.</div></div>
+</section>
+
+<!-- ================= REGISTRATION ================= -->
+<section id="register">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-badge"/></svg></span><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></h2>
+  <p class="sec-intro" data-l="en">People can add themselves to the userfile without an op doing it by hand. It takes two steps on purpose, and the bot is pointed at the one thing that actually decides whether host-based identification is safe: <strong>which host gets stored</strong>.</p>
+  <p class="sec-intro" data-l="fr">Les gens peuvent s'ajouter eux-mêmes au userfile sans qu'un op le fasse à la main. Ça se fait en deux étapes exprès, et le robot vise la seule chose qui rend l'identification par hôte sûre : <strong>quel hôte est enregistré</strong>.</p>
+
+  <h3 class="sub"><span data-l="en">Step one</span><span data-l="fr">Étape un</span></h3>
+  <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">/msg BotNick register</span> <span class="o">[handle]</span></pre></div>
+  <p data-l="en">The bot answers with the safety advice, what it would store, and a one-time code:</p>
+  <p data-l="fr">Le robot répond avec un conseil de sécurité, ce qu'il enregistrerait, et un code unique :</p>
+  <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">Read this first:</span> your host is not hidden. It is safer to auth with X and hide it before registering:
+  1. /msg x@channels.undernet.org login &lt;account&gt; &lt;password&gt;   (only ever send that to x@channels.undernet.org)
+  2. /mode yournick +x     - your host becomes &lt;account&gt;.users.undernet.org
+  3. come back and register again
+Why: an ISP host like dsl-142-99-1-2.videotron.ca gets handed to someone else when your IP changes, and they would inherit your access here.
+---
+I would register <span class="t">newguy</span> with the hostmask <span class="t">*!*@dsl-142-99-1-2.videotron.ca</span> and no access flags.
+<span class="n">To register please type:</span> /msg BotNick verify <span class="t">pcf957lcnlbl</span>
+That code is good for 5 minutes. If you did not ask for this, ignore it - nothing has been saved.</pre></div>
+
+  <h3 class="sub"><span data-l="en">Step two</span><span data-l="fr">Étape deux</span></h3>
+  <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">/msg BotNick verify</span> <span class="a">pcf957lcnlbl</span></pre></div>
+  <p data-l="en">The code has to be read out of a notice and typed back, which stops a script from registering nicks in bulk. <strong>Nothing is written until it comes back.</strong></p>
+  <p data-l="fr">Le code doit être lu dans une notice et retapé, ce qui empêche un script d'inscrire des pseudos en masse. <strong>Rien n'est écrit avant son retour.</strong></p>
+
+  <h3 class="sub"><span data-l="en">What the bot checks — twice</span><span data-l="fr">Ce que le robot vérifie — deux fois</span></h3>
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:290px"><span data-l="en">Check</span><span data-l="fr">Vérification</span></th><th scope="col"><span data-l="en">Why</span><span data-l="fr">Pourquoi</span></th></tr>
+    <tr><td><span data-l="en">Shares a channel with the bot</span><span data-l="fr">Partage un canal avec le robot</span></td><td><span data-l="en">Only people it can actually see. The host comes from <code>getchanhost</code>, never from anything the user sends</span><span data-l="fr">Seulement les gens qu'il voit vraiment. L'hôte vient de <code>getchanhost</code>, jamais de ce que la personne envoie</span></td></tr>
+    <tr><td><span data-l="en">Host does not already match a record</span><span data-l="fr">L'hôte ne correspond à aucune fiche</span></td><td><code>finduser</code> <span data-l="en">on the real</span><span data-l="fr">sur le vrai</span> <code>nick!ident@host</code></td></tr>
+    <tr><td><span data-l="en">Host unchanged since the request</span><span data-l="fr">Hôte inchangé depuis la demande</span></td><td><span data-l="en">Blocks asking on one IP and confirming on another</span><span data-l="fr">Empêche de demander depuis une IP et de confirmer depuis une autre</span></td></tr>
+    <tr><td><span data-l="en">Handle free, valid, one word</span><span data-l="fr">Handle libre, valide, en un mot</span></td><td><span data-l="en">2–<code>register_handle_max</code> characters, no spaces or punctuation</span><span data-l="fr">2 à <code>register_handle_max</code> caractères, sans espace ni ponctuation</span></td></tr>
+    <tr><td><span data-l="en">Rate limit per host</span><span data-l="fr">Limite par hôte</span></td><td><span data-l="en"><code>register_cooldown</code>, charged only when a code is really issued</span><span data-l="fr"><code>register_cooldown</code>, compté seulement quand un code est vraiment émis</span></td></tr>
+    <tr><td><span data-l="en">Code matches and has not expired</span><span data-l="fr">Code exact et pas expiré</span></td><td><code>register_token_life</code></td></tr>
+    <tr><td><strong><span data-l="en">No access flags granted</span><span data-l="fr">Aucun drapeau d'accès donné</span></strong></td><td><span data-l="en">Registration gets you a record, nothing else — ops grant levels with <code>!addvoice</code> / <code>!addmod</code> / <code>!addop</code></span><span data-l="fr">L'inscription donne une fiche, rien d'autre — les ops donnent les niveaux avec <code>!addvoice</code> / <code>!addmod</code> / <code>!addop</code></span></td></tr>
+  </table>
+  </div>
+  <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+    <div data-l="en"><b>Why the X advice is not decoration.</b> Host-based identification cuts both ways: anyone sharing a registered host <em>is</em> that user as far as the bot is concerned. A <code>*.users.undernet.org</code> host can only be worn by someone authed to that X account. When a second person on a shared host asks to register, the bot does not guess — it sends them to an op.</div>
+    <div data-l="fr"><b>Pourquoi le conseil sur X compte vraiment.</b> L'identification par hôte coupe dans les deux sens : quiconque partage un hôte enregistré <em>est</em> cette personne pour le robot. Un hôte <code>*.users.undernet.org</code> ne peut être porté que par quelqu'un authentifié sur ce compte X. Quand une deuxième personne sur un hôte partagé veut s'inscrire, le robot ne devine pas — il l'envoie voir un op.</div></div>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-log"/></svg>
+    <div data-l="en">Every request, refusal and success is logged and announced to the ops channel through <a href="#chanlog">chanlog</a>. To turn self-registration off: <code>set cc(register_enabled) 0</code>.</div>
+    <div data-l="fr">Chaque demande, refus et réussite est journalisé et annoncé au canal des ops par le <a href="#chanlog">chanlog</a>. Pour couper l'auto-inscription : <code>set cc(register_enabled) 0</code>.</div></div>
+</section>
+
+<!-- ================= CHANLOG ================= -->
+<section id="chanlog">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-log"/></svg></span><span data-l="en">Channel logging</span><span data-l="fr">Journal du canal</span></h2>
+  <p class="sec-intro" data-l="en">One audit trail for the channel staff: who got access, who got sanctioned, who registered, who was refused. It defaults to <span class="on">ON</span>, pointed at <code>cc(backchan)</code>, and each channel keeps its own destination.</p>
+  <p class="sec-intro" data-l="fr">Un seul journal pour l'équipe du canal : qui a reçu un accès, qui a été sanctionné, qui s'est inscrit, qui a été refusé. Il est <span class="on">ON</span> par défaut, dirigé vers <code>cc(backchan)</code>, et chaque canal garde sa propre destination.</p>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg>
+    <div data-l="en">The log is an ordinary channel <strong>message</strong>, not a notice, so it lands in the ops window like anything else and survives clients that hide notices. No colour codes — the <code>[CATEGORY]</code> tag carries the meaning.</div>
+    <div data-l="fr">Le journal est un <strong>message</strong> normal dans le canal, pas une notice : il arrive dans la fenêtre des ops comme le reste et survit aux clients qui cachent les notices. Aucun code de couleur — l'étiquette <code>[CATÉGORIE]</code> porte le sens.</div></div>
+  <div class="code reply"><span class="tag">ops channel</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="a">[ACCESS]</span>   #canada boss opped newguy
+<span class="a">[ACCESS]</span>   #canada boss set the topic: Bienvenue au #Canada
+<span class="r">[SANCTION]</span> #canada boss banned troll (*!*@troll.host) - spam
+<span class="r">[SANCTION]</span> #canada auto: deopped someop after 187 minutes idle
+<span class="n">[REGISTER]</span> newguy registered as newguy (*!*@dsl-1-2-3.videotron.ca)
+<span class="o">[MODULE]</span>   #canada boss disabled module idledevoice
+<span class="o">[BOT]</span>      boss reloaded the scripts (rehash)
+<span class="t">[DENIED]</span>   troll (*) tried restart by /msg</pre></div>
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:130px"><span data-l="en">Category</span><span data-l="fr">Catégorie</span></th><th scope="col"><span data-l="en">Events</span><span data-l="fr">Événements</span></th></tr>
+    <tr><td><code>ACCESS</code></td><td><span data-l="en">op, voice, mode, chattr, adduser, deluser, the access commands, topic, topicsync, say, act</span><span data-l="fr">op, voice, mode, chattr, adduser, deluser, les commandes d'accès, topic, topicsync, say, act</span></td></tr>
+    <tr><td><code>SANCTION</code></td><td><span data-l="en">kick, ban, unban, blacklist, whitelist, deop, devoice, and automatic idle-deops</span><span data-l="fr">kick, ban, unban, blacklist, whitelist, deop, devoice, et les deop automatiques des inactifs</span></td></tr>
+    <tr><td><code>REGISTER</code></td><td><span data-l="en">every registration request, refusal and success</span><span data-l="fr">chaque demande, refus et réussite d'inscription</span></td></tr>
+    <tr><td><code>MODULE</code></td><td><span data-l="en">module toggles, idle-deop settings, logging changes</span><span data-l="fr">activation des modules, réglages du deop des inactifs, changements du journal</span></td></tr>
+    <tr><td><code>BOT</code></td><td>rehash, restart, jump, save, join, part, botnick, global</td></tr>
+    <tr><td><code>DENIED</code></td><td><span data-l="en">refused attempts at owner commands, module changes and op by <code>/msg</code></span><span data-l="fr">tentatives refusées de commandes propriétaire, de changements de modules et d'op par <code>/msg</code></span></td></tr>
+  </table>
+  </div>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-mute"/></svg>
+    <div data-l="en"><b>Deliberately not logged:</b> automatic voice and devoice from ActiveVoice. They fire on every talker and would bury the events worth reading. The log also refuses to point a channel at itself or at a channel the bot is not on.</div>
+    <div data-l="fr"><b>Volontairement absent du journal :</b> le voice et le devoice automatiques d'ActiveVoice. Ils arrivent à chaque personne qui parle et noieraient les événements utiles. Le journal refuse aussi de pointer un canal vers lui-même ou vers un canal où le robot n'est pas.</div></div>
+</section>
+
+<!-- ================= MODULES ================= -->
+<section id="modules">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-puzzle"/></svg></span>Modules</h2>
+  <p class="sec-intro" data-l="en">Five features can be switched on and off <strong>per channel</strong>, live, without editing the config. Three start <span class="on">ON</span>; <code>idledeop</code> and <code>idledevoice</code> start <span class="off">OFF</span>.</p>
+  <p class="sec-intro" data-l="fr">Cinq fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Trois partent <span class="on">ON</span> ; <code>idledeop</code> et <code>idledevoice</code> partent <span class="off">OFF</span>.</p>
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:150px">Module</th><th scope="col" style="width:90px"><span data-l="en">Default</span><span data-l="fr">Défaut</span></th><th scope="col"><span data-l="en">What it does</span><span data-l="fr">À quoi ça sert</span></th></tr>
+    <tr><td><code>topic</code></td><td><span class="on">ON</span></td><td><span data-l="en"><code>!topic</code> and <code>!topicsync</code> — storing and re-applying the channel topic</span><span data-l="fr"><code>!topic</code> et <code>!topicsync</code> — garder et remettre le sujet du canal</span></td></tr>
+    <tr><td><code>activevoice</code></td><td><span class="on">ON</span></td><td><span data-l="en">Auto-voices non-registered users when they talk, and tracks their activity</span><span data-l="fr">Donne le voice aux non-inscrits quand ils parlent, et suit leur activité</span></td></tr>
+    <tr><td><code>idledevoice</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Removes voice from non-registered users who have gone idle</span><span data-l="fr">Retire le voice aux non-inscrits devenus inactifs</span></td></tr>
+    <tr><td><code>idledeop</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Deops ops idle past the channel's limit</span><span data-l="fr">Retire l'op aux ops inactifs au-delà de la limite du canal</span></td></tr>
+    <tr><td><code>chanlog</code></td><td><span class="on">ON</span></td><td><span data-l="en">Sends this channel's audit trail to the ops channel</span><span data-l="fr">Envoie le journal de ce canal au canal des ops</span></td></tr>
+  </table>
+  </div>
+  <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+    <div data-l="en"><b>Not persistent.</b> Module states live in memory. A <code>.rehash</code> or <code>.restart</code> puts every module back to its default.</div>
+    <div data-l="fr"><b>Pas permanent.</b> L'état des modules est en mémoire. Un <code>.rehash</code> ou un <code>.restart</code> remet chaque module à sa valeur par défaut.</div></div>
+</section>
+
+<!-- ================= ACTIVEVOICE ================= -->
+<section id="activevoice">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-mic"/></svg></span>ActiveVoice</h2>
+  <p class="sec-intro" data-l="en">ActiveVoice rewards people who actually talk. It exists for <strong>non-regulars</strong> — anyone who isn't a registered user with voice-worthy flags.</p>
+  <p class="sec-intro" data-l="fr">ActiveVoice récompense ceux qui parlent vraiment. Il existe pour les <strong>non-habitués</strong> — toute personne qui n'est pas inscrite avec des drapeaux qui méritent le voice.</p>
+  <ol class="steps" data-l="en">
+    <li><span>Someone who is <strong>not</strong> registered with <code>+n</code>, <code>+m</code>, <code>+M</code> or <code>+v</code> talks in the channel.</span></li>
+    <li><span>The bot voices them (<code>+v</code>) and starts their activity clock.</span></li>
+    <li><span>Every <code>activevoice_check_interval</code> seconds (default 10) it sweeps for idlers.</span></li>
+    <li><span>Anyone silent longer than <code>activevoice_idle_minutes</code> (default 180) loses the voice — <em>if</em> the <code>idledevoice</code> module is on (it starts off: <code>!enable idledevoice</code>).</span></li>
+  </ol>
+  <ol class="steps" data-l="fr">
+    <li><span>Quelqu'un qui n'est <strong>pas</strong> inscrit avec <code>+n</code>, <code>+m</code>, <code>+M</code> ou <code>+v</code> parle dans le canal.</span></li>
+    <li><span>Le robot lui donne le voice (<code>+v</code>) et démarre son chrono d'activité.</span></li>
+    <li><span>Toutes les <code>activevoice_check_interval</code> secondes (10 par défaut), il cherche les inactifs.</span></li>
+    <li><span>Quiconque se tait plus de <code>activevoice_idle_minutes</code> (180 par défaut) perd le voice — <em>si</em> le module <code>idledevoice</code> est actif (il part éteint : <code>!enable idledevoice</code>).</span></li>
+  </ol>
+  <div class="pill-row">
+    <span class="pill">+n</span><span class="pill">+m</span><span class="pill">+M</span><span class="pill">+v</span><span class="pill">ops</span><span class="pill">X / W</span>
+  </div>
+  <div class="tip"><svg class="ico" aria-hidden="true"><use href="#i-mic"/></svg>
+    <div data-l="en"><b>Want the voicing but not the devoicing?</b> <code>!disable idledevoice</code> leaves auto-voice running and stops the sweep. People already voiced when the script loads get their clock started instead of being devoiced.</div>
+    <div data-l="fr"><b>Tu veux le voice sans le devoice ?</b> <code>!disable idledevoice</code> garde le voice automatique et arrête le ménage. Ceux qui avaient déjà le voice au chargement du script voient leur chrono démarrer au lieu de perdre le voice.</div></div>
+</section>
+
+<!-- ================= IDLEDEOP ================= -->
+<section id="idledeop">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-clock"/></svg></span><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></h2>
+  <p class="sec-intro" data-l="en">Ops who sit idle for too long lose <code>+o</code> until they come back and ask for it again. The module ships <span class="off">OFF</span> on every channel — switch it on where you want it.</p>
+  <p class="sec-intro" data-l="fr">Les ops inactifs trop longtemps perdent leur <code>+o</code> jusqu'à ce qu'ils reviennent le demander. Le module est livré <span class="off">OFF</span> dans chaque canal — active-le là où tu le veux.</p>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Turn it on here</span><span data-l="fr">L'activer ici</span></th><td><code>!enable idledeop</code></td></tr>
+    <tr><th><span data-l="en">Set the limit</span><span data-l="fr">Régler la limite</span></th><td><code>!idledeop #channel 120</code> — <span data-l="en">minutes, per channel</span><span data-l="fr">minutes, par canal</span></td></tr>
+    <tr><th><span data-l="en">Master switch</span><span data-l="fr">Interrupteur général</span></th><td><code>cc(idledeop_enabled)</code> — <code>1</code> · <span data-l="en">set <code>0</code> to switch it off everywhere</span><span data-l="fr">mets <code>0</code> pour l'éteindre partout</span></td></tr>
+    <tr><th><span data-l="en">Never deopped</span><span data-l="fr">Jamais deop</span></th><td><span data-l="en">Service bots (<code>X</code>, <code>W</code>), the bot itself, <code>+n</code> / <code>+m</code> users, and anyone in <code>cc(deop_exempt)</code> by nick or handle</span><span data-l="fr">Les services (<code>X</code>, <code>W</code>), le robot lui-même, les <code>+n</code> / <code>+m</code>, et toute personne dans <code>cc(deop_exempt)</code> par pseudo ou handle</span></td></tr>
+  </table>
+  </div>
+  <div class="code"><span class="tag">config</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>set cc(deop_exempt) [list "Secoupe" "Seb"]</pre></div>
+</section>
+
+<!-- ================= TOPIC ================= -->
+<section id="topicsys">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hash"/></svg></span><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></h2>
+  <p class="sec-intro" data-l="en">The bot remembers the topic you set through it, per channel, and puts it back with <code>!topicsync</code> when someone mangles it. The stored topic lives in memory and is lost on restart.</p>
+  <p class="sec-intro" data-l="fr">Le robot retient le sujet que tu fixes par lui, canal par canal, et le remet avec <code>!topicsync</code> quand quelqu'un l'abîme. Le sujet est gardé en mémoire et perdu au redémarrage.</p>
+</section>
+
+<!-- ================= PROTECTIONS ================= -->
+<section id="protections">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-shield"/></svg></span>Protections</h2>
+  <p class="sec-intro" data-l="en">The bot refuses to be turned against the people running it.</p>
+  <p class="sec-intro" data-l="fr">Le robot refuse d'être retourné contre ceux qui le gèrent.</p>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Protected flags</span><span data-l="fr">Drapeaux protégés</span></th><td><span data-l="en"><code>+n</code> and <code>+m</code> users can't be deopped, devoiced, kicked or banned through the bot</span><span data-l="fr">Les <code>+n</code> et <code>+m</code> ne peuvent pas être deop, devoice, expulsés ou bannis par le robot</span></td></tr>
+    <tr><th><span data-l="en">Protected bots</span><span data-l="fr">Services protégés</span></th><td><span data-l="en"><code>X</code> and <code>W</code> are never deopped or acted on</span><span data-l="fr"><code>X</code> et <code>W</code> ne sont jamais deop ni visés</span></td></tr>
+    <tr><th><span data-l="en">Owner re-check on /msg</span><span data-l="fr">Propriétaire revérifié en /msg</span></th><td><span data-l="en">Owner commands sent by <code>/msg</code> re-verify the <code>n</code> flag and log refused attempts</span><span data-l="fr">Les commandes propriétaire en <code>/msg</code> revérifient le drapeau <code>n</code> et journalisent les refus</span></td></tr>
+    <tr><th><span data-l="en">Strangers stay quiet</span><span data-l="fr">Les inconnus restent discrets</span></th><td><span data-l="en">Someone the bot has no record for gets refusals by notice, so a stranger can't make the bot talk to the channel</span><span data-l="fr">Quelqu'un sans fiche reçoit les refus par notice : un inconnu ne peut pas faire parler le robot dans le canal</span></td></tr>
+    <tr><th><span data-l="en">Hop on deop</span><span data-l="fr">Réaction au deop</span></th><td><span data-l="en"><code>hopondeop</code> / <code>kickondeop</code> react when the bot itself is deopped</span><span data-l="fr"><code>hopondeop</code> / <code>kickondeop</code> réagissent quand le robot perd son op</span></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ================= CTCP ================= -->
+<section id="ctcp">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-plug"/></svg></span>CTCP &amp; DCC</h2>
+  <p class="sec-intro" data-l="en">The bot answers the usual CTCP queries and has a few partyline extras.</p>
+  <p class="sec-intro" data-l="fr">Le robot répond aux requêtes CTCP habituelles et a quelques extras sur la partyline.</p>
+  <div class="pill-row"><span class="pill">CTCP VERSION</span><span class="pill">CTCP PING</span><span class="pill">CTCP TIME</span><span class="pill">CTCP FINGER</span></div>
+  <div class="table-scroll">
+  <table>
+    <tr><th scope="col" style="width:200px">DCC</th><th scope="col" style="width:90px"><span data-l="en">Flag</span><span data-l="fr">Drapeau</span></th><th scope="col"><span data-l="en">What it does</span><span data-l="fr">À quoi ça sert</span></th></tr>
+    <tr><td><code>.lmao</code></td><td><code>fn</code></td><td><span data-l="en">Script information on the partyline</span><span data-l="fr">Info sur le script dans la partyline</span></td></tr>
+    <tr><td><code>.keepalive</code></td><td><code>fn</code></td><td><span data-l="en">Starts a per-minute partyline keep-alive</span><span data-l="fr">Démarre un maintien de connexion à la minute</span></td></tr>
+    <tr><td><code>.undokeepalive</code></td><td><code>fn</code></td><td><span data-l="en">Stops it again</span><span data-l="fr">L'arrête</span></td></tr>
+  </table>
+  </div>
+</section>
+
+<!-- ================= GOTCHAS ================= -->
+<section id="gotchas">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></span><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></h2>
+  <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg>
+    <div data-l="en"><b>Memory only.</b> Module states, stored topics and chanlog destinations reset on <code>.rehash</code> or <code>.restart</code>.</div>
+    <div data-l="fr"><b>En mémoire seulement.</b> L'état des modules, les sujets gardés et les destinations du chanlog repartent à zéro au <code>.rehash</code> ou au <code>.restart</code>.</div></div>
+  <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
+    <div data-l="en"><b><code>!chanset</code> and <code>!uptime</code> are open to everyone</b> — both are bound <code>n|-</code>.</div>
+    <div data-l="fr"><b><code>!chanset</code> et <code>!uptime</code> sont ouvertes à tous</b> — les deux sont liées en <code>n|-</code>.</div></div>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-hammer"/></svg>
+    <div data-l="en"><b>The bot must be opped</b> for op, voice, kick, ban, topic and every sweep. It tells you when it isn't.</div>
+    <div data-l="fr"><b>Le robot doit être op</b> pour op, voice, kick, ban, sujet et chaque ménage. Il te le dit quand il ne l'est pas.</div></div>
+</section>
+
+<!-- ================= CHANGELOG ================= -->
+<section id="changelog">
+  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-history"/></svg></span><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
+
+  <h3 class="sub">6.6.0</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Away that sticks</span><span data-l="fr">Une absence qui tient</span></th><td><span data-l="en">New <code>cc(away_enabled)</code>, <code>cc(away_message)</code> and <code>cc(away_file)</code>. The bot can set itself away on every connect and rehash, and <code>!away</code> / <code>!back</code> are saved to disk so they survive reboots. Both work by <code>/msg</code>, and <code>!away</code> alone shows the current message.</span><span data-l="fr">Nouveaux <code>cc(away_enabled)</code>, <code>cc(away_message)</code> et <code>cc(away_file)</code>. Le robot peut se mettre absent à chaque connexion et rehash, et <code>!away</code> / <code>!back</code> sont enregistrés sur le disque pour survivre aux redémarrages. Les deux marchent en <code>/msg</code>, et <code>!away</code> seul affiche le message actuel.</span></td></tr>
+    <tr><th><span data-l="en">Quieter by default</span><span data-l="fr">Plus discret par défaut</span></th><td><span data-l="en">The <code>idledevoice</code> module now starts off, like <code>idledeop</code>. Sweeps run every 5 s (idle deop) and 10 s (ActiveVoice).</span><span data-l="fr">Le module <code>idledevoice</code> part maintenant éteint, comme <code>idledeop</code>. Les vérifications tournent aux 5 s (deop des inactifs) et aux 10 s (ActiveVoice).</span></td></tr>
+  </table>
+  </div>
+
+  <h3 class="sub">6.5.1 – 6.5.2</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Channel management</span><span data-l="fr">Gestion des canaux</span></th><td><span data-l="en">New owner commands <code>!addchan</code>, <code>!delchan</code>, <code>!suschan</code> and <code>!unsuschan</code>. <code>!addchan</code> saves to the chanfile and works by <code>/msg</code>. Suspending no longer sends duplicate joins and parts.</span><span data-l="fr">Nouvelles commandes propriétaire <code>!addchan</code>, <code>!delchan</code>, <code>!suschan</code> et <code>!unsuschan</code>. <code>!addchan</code> enregistre dans le chanfile et marche en <code>/msg</code>. La suspension n'envoie plus de join et part en double.</span></td></tr>
+    <tr><th><span data-l="en">Access welcomes</span><span data-l="fr">Bienvenues d'accès</span></th><td><span data-l="en">Someone who gets a level is welcomed by notice, queued one line every <code>cc(access_welcome_delay)</code> seconds.</span><span data-l="fr">La personne qui reçoit un niveau est accueillie par notice, en file, une ligne toutes les <code>cc(access_welcome_delay)</code> secondes.</span></td></tr>
+    <tr><th><span data-l="en">Minutes, not hours</span><span data-l="fr">Des minutes, pas des heures</span></th><td><code>cc(idledeop_default_minutes)</code>, <code>cc(activevoice_idle_minutes)</code>, <code>!idledeop #chan &lt;minutes&gt;</code></td></tr>
+    <tr><th><span data-l="en">Calmer defaults</span><span data-l="fr">Valeurs plus calmes</span></th><td><span data-l="en">Idle deop ships <strong>off</strong>; the back channel defaults to <code>+snt</code>.</span><span data-l="fr">Le deop des inactifs est livré <strong>éteint</strong> ; le canal des ops est <code>+snt</code> par défaut.</span></td></tr>
+  </table>
+  </div>
+
+  <h3 class="sub">6.5.0</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en"><code>!op</code> said nothing</span><span data-l="fr"><code>!op</code> ne disait rien</span></th><td><span data-l="en"><strong>Fix.</strong> Mode and access commands now always answer: the level is decided inside the command instead of by a bind mask that dropped the line silently.</span><span data-l="fr"><strong>Correctif.</strong> Les commandes de modes et d'accès répondent toujours : le niveau est décidé dans la commande au lieu d'un masque de bind qui avalait la ligne en silence.</span></td></tr>
+    <tr><th><span data-l="en">Access sets the modes</span><span data-l="fr">L'accès applique les modes</span></th><td><span data-l="en">Granting or removing a level sets or removes <code>+o</code> / <code>+v</code> in the channel.</span><span data-l="fr">Donner ou retirer un niveau applique ou retire <code>+o</code> / <code>+v</code> dans le canal.</span></td></tr>
+    <tr><th><span data-l="en">Tighter targets</span><span data-l="fr">Cibles plus strictes</span></th><td><span data-l="en">Mode commands check the target is on the channel and take only the first word. Self-deop always works.</span><span data-l="fr">Les commandes de modes vérifient que la cible est dans le canal et ne prennent que le premier mot. Se retirer l'op marche toujours.</span></td></tr>
+  </table>
+  </div>
+
+  <h3 class="sub">6.2.0 – 6.4.0</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th>6.4.0</th><td><span data-l="en">Bind masks fixed for global staff, chanlog as channel messages, every colour code removed, <code>cc(deop_exempt)</code>.</span><span data-l="fr">Masques de bind corrigés pour l'équipe globale, chanlog en messages de canal, tous les codes de couleur retirés, <code>cc(deop_exempt)</code>.</span></td></tr>
+    <tr><th>6.3.0</th><td><span data-l="en">The access level system (<code>!addvoice</code> … <code>!addmaster</code>, <code>!delaccess</code>, <code>!access</code>) and the new <code>+M</code> Mod rung.</span><span data-l="fr">Le système de niveaux (<code>!addvoice</code> … <code>!addmaster</code>, <code>!delaccess</code>, <code>!access</code>) et le nouvel échelon Mod <code>+M</code>.</span></td></tr>
+    <tr><th>6.2.0</th><td><span data-l="en">One shared help table, module control, self-registration and the <code>chanlog</code> module.</span><span data-l="fr">Une table d'aide partagée, le contrôle des modules, l'auto-inscription et le module <code>chanlog</code>.</span></td></tr>
+  </table>
+  </div>
+</section>
+
+</div></main>
+</div>
+
+<!-- ======================= FOOTER ======================= -->
+<footer class="site">
+  <div class="foot-in">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="logo" href="#top"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/></svg><b>lmao<span>.tcl</span></b></a>
+        <p data-l="en">Free, open-source channel management for eggdrop. GPLv3.</p>
+        <p data-l="fr">Gestion de canal libre et gratuite pour eggdrop. GPLv3.</p>
+      </div>
+      <div>
+        <h2>Documentation</h2>
+        <a href="#install">Installation</a>
+        <a href="#config">Configuration</a>
+        <a href="#cmd-access"><span data-l="en">Commands</span><span data-l="fr">Commandes</span></a>
+        <a href="#changelog"><span data-l="en">Changelog</span><span data-l="fr">Versions</span></a>
+      </div>
+      <div>
+        <h2><span data-l="en">Project</span><span data-l="fr">Projet</span></h2>
+        <a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><span data-l="en">Source code ↗</span><span data-l="fr">Code source ↗</span></a>
+        <a href="https://lmao-tcl.github.io/lmao.tcl" target="_blank" rel="noopener noreferrer"><span data-l="en">Download lmao.tcl ↗</span><span data-l="fr">Télécharger lmao.tcl ↗</span></a>
+        <a href="https://github.com/lmao-tcl/lmao-tcl.github.io/issues" target="_blank" rel="noopener noreferrer"><span data-l="en">Report a bug ↗</span><span data-l="fr">Signaler un bogue ↗</span></a>
+      </div>
+      <div>
+        <h2><span data-l="en">Community</span><span data-l="fr">Communauté</span></h2>
+        <a href="https://canada-undernet.github.io/" target="_blank" rel="noopener noreferrer">#Canada @ Undernet ↗</a>
+        <a href="https://duckhunt.store/" target="_blank" rel="noopener noreferrer"><span data-l="en">DuckHunt Shop ↗</span><span data-l="fr">Boutique DuckHunt ↗</span></a>
+        <a href="https://www.eggheads.org/" target="_blank" rel="noopener noreferrer">Eggdrop ↗</a>
+      </div>
+      <div>
+        <h2><span data-l="en">Legal</span><span data-l="fr">Mentions légales</span></h2>
+        <a href="privacy.html"><span data-l="en">Privacy policy</span><span data-l="fr">Politique de confidentialité</span></a>
+        <a href="terms.html"><span data-l="en">Terms of use</span><span data-l="fr">Conditions d'utilisation</span></a>
+        <a href="cookies.html"><span data-l="en">Cookie policy</span><span data-l="fr">Politique relative aux témoins</span></a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span data-l="en">A volunteer project by <a href="https://github.com/DooubleTap" target="_blank" rel="noopener noreferrer">Seb.users.undernet.org</a>. Not affiliated with the Undernet IRC network or the Eggheads project. No cookies, no analytics, no ads.</span>
+      <span data-l="fr">Un projet bénévole de <a href="https://github.com/DooubleTap" target="_blank" rel="noopener noreferrer">Seb.users.undernet.org</a>. Non affilié au réseau IRC Undernet ni au projet Eggheads. Aucun témoin, aucune analyse d'audience, aucune publicité.</span>
+      <span><span data-l="en">page uptime</span><span data-l="fr">temps de page</span>: <span class="up" id="uptime">0s</span></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ======================= STORAGE NOTICE ======================= -->
+<div class="notice-bar" id="notice" role="region" aria-label="Notice" hidden>
+  <p data-l="en"><b>No cookies, no tracking.</b> This site only remembers your language choice and that you closed this notice, in your own browser.</p>
+  <p data-l="fr"><b>Aucun témoin, aucun pistage.</b> Ce site retient seulement ton choix de langue et le fait que tu as fermé cet avis, dans ton propre navigateur.</p>
+  <div class="acts">
+    <a href="cookies.html"><span data-l="en">Cookie policy</span><span data-l="fr">Politique relative aux témoins</span></a>
+    <button type="button" class="nbtn cta" id="notice-ok"><span data-l="en">Got it</span><span data-l="fr">Compris</span></button>
+  </div>
+</div>
+
+<button id="top-btn" type="button"><svg class="ico" aria-hidden="true"><use href="#i-up"/></svg><span class="sr-only"><span data-l="en">Back to top</span><span data-l="fr">Retour en haut</span></span></button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const L = () => document.documentElement.lang === "fr" ? "fr" : "en";
+  const T = {
+    en: { title: "lmao.tcl — eggdrop channel management", search: "Filter commands…", match: n => `${n} command${n === 1 ? "" : "s"} match`, copied: "Copied to clipboard", pause: "Pause", play: "Play" },
+    fr: { title: "lmao.tcl — gestion de canal pour eggdrop", search: "Filtrer les commandes…", match: n => `${n} commande${n === 1 ? "" : "s"} trouvée${n === 1 ? "" : "s"}`, copied: "Copié dans le presse-papiers", pause: "Pause", play: "Lecture" }
+  };
+
+  // ---------- Language ----------
+  function setLang(l) {
+    document.documentElement.lang = l;
+    document.title = T[l].title;
+    $("#search").placeholder = T[l].search;
+    $$(".lang button").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === l));
+    try { localStorage.setItem("lang", l); } catch (e) {}
+    showTip();
+    if (search.value) search.dispatchEvent(new Event("input"));
+  }
+  $$(".lang button").forEach(b => b.addEventListener("click", () => setLang(b.dataset.lang)));
+
+  // New-tab links are announced to screen readers
+  $$('a[target="_blank"]').forEach(a => a.setAttribute("aria-describedby", "newtab-hint"));
+
+  // ---------- IRC text background ----------
+  const NICKS = ["maple", "poutine", "caribou", "timbits", "loonie", "moose", "dave", "boss", "chanop", "newguy", "hockeyfan", "beaver", "toque", "eh_bud"];
+  const CHAT = ["lmao", "lol", "bonjour tout le monde", "anyone here?", "brb café", "gg", "haha nice", "qui a changé le topic?", "!help", "!verify", "ça va?", "!uptime", "eh", "that bot is fast", "back", "!version", "salut!", "bonne nuit", ":)", "tabarnouche"];
+  const BOT = [
+    "-lmao- [OK] dave is now Voice on #canada (flags: -|v)",
+    "-lmao- Quick Help: Type !help <command> for details",
+    "-lmao- Access Info for maple: Level: Voice (v)",
+    "-lmao- [OK] newguy moves up from Voice to Mod on #canada",
+    "-lmao- lmao.tcl 6.6.0 - https://github.com/lmao-tcl/lmao-tcl.github.io",
+    "[SANCTION] #canada boss banned troll (*!*@troll.host) - spam",
+    "[ACCESS] #canada boss opped chanop",
+    "[REGISTER] newguy registered as newguy",
+    "[MODULE] #canada boss disabled module idledevoice"
+  ];
+  const SYS = n => pick([`--> ${n} (~${n}@${n}.users.undernet.org) has joined #canada`, `<-- ${n} has quit (Ping timeout)`, `*** lmao sets mode: +v ${n}`, `*** X sets mode: +o lmao`, `<-- ${n} has left #canada`]);
+  function bgLine() {
+    const h = String(Math.floor(Math.random() * 24)).padStart(2, "0"), m = String(Math.floor(Math.random() * 60)).padStart(2, "0");
+    const r = Math.random(), n = pick(NICKS);
+    const body = r < 0.55 ? `<span class="n${1 + NICKS.indexOf(n) % 6}">&lt;${n}&gt;</span> ${esc(pick(CHAT))}`
+      : r < 0.78 ? `<span class="bgbot">${esc(pick(BOT))}</span>` : `<span class="bgsys">${esc(SYS(n))}</span>`;
+    return `[${h}:${m}] ${body}`;
+  }
+  $$("#bg .col").forEach((col, i) => {
+    const lines = Array.from({ length: 70 }, bgLine).join("<br>");
+    col.innerHTML = lines + "<br>" + lines;
+    col.style.animationDuration = (180 + i * 40) + "s";
+  });
+
+  // ---------- Fake IRC client demo ----------
+  let paused = reduced;
+  const log = $("#irc-log"), nicksEl = $("#irc-nicks"), typed = $("#irc-typed"), me = $("#irc-me");
+  const ts = () => { const d = new Date(); return `<span class="ts">${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}</span> `; };
+  const nk = { boss: "nk1", dave: "nk2", maple: "nk3", troll: "nk4", chanop: "nk5" };
+  let nicks;
+  function drawNicks() {
+    const o = n => n.m === "@" ? 0 : n.m === "+" ? 1 : 2;
+    nicksEl.innerHTML = [...nicks].sort((a, b) => o(a) - o(b) || a.n.localeCompare(b.n)).map(n => `<div class="${n.m === "@" ? "op" : n.m === "+" ? "vc" : ""}">${n.m}${n.n}</div>`).join("");
+  }
+  function say(html) {
+    const d = document.createElement("div");
+    d.innerHTML = ts() + html;
+    log.appendChild(d);
+    while (log.children.length > 14) log.firstChild.remove();
+  }
+  const msg = (n, t) => say(`&lt;<span class="${nk[n] || ""}">${n}</span>&gt; ${esc(t)}`);
+  const notice = t => say(`<span class="notice">-lmao- ${esc(t)}</span>`);
+  const sys = t => say(`<span class="sys">${esc(t)}</span>`);
+  const mode = t => say(`<span class="mode">*** ${esc(t)}</span>`);
+  const setMode = (n, m) => { const x = nicks.find(k => k.n === n); if (x) x.m = m; drawNicks(); };
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const waitPlay = async () => { while (paused) await sleep(250); };
+  async function type(who, text) {
+    me.textContent = `[${who}]`;
+    typed.textContent = "";
+    for (const ch of text) { await waitPlay(); typed.textContent += ch; await sleep(55 + Math.random() * 60); }
+    await sleep(350);
+    typed.textContent = "";
+    msg(who, text);
+  }
+  const SCRIPT = [
+    () => sys("--> dave (~dave@dave.users.undernet.org) has joined #canada"),
+    () => { nicks.push({ n: "dave", m: "" }); drawNicks(); },
+    () => msg("dave", "salut tout le monde 👋"),
+    () => { mode("lmao sets mode: +v dave"); setMode("dave", "+"); },
+    () => type("boss", "!addmod dave"),
+    () => notice("[OK] dave moves up from Voice to Mod on #canada (flags: -|Mv)"),
+    () => notice("Welcome, dave! You have been granted Mod access on #canada by boss."),
+    () => { $("#tab-ops").style.color = "var(--orange)"; },
+    () => msg("troll", "BUY CHEAP BOUNCERS!!! www.spam.example"),
+    () => msg("troll", "BUY CHEAP BOUNCERS!!! www.spam.example"),
+    () => type("dave", "!ban troll spam"),
+    () => mode("lmao sets mode: +b *!*@troll.host"),
+    () => { say(`<span class="kick">*** troll was kicked by lmao (spam)</span>`); nicks = nicks.filter(k => k.n !== "troll"); drawNicks(); },
+    () => msg("maple", "lmao"),
+    () => type("chanop", "!op"),
+    () => notice("you are not an Op in the user list on #canada, so I cannot op anyone"),
+    () => msg("maple", "lmao x2"),
+    () => type("boss", "!help ban"),
+    () => notice("Command: !ban <nick> [reason]"),
+    () => notice("Example: !ban baduser being annoying")
+  ];
+  function resetDemo() {
+    log.innerHTML = "";
+    $("#tab-ops").style.color = "";
+    nicks = [{ n: "X", m: "@" }, { n: "lmao", m: "@" }, { n: "boss", m: "@" }, { n: "maple", m: "+" }, { n: "chanop", m: "" }, { n: "troll", m: "" }];
+    drawNicks();
+    sys("Now talking in #canada");
+    sys("Topic: Bienvenue au #Canada - be nice eh");
+  }
+  async function demo() {
+    for (;;) {
+      await waitPlay();
+      resetDemo();
+      for (const step of SCRIPT) {
+        await waitPlay();
+        await step();
+        await sleep(900 + Math.random() * 900);
+      }
+      await sleep(4000);
+    }
+  }
+  resetDemo();
+  demo();
+  setInterval(() => { if (!paused) $("#lag").textContent = (0.04 + Math.random() * 0.2).toFixed(2); }, 2500);
+
+  // ---------- Pause / play every animation ----------
+  const pauseBtn = $("#pause");
+  function setPaused(p) {
+    paused = p;
+    document.body.classList.toggle("paused", p);
+    pauseBtn.setAttribute("aria-pressed", p);
+    pauseBtn.querySelector("use").setAttribute("href", p ? "#i-play" : "#i-pause");
+    pauseBtn.querySelector('[data-l="en"]').textContent = p ? T.en.play : T.en.pause;
+    pauseBtn.querySelector('[data-l="fr"]').textContent = p ? T.fr.play : T.fr.pause;
+  }
+  pauseBtn.addEventListener("click", () => setPaused(!paused));
+  setPaused(paused);
+
+  // ---------- Tip of the moment ----------
+  const TIPS = {
+    en: [
+      "<code>/msg BotNick help ban</code> keeps even the command out of the channel.",
+      "<code>!disable idledevoice</code> keeps auto-voice but stops the devoicing.",
+      "Auth with X and set <code>+x</code> before <code>/msg BotNick register</code>.",
+      "<code>!access mod</code> lists just the mods on this channel.",
+      "<code>!addvoice</code> on an op moves them <em>down</em> — one rung at a time.",
+      "<code>!chanlog #ops</code> sends this channel's audit trail to #ops.",
+      "<code>!suschan</code> parks a channel and keeps all of its users.",
+      "Type <kbd>/</kbd> anywhere on this page to filter commands."
+    ],
+    fr: [
+      "<code>/msg BotNick help ban</code> garde même la commande hors du canal.",
+      "<code>!disable idledevoice</code> garde le voice automatique mais arrête le devoice.",
+      "Authentifie-toi auprès de X et mets <code>+x</code> avant <code>/msg BotNick register</code>.",
+      "<code>!access mod</code> ne liste que les mods de ce canal.",
+      "<code>!addvoice</code> sur un op le fait <em>descendre</em> — un échelon à la fois.",
+      "<code>!chanlog #ops</code> envoie le journal de ce canal dans #ops.",
+      "<code>!suschan</code> met un canal de côté en gardant tous ses utilisateurs.",
+      "Tape <kbd>/</kbd> n'importe où sur la page pour filtrer les commandes."
+    ]
+  };
+  let tipI = Math.floor(Math.random() * TIPS.en.length);
+  function showTip() { $("#tip").innerHTML = TIPS[L()][tipI % TIPS.en.length]; }
+  $("#tip-next").addEventListener("click", () => { tipI++; showTip(); });
+
+  // ---------- Count-up stats ----------
+  if (!reduced) {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      io.unobserve(e.target);
+      const el = e.target, end = +el.dataset.count, suf = el.dataset.suffix || "", t0 = performance.now();
+      const tick = t => { const p = Math.min(1, (t - t0) / 1100); el.textContent = Math.round(end * (1 - Math.pow(1 - p, 3))) + suf; if (p < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    }));
+    $$("[data-count]").forEach(c => io.observe(c));
+  }
+
+  // ---------- Copy buttons ----------
+  const toast = $("#toast");
+  let toastT;
+  function flash(text) { toast.textContent = text; toast.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => toast.classList.remove("show"), 1400); }
+  document.addEventListener("click", e => {
+    const btn = e.target.closest(".copy");
+    if (!btn || !navigator.clipboard) return;
+    const src = btn.dataset.copy ? document.getElementById(btn.dataset.copy) : btn.parentElement.querySelector("pre");
+    const txt = src.innerText.split("\n").filter(l => !/^\s*#\s/.test(l)).join("\n").trim();
+    navigator.clipboard.writeText(txt).then(() => {
+      btn.classList.add("ok");
+      btn.querySelector("use").setAttribute("href", "#i-check");
+      flash(T[L()].copied);
+      setTimeout(() => { btn.classList.remove("ok"); btn.querySelector("use").setAttribute("href", "#i-copy"); }, 1200);
+    }, () => {});
+  });
+
+  // ---------- Command filter ----------
+  const search = $("#search"), count = $("#search-count"), cards = $$(".cmd");
+  search.addEventListener("input", () => {
+    const q = search.value.trim().toLowerCase();
+    let n = 0;
+    cards.forEach(c => {
+      const hit = !q || (c.dataset.k || "").includes(q) || c.innerText.toLowerCase().includes(q);
+      c.classList.toggle("hidden", !hit);
+      if (hit) n++;
+    });
+    count.textContent = q ? T[L()].match(n) : "";
+    if (q && n) document.querySelector(".cmd:not(.hidden)").scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+  });
+
+  // ---------- Mobile menu ----------
+  const menuBtn = $("#menu-btn");
+  function setMenu(open) { document.body.classList.toggle("nav-open", open); menuBtn.setAttribute("aria-expanded", open); }
+  menuBtn.addEventListener("click", () => setMenu(!document.body.classList.contains("nav-open")));
+  $("#nav").addEventListener("click", e => { if (e.target.closest("a")) setMenu(false); });
+
+  // ---------- Keys: "/" to search, Esc to close, type "lmao" for a surprise ----------
+  let buf = "";
+  document.addEventListener("keydown", e => {
+    const inField = document.activeElement === search;
+    if (e.key === "/" && !inField && !e.ctrlKey && !e.metaKey) { e.preventDefault(); setMenu(true); search.focus(); return; }
+    if (e.key === "Escape") {
+      if (inField) { search.value = ""; search.dispatchEvent(new Event("input")); search.blur(); }
+      if (document.body.classList.contains("nav-open")) { setMenu(false); menuBtn.focus(); }
+      return;
+    }
+    if (inField || e.key.length !== 1) return;
+    buf = (buf + e.key.toLowerCase()).slice(-4);
+    if (buf === "lmao") lol();
+  });
+  function lol() {
+    if (reduced || paused) return flash("😂");
+    for (let i = 0; i < 26; i++) {
+      const s = document.createElement("span");
+      s.className = "lol";
+      s.setAttribute("aria-hidden", "true");
+      s.textContent = pick(["😂", "🤣", "😂", "🍁", "😹"]);
+      s.style.left = Math.random() * 100 + "vw";
+      s.style.top = 100 + Math.random() * 20 + "vh";
+      s.style.fontSize = 20 + Math.random() * 26 + "px";
+      s.style.animationDelay = Math.random() * 0.6 + "s";
+      s.style.setProperty("--dx", (Math.random() - 0.5) * 200 + "px");
+      s.style.setProperty("--r", (Math.random() - 0.5) * 540 + "deg");
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 3200);
+    }
+  }
+  let logoClicks = 0;
+  $("#logo").addEventListener("click", () => { if (++logoClicks % 3 === 0) lol(); });
+
+  // ---------- Scrollspy (sidebar + navbar) + back to top ----------
+  const spyLinks = $$(".nav a, .navlinks a");
+  const ids = [...new Set(spyLinks.map(a => a.getAttribute("href").slice(1)))];
+  const secs = ids.map(id => document.getElementById(id)).filter(Boolean).sort((a, b) => a.offsetTop - b.offsetTop);
+  const topBtn = $("#top-btn");
+  function spy() {
+    const y = scrollY + 140;
+    let cur = null;
+    secs.forEach(s => { if (s.offsetTop <= y) cur = s.id; });
+    spyLinks.forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + cur));
+    topBtn.classList.toggle("show", scrollY > 700);
+  }
+  addEventListener("scroll", spy, { passive: true });
+  spy();
+  topBtn.addEventListener("click", () => { scrollTo({ top: 0, behavior: reduced ? "auto" : "smooth" }); $("#main").focus({ preventScroll: true }); });
+
+  // ---------- Storage notice, shown once ----------
+  let seen = false;
+  try { seen = localStorage.getItem("notice-ok") === "1"; } catch (e) {}
+  if (!seen) {
+    const bar = $("#notice");
+    bar.hidden = false;
+    $("#notice-ok").addEventListener("click", () => { try { localStorage.setItem("notice-ok", "1"); } catch (e) {} bar.hidden = true; });
+  }
+
+  // ---------- Page uptime, like !uptime ----------
+  const t0 = Date.now();
+  setInterval(() => {
+    let s = Math.floor((Date.now() - t0) / 1000);
+    const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60);
+    s %= 60;
+    $("#uptime").textContent = (h ? h + "h " : "") + (h || m ? m + "m " : "") + s + "s";
+  }, 1000);
+
+  setLang(L());
+})();
+</script>
 </body>
 </html>
