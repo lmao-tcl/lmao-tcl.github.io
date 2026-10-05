@@ -411,7 +411,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/><path d="M14 30q-3 4 0 7M50 30q3 4 0 7" stroke="#4cc3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <b>lmao<span>.tcl</span></b>
     </a>
-    <span class="ver">v6.8.0</span>
+    <span class="ver">v6.8.1</span>
     <nav class="navlinks" aria-label="Main">
       <a href="#features"><svg class="ico" aria-hidden="true"><use href="#i-home"/></svg><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a>
       <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span data-l="en">Install</span><span data-l="fr">Installer</span></a>
@@ -488,7 +488,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <p class="tagline" data-l="en">Channel management for eggdrop, built for UnderNet. <em>Every reply by notice, never in your channel.</em></p>
     <p class="tagline" data-l="fr">La gestion de canal pour eggdrop, pensée pour UnderNet. <em>Chaque réponse par notice, jamais dans ton canal.</em></p>
     <div class="badges">
-      <span class="badge o">v6.8.0</span>
+      <span class="badge o">v6.8.1</span>
       <span class="badge g">eggdrop ≥ 1.8</span>
       <span class="badge b">Tcl ≥ 8.5</span>
       <span class="badge">UnderNet · ircu · X</span>
@@ -615,7 +615,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     le robot n'inonde jamais le canal qu'il est censé protéger.</p>
   <div class="table-scroll">
   <table class="kv">
-    <tr><th>Script</th><td>lmao.tcl v6.8.0</td></tr>
+    <tr><th>Script</th><td>lmao.tcl v6.8.1</td></tr>
     <tr><th><span data-l="en">Repository</span><span data-l="fr">Dépôt</span></th><td><a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer">github.com/lmao-tcl/lmao-tcl.github.io</a></td></tr>
     <tr><th><span data-l="en">Requirements</span><span data-l="fr">Prérequis</span></th><td><span data-l="en">Eggdrop 1.8 or newer (tested on 1.10.1) · Tcl 8.5 or newer</span><span data-l="fr">Eggdrop 1.8 ou plus récent (testé sur 1.10.1) · Tcl 8.5 ou plus récent</span></td></tr>
     <tr><th><span data-l="en">Network</span><span data-l="fr">Réseau</span></th><td><span data-l="en">Written for UnderNet ircu — aware of the <code>X</code> and <code>W</code> services</span><span data-l="fr">Écrit pour ircu d'UnderNet — tient compte des services <code>X</code> et <code>W</code></span></td></tr>
@@ -648,7 +648,7 @@ source scripts/lmao.tcl</pre></div>
 
   <p data-l="en">You should see this in the partyline and the log:</p>
   <p data-l="fr">Tu devrais voir ceci dans la partyline et le journal :</p>
-  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.0] - Complete production ready version</span>
+  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.1] - Complete production ready version</span>
 <span class="n">Loaded successfully - ready to serve!</span></pre></div>
 
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
@@ -694,6 +694,7 @@ source scripts/lmao.tcl</pre></div>
     <tr><td><code>cc(guard_ban_minutes)</code></td><td><code>10</code></td><td><span data-l="en">How long that ban lasts</span><span data-l="fr">Durée de ce bannissement</span></td></tr>
     <tr><td><code>cc(guard_lock_modes)</code></td><td><code>Dm</code></td><td><span data-l="en">Modes a lock sets. Letters the server does not support are skipped</span><span data-l="fr">Modes posés par le verrou. Les lettres que le serveur ne connaît pas sont ignorées</span></td></tr>
     <tr><td><code>cc(guard_lock_minutes)</code></td><td><code>5</code></td><td><span data-l="en">Quiet minutes before a lock lifts itself</span><span data-l="fr">Minutes de calme avant que le verrou se lève</span></td></tr>
+    <tr><td><code>cc(guard_netsplit_seconds)</code></td><td><code>120</code></td><td><span data-l="en">After a netsplit, joins are not counted as a flood for this long (the relink brings everyone from the other side at once)</span><span data-l="fr">Après un netsplit, les arrivées ne comptent pas comme un flood pendant ce temps (la reconnexion ramène tout l'autre côté d'un coup)</span></td></tr>
     <tr><td><code>cc(x_user)</code></td><td><em><span data-l="en">empty</span><span data-l="fr">vide</span></em></td><td><span data-l="en">X account name. Empty keeps every X feature off</span><span data-l="fr">Nom du compte X. Vide, toutes les fonctions X restent éteintes</span></td></tr>
     <tr><td><code>cc(x_pass)</code></td><td><em><span data-l="en">empty</span><span data-l="fr">vide</span></em></td><td><span data-l="en">X password. Keep the config file private</span><span data-l="fr">Mot de passe X. Garde le fichier de config privé</span></td></tr>
     <tr><td><code>cc(x_hide_host)</code></td><td><code>1</code></td><td><span data-l="en">Set <code>+x</code> after logging in, so the bot's host becomes <code>&lt;account&gt;.users.undernet.org</code></span><span data-l="fr">Mettre <code>+x</code> après la connexion : l'hôte du robot devient <code>&lt;compte&gt;.users.undernet.org</code></span></td></tr>
@@ -1343,6 +1344,9 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-eye"/></svg>
     <div data-l="en">Ops, registered regulars (<code>n m o M v</code>) and service bots are never counted. The ops are warned with a notice only they see (<code>NOTICE @#channel</code>), and every lock, unlock and kick goes to <a href="#chanlog">chanlog</a>.</div>
     <div data-l="fr">Les ops, les habitués inscrits (<code>n m o M v</code>) et les services ne sont jamais comptés. Les ops sont avertis par une notice qu'eux seuls voient (<code>NOTICE @#canal</code>), et chaque verrou, déverrouillage et expulsion va dans le <a href="#chanlog">chanlog</a>.</div></div>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg>
+    <div data-l="en"><b>Netsplits are not attacks.</b> People coming back from a split rejoin quietly (eggdrop tells them apart), and for 2 minutes after any split sign in a channel, joins are not counted as a flood and the bad channel WHOIS is skipped — a relink brings everyone from the other side at once. UnderNet hides server names in splits (<code>*.net *.split</code>); a user's own quit always starts with <code>Quit:</code>, so nobody can fake a split to sneak a flood in.</div>
+    <div data-l="fr"><b>Un netsplit n'est pas une attaque.</b> Ceux qui reviennent d'un split rentrent discrètement (eggdrop les distingue), et pendant 2 minutes après tout signe de split dans un canal, les arrivées ne comptent pas comme un flood et le WHOIS des canaux interdits est sauté — une reconnexion ramène tout l'autre côté d'un coup. UnderNet cache les noms de serveurs dans les splits (<code>*.net *.split</code>) ; le message de départ d'un utilisateur commence toujours par <code>Quit:</code>, donc personne ne peut simuler un split pour glisser un flood.</div></div>
 
   <div class="cmd" data-k="lockdown lock flood attack drones +D +m verrouiller">
     <div class="cmd-head"><h4><span class="amp">!</span>lockdown</h4><span class="lvl op">Op+</span></div>
@@ -1567,6 +1571,14 @@ set cc(x_pass) "its-x-password"</pre></div>
 <section id="changelog">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-history"/></svg></span><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
 
+  <h3 class="sub">6.8.1</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Netsplits</span><span data-l="fr">Netsplits</span></th><td><span data-l="en">A relink after a netsplit no longer looks like a join flood: for <code>cc(guard_netsplit_seconds)</code> after any split sign, joins are not counted and the bad channel WHOIS is skipped. Splits are recognized from eggdrop and from ircu's hidden <code>*.net *.split</code> quits.</span><span data-l="fr">Une reconnexion après un netsplit ne ressemble plus à un flood d'arrivées : pendant <code>cc(guard_netsplit_seconds)</code> après tout signe de split, les arrivées ne comptent pas et le WHOIS des canaux interdits est sauté. Les splits sont reconnus par eggdrop et par les départs cachés <code>*.net *.split</code> d'ircu.</span></td></tr>
+    <tr><th>Delayjoin</th><td><span data-l="en">Someone hidden in several of the bot's channels is looked up once.</span><span data-l="fr">Quelqu'un caché dans plusieurs canaux du robot n'est vérifié qu'une fois.</span></td></tr>
+  </table>
+  </div>
+
   <h3 class="sub">6.8.0</h3>
   <div class="table-scroll">
   <table class="kv">
@@ -1721,7 +1733,7 @@ set cc(x_pass) "its-x-password"</pre></div>
     "-lmao- Quick Help: Type !help <command> for details",
     "-lmao- Access Info for maple: Level: Voice (v)",
     "-lmao- [OK] newguy moves up from Voice to Mod on #canada",
-    "-lmao- lmao.tcl 6.8.0 - https://github.com/lmao-tcl/lmao-tcl.github.io",
+    "-lmao- lmao.tcl 6.8.1 - https://github.com/lmao-tcl/lmao-tcl.github.io",
     "[SANCTION] #canada boss banned troll (*!*@troll.host) - spam",
     "[ACCESS] #canada boss opped chanop",
     "[REGISTER] newguy registered as newguy",

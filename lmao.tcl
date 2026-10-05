@@ -76,6 +76,10 @@ set cc(guard_user_action) "kickban"
 set cc(guard_ban_minutes) 10
 set cc(guard_lock_modes) "Dm"
 set cc(guard_lock_minutes) 5
+# After a netsplit the servers relink and everyone from the other side
+# "joins" at once. For this many seconds after any split sign in a channel,
+# joins are not counted as a flood and the bad channel WHOIS is skipped.
+set cc(guard_netsplit_seconds) 120
 
 # Delayjoin - keeps a channel +Dm (ircu delayed join + moderated) and lets
 # people in by voicing them, per channel (!enable/!disable delayjoin, off by
@@ -122,7 +126,7 @@ set cc(x_hide_host) 1
 set cc(x_rescue) 1
 
 # Version info
-set cc(version_number) "6.8.0"
+set cc(version_number) "6.8.1"
 set cc(version) "\002\[lmao.tcl $cc(version_number)\]\002"
 set cc(www) "https://lmao-tcl.github.io/"
 
@@ -294,6 +298,9 @@ bind pubm - * guard:pubm
 bind notc - * guard:notc
 bind ctcp - ACTION guard:action
 bind nick - * guard:nick
+bind splt - * guard:split
+bind rejn - * guard:split
+bind sign - * guard:sign
 
 # Delayjoin (+Dm), DNSBL and bad channels
 bind raw - 355 dj:raw355
@@ -3562,8 +3569,43 @@ proc guard:action {nick uhost hand dest keyword text} {
 	return 0
 }
 
+# Netsplits. Eggdrop sends people coming back from a split to "rejn", not
+# "join", but after a relink the bot also sees everyone who joined on the
+# other side while it was split - a wall of joins that is not an attack.
+# Any split sign in a channel opens a grace window of guard_netsplit_seconds.
+array set guard_netsplit {}
+
+proc guard:split {nick uhost hand chan} {
+	global guard_netsplit
+	set guard_netsplit([string tolower $chan]) [clock seconds]
+	return 0
+}
+
+# ircu hides server names (HIS_NETSPLIT): a split sign-off reads "*.net
+# *.split". A user's own quit message always starts with "Quit: " on ircu,
+# so nobody can fake this to sneak a flood past the guard.
+proc guard:is_split_reason {reason} {
+	return [regexp {^[A-Za-z0-9*._-]+\.[A-Za-z0-9*_-]+ [A-Za-z0-9*._-]+\.[A-Za-z0-9*_-]+$} $reason]
+}
+
+proc guard:sign {nick uhost hand chan reason} {
+	if {[guard:is_split_reason $reason]} {
+		guard:split $nick $uhost $hand $chan
+	}
+	return 0
+}
+
+proc guard:netjoin {chan} {
+	global cc guard_netsplit
+	set key [string tolower $chan]
+	return [expr {[info exists guard_netsplit($key)] && [clock seconds] - $guard_netsplit($key) < $cc(guard_netsplit_seconds)}]
+}
+
 proc guard:join {nick uhost hand chan} {
 	if {[isbotnick $nick] || ![guard:active $chan] || [guard:trusted $nick $chan]} {
+		return 0
+	}
+	if {[guard:netjoin $chan]} {
 		return 0
 	}
 	set lc [string tolower $chan]
@@ -3766,6 +3808,9 @@ proc guard:status:pub {nick uhost hand chan arg} {
 		if {[string first $m [lmao:server_modes]] >= 0} {
 			append usable $m
 		}
+	}
+	if {[guard:netjoin $chan]} {
+		append lock ", netsplit grace (joins not counted right now)"
 	}
 	putserv "NOTICE $nick :\002Guard on $chan:\002 $state, $lock. Lock modes: +$usable"
 	putserv "NOTICE $nick :Limits (count:seconds) - one user: $cc(guard_user_flood) ($cc(guard_user_action)), channel: $cc(guard_line_flood), joins: $cc(guard_join_flood), nick changes: $cc(guard_nick_flood)"
@@ -4633,7 +4678,9 @@ proc scan:join {nick uhost hand chan} {
 		return 0
 	}
 	if {[dnsbl:on $chan] || [badchan:on $chan]} {
-		dnsbl:check $chan $nick $uhost [list badchan:check $chan $nick $uhost {}]
+		# Right after a netsplit: DNS checks are free, a WHOIS per person is not
+		set then [expr {[guard:netjoin $chan] ? {} : [list badchan:check $chan $nick $uhost {}]}]
+		dnsbl:check $chan $nick $uhost $then
 	}
 	return 0
 }

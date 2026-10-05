@@ -2,7 +2,7 @@
 
 **Channel management for eggdrop, built for UnderNet.**
 
-[![Version](https://img.shields.io/badge/version-6.8.0-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
+[![Version](https://img.shields.io/badge/version-6.8.1-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
 [![Eggdrop](https://img.shields.io/badge/eggdrop-1.8%2B-green.svg)](https://www.eggheads.org/)
 [![Tcl](https://img.shields.io/badge/tcl-8.5%2B-blue.svg)](https://www.tcl.tk/)
 [![License](https://img.shields.io/badge/license-GPLv3-lightgrey.svg)](LICENSE)
@@ -69,7 +69,7 @@ source scripts/lmao.tcl
 Then `.rehash` on the partyline. You should see:
 
 ```
-[lmao.tcl 6.8.0] - Complete production ready version
+[lmao.tcl 6.8.1] - Complete production ready version
 Loaded successfully - ready to serve!
 ```
 
@@ -109,6 +109,7 @@ Everything lives in the `CONFIGURATION SECTION` at the top of the script.
 | `cc(guard_ban_minutes)` | `10` | How long that ban lasts |
 | `cc(guard_lock_modes)` | `Dm` | Modes a lock sets (unsupported letters are skipped) |
 | `cc(guard_lock_minutes)` | `5` | Quiet minutes before a lock lifts itself |
+| `cc(guard_netsplit_seconds)` | `120` | Grace after a netsplit: joins are not counted as a flood |
 | `cc(x_user)` / `cc(x_pass)` | empty | The bot's own X account. Empty keeps X off |
 | `cc(x_hide_host)` | `1` | Set `+x` after logging in to X |
 | `cc(x_rescue)` | `1` | Ask X for op, unban or invite when locked out |
@@ -263,6 +264,11 @@ lock, unlock and kick goes to chanlog.
 !unlock                lift it early
 !guard                 state and limits
 ```
+
+**Netsplits are not attacks.** People returning from a split rejoin quietly, and for 2 minutes
+after any split sign in a channel, joins are not counted and the bad channel WHOIS is skipped, so
+a relink never trips the guard. UnderNet's hidden `*.net *.split` quits are recognized; a user's
+own quit always starts with `Quit:`, so a split cannot be faked.
 
 If a channel's eggdrop `chanmode` setting enforces `-m` or `-D`, it will undo a lock.
 
