@@ -2,7 +2,7 @@
 
 **Channel management for eggdrop, built for UnderNet.**
 
-[![Version](https://img.shields.io/badge/version-6.8.1-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
+[![Version](https://img.shields.io/badge/version-6.8.2-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
 [![Eggdrop](https://img.shields.io/badge/eggdrop-1.8%2B-green.svg)](https://www.eggheads.org/)
 [![Tcl](https://img.shields.io/badge/tcl-8.5%2B-blue.svg)](https://www.tcl.tk/)
 [![License](https://img.shields.io/badge/license-GPLv3-lightgrey.svg)](LICENSE)
@@ -24,7 +24,8 @@ bot never floods your channel.
 - **One help table.** `!help` and `/msg <bot> help` share a single source of truth, so
   documentation can't drift away from the commands.
 - **Per-channel modules.** Turn features on and off per channel with `!enable` /
-  `!disable`, without touching the config or reloading anything.
+  `!disable`, without touching the config or reloading anything. Every module ships off, and
+  what you switch on is saved.
 - **Real access levels.** Voice, Mod, Op, Master, Owner — one rung at a time, modes follow
   the level, and you can only reach below yourself.
 - **Self-registration.** `/msg <bot> register` adds someone to the userfile behind a
@@ -69,7 +70,7 @@ source scripts/lmao.tcl
 Then `.rehash` on the partyline. You should see:
 
 ```
-[lmao.tcl 6.8.1] - Complete production ready version
+[lmao.tcl 6.8.2] - Complete production ready version
 Loaded successfully - ready to serve!
 ```
 
@@ -91,9 +92,11 @@ Everything lives in the `CONFIGURATION SECTION` at the top of the script.
 | `cc(away_enabled)` | `0` | Set the bot away with `cc(away_message)` on connect and rehash |
 | `cc(away_message)` | text | The default away message |
 | `cc(away_file)` | `lmao-away.txt` | Where `!away` / `!back` are saved so they survive reboots |
-| `cc(idledeop_enabled)` | `1` | Master switch for idle deop (the module still starts off per channel) |
+| `cc(idledeop_enabled)` | `1` | Master switch for idle deop: `0` stops it everywhere (the module still starts off per channel) |
 | `cc(idledeop_default_minutes)` | `180` | Minutes before an idle op is deopped |
 | `cc(idledeop_check_interval)` | `5` | Seconds between idle-deop sweeps |
+| `cc(idledeop_whois)` | `1` | WHOIS an op for their real idle time before deopping; `0` = quiet in the channel is enough |
+| `cc(module_file)` | `lmao-modules.txt` | Where module switches and idle deop limits are saved |
 | `cc(activevoice_idle_minutes)` | `180` | Minutes before an idle voice is removed |
 | `cc(activevoice_check_interval)` | `10` | Seconds between devoice sweeps |
 | `cc(access_welcome_delay)` | `3` | Seconds between queued welcome notices |
@@ -127,17 +130,17 @@ Everything lives in the `CONFIGURATION SECTION` at the top of the script.
 
 ## Modules
 
-Modules are per channel. Four start **on**; the other five start **off** because they change how
-the channel works.
+Modules are per channel, and all nine start **off**: the bot does nothing on a channel until you
+switch a module on there with `!enable`.
 
 | Module | Default | What it does |
 | --- | --- | --- |
-| `topic` | on | `!topic` / `!topicsync` — stores the topic and re-applies it when it drifts |
-| `activevoice` | on | Auto-voices non-registered users when they talk, and tracks their activity |
+| `topic` | **off** | `!topic` / `!topicsync` — stores the topic and re-applies it when it drifts |
+| `activevoice` | **off** | Auto-voices non-registered users when they talk, and tracks their activity |
 | `idledevoice` | **off** | Removes voice from non-registered users who have gone idle |
 | `idledeop` | **off** | Deops ops who have been idle past the channel's limit |
-| `chanlog` | on | Sends the channel's audit trail to the ops channel |
-| `guard` | on | Flood protection: kicks lone flooders, locks the channel under attack |
+| `chanlog` | **off** | Sends the channel's audit trail to the ops channel |
+| `guard` | **off** | Flood protection: kicks lone flooders, locks the channel under attack |
 | `delayjoin` | off | Keeps the channel `+Dm` and voices hidden newcomers once they check out |
 | `dnsbl` | off | Bans IPs listed on drone and proxy blacklists, even before they show up |
 | `badchan` | off | Bans people who sit in listed channels |
@@ -149,8 +152,9 @@ the channel works.
 /msg <bot> disable #chan idledevoice  same thing, privately
 ```
 
-> **Note:** module states and chanlog destinations are held in memory. A `.rehash` or
-> `.restart` puts every module back to its default and every log back to `cc(backchan)`.
+> **Note:** module states and idle deop limits are saved in `cc(module_file)` and survive a
+> `.rehash` or `.restart`. Chanlog destinations are still held in memory: a `.restart` puts
+> every log back to `cc(backchan)`.
 
 ---
 
@@ -239,8 +243,14 @@ channel you name, so channel-only ops and masters work too.
 
 ## Idle deop
 
-The module is off by default. `!enable idledeop` turns it on for a channel and `!idledeop #chan <minutes>`
-sets the limit. Never deopped: the service bots in `cc(protected_bots)`, the bot itself,
+The module is off by default. `!enable idledeop` turns it on for a channel, with the
+`cc(idledeop_default_minutes)` limit, and `!idledeop #chan <minutes>` sets that channel's own limit.
+
+An op loses `@` only when all of this is true: quiet in the channel for the limit, opped for at
+least that long (someone opped a minute ago is not idle), and — with `cc(idledeop_whois)` on —
+idle on IRC for the limit according to a WHOIS on their own server. An op who is busy in another
+channel or in private keeps `@`. If the server hides the idle time, the channel idle decides.
+ Never deopped: the service bots in `cc(protected_bots)`, the bot itself,
 anyone with a flag from `cc(protected_flags)`, and anyone named in `cc(deop_exempt)`
 (nick or handle, case-insensitive).
 
@@ -248,7 +258,7 @@ anyone with a flag from `cc(protected_flags)`, and anyone named in `cc(deop_exem
 
 ## Flood guard
 
-The `guard` module is on by default. One person saying 6 lines in 5 seconds is kicked and
+The `guard` module is off by default: `!enable guard` turns it on for a channel. One person saying 6 lines in 5 seconds is kicked and
 banned for 10 minutes. The whole channel flooding (15 lines in 5 seconds), 8 joins in 10
 seconds or 5 nick changes in 10 seconds **locks the channel** with `+Dm`:
 

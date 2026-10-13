@@ -411,7 +411,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/><path d="M14 30q-3 4 0 7M50 30q3 4 0 7" stroke="#4cc3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <b>lmao<span>.tcl</span></b>
     </a>
-    <span class="ver">v6.8.1</span>
+    <span class="ver">v6.8.2</span>
     <nav class="navlinks" aria-label="Main">
       <a href="#features"><svg class="ico" aria-hidden="true"><use href="#i-home"/></svg><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a>
       <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span data-l="en">Install</span><span data-l="fr">Installer</span></a>
@@ -488,7 +488,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <p class="tagline" data-l="en">Channel management for eggdrop, built for UnderNet. <em>Every reply by notice, never in your channel.</em></p>
     <p class="tagline" data-l="fr">La gestion de canal pour eggdrop, pensée pour UnderNet. <em>Chaque réponse par notice, jamais dans ton canal.</em></p>
     <div class="badges">
-      <span class="badge o">v6.8.1</span>
+      <span class="badge o">v6.8.2</span>
       <span class="badge g">eggdrop ≥ 1.8</span>
       <span class="badge b">Tcl ≥ 8.5</span>
       <span class="badge">UnderNet · ircu · X</span>
@@ -615,7 +615,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     le robot n'inonde jamais le canal qu'il est censé protéger.</p>
   <div class="table-scroll">
   <table class="kv">
-    <tr><th>Script</th><td>lmao.tcl v6.8.1</td></tr>
+    <tr><th>Script</th><td>lmao.tcl v6.8.2</td></tr>
     <tr><th><span data-l="en">Repository</span><span data-l="fr">Dépôt</span></th><td><a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer">github.com/lmao-tcl/lmao-tcl.github.io</a></td></tr>
     <tr><th><span data-l="en">Requirements</span><span data-l="fr">Prérequis</span></th><td><span data-l="en">Eggdrop 1.8 or newer (tested on 1.10.1) · Tcl 8.5 or newer</span><span data-l="fr">Eggdrop 1.8 ou plus récent (testé sur 1.10.1) · Tcl 8.5 ou plus récent</span></td></tr>
     <tr><th><span data-l="en">Network</span><span data-l="fr">Réseau</span></th><td><span data-l="en">Written for UnderNet ircu — aware of the <code>X</code> and <code>W</code> services</span><span data-l="fr">Écrit pour ircu d'UnderNet — tient compte des services <code>X</code> et <code>W</code></span></td></tr>
@@ -648,7 +648,7 @@ source scripts/lmao.tcl</pre></div>
 
   <p data-l="en">You should see this in the partyline and the log:</p>
   <p data-l="fr">Tu devrais voir ceci dans la partyline et le journal :</p>
-  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.1] - Complete production ready version</span>
+  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.2] - Complete production ready version</span>
 <span class="n">Loaded successfully - ready to serve!</span></pre></div>
 
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
@@ -671,9 +671,11 @@ source scripts/lmao.tcl</pre></div>
     <tr><td><code>cc(away_enabled)</code></td><td><code>0</code></td><td><span data-l="en">Set the bot away with <code>cc(away_message)</code> on every connect and rehash</span><span data-l="fr">Mettre le robot absent avec <code>cc(away_message)</code> à chaque connexion et rehash</span></td></tr>
     <tr><td><code>cc(away_message)</code></td><td><em><span data-l="en">text</span><span data-l="fr">texte</span></em></td><td><span data-l="en">The default away message</span><span data-l="fr">Le message d'absence par défaut</span></td></tr>
     <tr><td><code>cc(away_file)</code></td><td><code>lmao-away.txt</code></td><td><span data-l="en">Where <code>!away</code> / <code>!back</code> save their setting, so it survives reboots and takes over from the two above</span><span data-l="fr">Où <code>!away</code> / <code>!back</code> enregistrent leur réglage : il survit aux redémarrages et remplace les deux ci-dessus</span></td></tr>
-    <tr><td><code>cc(idledeop_enabled)</code></td><td><code>1</code></td><td><span data-l="en">Master switch for idle deop. The <code>idledeop</code> module itself still starts off on each channel</span><span data-l="fr">Interrupteur général du deop des inactifs. Le module <code>idledeop</code> reste éteint au départ dans chaque canal</span></td></tr>
+    <tr><td><code>cc(idledeop_enabled)</code></td><td><code>1</code></td><td><span data-l="en">Master switch for idle deop: <code>0</code> stops it on every channel. The <code>idledeop</code> module itself still starts off on each channel</span><span data-l="fr">Interrupteur général du deop des inactifs : <code>0</code> l'arrête dans tous les canaux. Le module <code>idledeop</code> reste éteint au départ dans chaque canal</span></td></tr>
     <tr><td><code>cc(idledeop_default_minutes)</code></td><td><code>180</code></td><td><span data-l="en">Minutes before an idle op is deopped</span><span data-l="fr">Minutes avant qu'un op inactif perde son op</span></td></tr>
     <tr><td><code>cc(idledeop_check_interval)</code></td><td><code>5</code></td><td><span data-l="en">Seconds between idle-deop sweeps</span><span data-l="fr">Secondes entre deux vérifications du deop des inactifs</span></td></tr>
+    <tr><td><code>cc(idledeop_whois)</code></td><td><code>1</code></td><td><span data-l="en">WHOIS an op for their real idle time before deopping; <code>0</code> = quiet in the channel is enough</span><span data-l="fr">Fait un WHOIS de l'op pour son vrai temps d'inactivité avant le deop ; <code>0</code> = le silence dans le canal suffit</span></td></tr>
+    <tr><td><code>cc(module_file)</code></td><td><code>lmao-modules.txt</code></td><td><span data-l="en">Where module switches and idle deop limits are saved</span><span data-l="fr">Fichier où sont gardés l'état des modules et les limites du deop des inactifs</span></td></tr>
     <tr><td><code>cc(activevoice_idle_minutes)</code></td><td><code>180</code></td><td><span data-l="en">Minutes before an idle voice is removed</span><span data-l="fr">Minutes avant qu'un voice inactif soit retiré</span></td></tr>
     <tr><td><code>cc(activevoice_check_interval)</code></td><td><code>10</code></td><td><span data-l="en">Seconds between devoice sweeps</span><span data-l="fr">Secondes entre deux vérifications du devoice</span></td></tr>
     <tr><td><code>cc(access_welcome_delay)</code></td><td><code>3</code></td><td><span data-l="en">Seconds between welcome notices. They are queued and sent one line at a time across every access change, so a burst of grants can't flood the network</span><span data-l="fr">Secondes entre deux notices de bienvenue. Elles sont mises en file et envoyées une ligne à la fois pour tous les changements d'accès, pour ne pas inonder le réseau</span></td></tr>
@@ -984,8 +986,8 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 
   <div class="cmd" data-k="topic topicsync set channel topic store restore sujet">
     <div class="cmd-head"><h4><span class="amp">!</span>topic &nbsp;/&nbsp; <span class="amp">!</span>topicsync</h4><span class="lvl op">Op+</span></div>
-    <p data-l="en">Sets the channel topic <strong>and stores it</strong>, so <code>!topicsync</code> can put it back after someone changes it. Needs the <code>topic</code> module.</p>
-    <p data-l="fr">Change le sujet du canal <strong>et le garde en mémoire</strong>, pour que <code>!topicsync</code> le remette quand quelqu'un le modifie. Demande le module <code>topic</code>.</p>
+    <p data-l="en">Sets the channel topic <strong>and stores it</strong>, so <code>!topicsync</code> can put it back after someone changes it. Needs the <code>topic</code> module (<code>!enable topic</code>).</p>
+    <p data-l="fr">Change le sujet du canal <strong>et le garde en mémoire</strong>, pour que <code>!topicsync</code> le remette quand quelqu'un le modifie. Demande le module <code>topic</code> (<code>!enable topic</code>).</p>
     <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!topic</span> <span class="a">&lt;new topic text&gt;</span>
 <span class="t">!topicsync</span></pre></div>
   </div>
@@ -1064,11 +1066,11 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 <span class="t">!disable</span> <span class="a">&lt;module&gt;</span>
 <span class="t">/msg BotNick disable</span> <span class="a">#channel &lt;module&gt;</span></pre></div>
     <div class="code reply"><span class="tag">notice</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">Modules for #channel:</span>
-  [<span class="n">ON</span> ] activevoice - auto-voices non-registered users when they talk
-  [<span class="n">ON</span> ] chanlog - sends this channel's audit trail to the ops channel
+  [<span class="r">OFF</span>] activevoice - auto-voices non-registered users when they talk
+  [<span class="r">OFF</span>] chanlog - sends this channel's audit trail to the ops channel
   [<span class="r">OFF</span>] idledeop - deops ops who have been idle past the channel limit
   [<span class="r">OFF</span>] idledevoice - removes voice from non-registered users idle too long
-  [<span class="n">ON</span> ] topic - !topic / !topicsync - stores and re-applies the channel topic</pre></div>
+  [<span class="r">OFF</span>] topic - !topic / !topicsync - stores and re-applies the channel topic</pre></div>
   </div>
 </section>
 
@@ -1225,8 +1227,8 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 <!-- ================= CHANLOG ================= -->
 <section id="chanlog">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-log"/></svg></span><span data-l="en">Channel logging</span><span data-l="fr">Journal du canal</span></h2>
-  <p class="sec-intro" data-l="en">One audit trail for the channel staff: who got access, who got sanctioned, who registered, who was refused. It defaults to <span class="on">ON</span>, pointed at <code>cc(backchan)</code>, and each channel keeps its own destination.</p>
-  <p class="sec-intro" data-l="fr">Un seul journal pour l'équipe du canal : qui a reçu un accès, qui a été sanctionné, qui s'est inscrit, qui a été refusé. Il est <span class="on">ON</span> par défaut, dirigé vers <code>cc(backchan)</code>, et chaque canal garde sa propre destination.</p>
+  <p class="sec-intro" data-l="en">One audit trail for the channel staff: who got access, who got sanctioned, who registered, who was refused. The <code>chanlog</code> module ships <span class="off">OFF</span> — <code>!enable chanlog</code> starts it. It is pointed at <code>cc(backchan)</code>, and each channel keeps its own destination.</p>
+  <p class="sec-intro" data-l="fr">Un seul journal pour l'équipe du canal : qui a reçu un accès, qui a été sanctionné, qui s'est inscrit, qui a été refusé. Le module <code>chanlog</code> est livré <span class="off">OFF</span> — <code>!enable chanlog</code> le démarre. Il est dirigé vers <code>cc(backchan)</code>, et chaque canal garde sa propre destination.</p>
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg>
     <div data-l="en">The log is an ordinary channel <strong>message</strong>, not a notice, so it lands in the ops window like anything else and survives clients that hide notices. No colour codes — the <code>[CATEGORY]</code> tag carries the meaning.</div>
     <div data-l="fr">Le journal est un <strong>message</strong> normal dans le canal, pas une notice : il arrive dans la fenêtre des ops comme le reste et survit aux clients qui cachent les notices. Aucun code de couleur — l'étiquette <code>[CATÉGORIE]</code> porte le sens.</div></div>
@@ -1257,32 +1259,32 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 <!-- ================= MODULES ================= -->
 <section id="modules">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-puzzle"/></svg></span>Modules</h2>
-  <p class="sec-intro" data-l="en">Nine features can be switched on and off <strong>per channel</strong>, live, without editing the config. Four start <span class="on">ON</span>; the other five start <span class="off">OFF</span> because they change how the channel works.</p>
-  <p class="sec-intro" data-l="fr">Neuf fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Quatre partent <span class="on">ON</span> ; les cinq autres partent <span class="off">OFF</span> parce qu'elles changent le fonctionnement du canal.</p>
+  <p class="sec-intro" data-l="en">Nine features can be switched on and off <strong>per channel</strong>, live, without editing the config. All nine start <span class="off">OFF</span>: the bot does nothing on a channel until you switch a module on there with <code>!enable</code>.</p>
+  <p class="sec-intro" data-l="fr">Neuf fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Les neuf partent <span class="off">OFF</span> : le robot ne fait rien dans un canal tant que tu n'y actives pas un module avec <code>!enable</code>.</p>
   <div class="table-scroll">
   <table>
     <tr><th scope="col" style="width:150px">Module</th><th scope="col" style="width:90px"><span data-l="en">Default</span><span data-l="fr">Défaut</span></th><th scope="col"><span data-l="en">What it does</span><span data-l="fr">À quoi ça sert</span></th></tr>
-    <tr><td><code>topic</code></td><td><span class="on">ON</span></td><td><span data-l="en"><code>!topic</code> and <code>!topicsync</code> — storing and re-applying the channel topic</span><span data-l="fr"><code>!topic</code> et <code>!topicsync</code> — garder et remettre le sujet du canal</span></td></tr>
-    <tr><td><code>activevoice</code></td><td><span class="on">ON</span></td><td><span data-l="en">Auto-voices non-registered users when they talk, and tracks their activity</span><span data-l="fr">Donne le voice aux non-inscrits quand ils parlent, et suit leur activité</span></td></tr>
+    <tr><td><code>topic</code></td><td><span class="off">OFF</span></td><td><span data-l="en"><code>!topic</code> and <code>!topicsync</code> — storing and re-applying the channel topic</span><span data-l="fr"><code>!topic</code> et <code>!topicsync</code> — garder et remettre le sujet du canal</span></td></tr>
+    <tr><td><code>activevoice</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Auto-voices non-registered users when they talk, and tracks their activity</span><span data-l="fr">Donne le voice aux non-inscrits quand ils parlent, et suit leur activité</span></td></tr>
     <tr><td><code>idledevoice</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Removes voice from non-registered users who have gone idle</span><span data-l="fr">Retire le voice aux non-inscrits devenus inactifs</span></td></tr>
     <tr><td><code>idledeop</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Deops ops idle past the channel's limit</span><span data-l="fr">Retire l'op aux ops inactifs au-delà de la limite du canal</span></td></tr>
-    <tr><td><code>chanlog</code></td><td><span class="on">ON</span></td><td><span data-l="en">Sends this channel's audit trail to the ops channel</span><span data-l="fr">Envoie le journal de ce canal au canal des ops</span></td></tr>
-    <tr><td><code>guard</code></td><td><span class="on">ON</span></td><td><span data-l="en">Flood protection: kicks lone flooders, locks the channel under attack — see <a href="#guard">flood guard</a></span><span data-l="fr">Protection anti-flood : expulse les flooders isolés, verrouille le canal sous attaque — voir <a href="#guard">garde anti-flood</a></span></td></tr>
+    <tr><td><code>chanlog</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Sends this channel's audit trail to the ops channel</span><span data-l="fr">Envoie le journal de ce canal au canal des ops</span></td></tr>
+    <tr><td><code>guard</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Flood protection: kicks lone flooders, locks the channel under attack — see <a href="#guard">flood guard</a></span><span data-l="fr">Protection anti-flood : expulse les flooders isolés, verrouille le canal sous attaque — voir <a href="#guard">garde anti-flood</a></span></td></tr>
     <tr><td><code>delayjoin</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Keeps the channel <code>+Dm</code> and voices hidden newcomers — see <a href="#delayjoin">delayed join</a></span><span data-l="fr">Garde le canal en <code>+Dm</code> et donne le voice aux nouveaux cachés — voir <a href="#delayjoin">arrivées différées</a></span></td></tr>
     <tr><td><code>dnsbl</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Bans IPs listed on drone and proxy blacklists — see <a href="#dnsbl">drone blacklists</a></span><span data-l="fr">Bannit les IP inscrites sur les listes noires de drones et de proxys — voir <a href="#dnsbl">listes noires</a></span></td></tr>
     <tr><td><code>badchan</code></td><td><span class="off">OFF</span></td><td><span data-l="en">Bans people who sit in listed channels — see <a href="#badchan">bad channels</a></span><span data-l="fr">Bannit les gens présents dans les canaux listés — voir <a href="#badchan">canaux interdits</a></span></td></tr>
   </table>
   </div>
-  <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
-    <div data-l="en"><b>Not persistent.</b> Module states live in memory. A <code>.rehash</code> or <code>.restart</code> puts every module back to its default.</div>
-    <div data-l="fr"><b>Pas permanent.</b> L'état des modules est en mémoire. Un <code>.rehash</code> ou un <code>.restart</code> remet chaque module à sa valeur par défaut.</div></div>
+  <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
+    <div data-l="en"><b>Saved.</b> Module states and idle deop limits are written to <code>cc(module_file)</code> (<code>lmao-modules.txt</code>) on every change and read back after a <code>.rehash</code> or <code>.restart</code>.</div>
+    <div data-l="fr"><b>Sauvegardé.</b> L'état des modules et les limites du deop des inactifs sont écrits dans <code>cc(module_file)</code> (<code>lmao-modules.txt</code>) à chaque changement et relus après un <code>.rehash</code> ou un <code>.restart</code>.</div></div>
 </section>
 
 <!-- ================= ACTIVEVOICE ================= -->
 <section id="activevoice">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-mic"/></svg></span>ActiveVoice</h2>
-  <p class="sec-intro" data-l="en">ActiveVoice rewards people who actually talk. It exists for <strong>non-regulars</strong> — anyone who isn't a registered user with voice-worthy flags.</p>
-  <p class="sec-intro" data-l="fr">ActiveVoice récompense ceux qui parlent vraiment. Il existe pour les <strong>non-habitués</strong> — toute personne qui n'est pas inscrite avec des drapeaux qui méritent le voice.</p>
+  <p class="sec-intro" data-l="en">ActiveVoice rewards people who actually talk. It exists for <strong>non-regulars</strong> — anyone who isn't a registered user with voice-worthy flags. The module ships <span class="off">OFF</span>: <code>!enable activevoice</code> starts it on a channel.</p>
+  <p class="sec-intro" data-l="fr">ActiveVoice récompense ceux qui parlent vraiment. Il existe pour les <strong>non-habitués</strong> — toute personne qui n'est pas inscrite avec des drapeaux qui méritent le voice. Le module est livré <span class="off">OFF</span> : <code>!enable activevoice</code> le démarre dans un canal.</p>
   <ol class="steps" data-l="en">
     <li><span>Someone who is <strong>not</strong> registered with <code>+n</code>, <code>+m</code>, <code>+M</code> or <code>+v</code> talks in the channel.</span></li>
     <li><span>The bot voices them (<code>+v</code>) and starts their activity clock.</span></li>
@@ -1313,6 +1315,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     <tr><th><span data-l="en">Turn it on here</span><span data-l="fr">L'activer ici</span></th><td><code>!enable idledeop</code></td></tr>
     <tr><th><span data-l="en">Set the limit</span><span data-l="fr">Régler la limite</span></th><td><code>!idledeop #channel 120</code> — <span data-l="en">minutes, per channel</span><span data-l="fr">minutes, par canal</span></td></tr>
     <tr><th><span data-l="en">Master switch</span><span data-l="fr">Interrupteur général</span></th><td><code>cc(idledeop_enabled)</code> — <code>1</code> · <span data-l="en">set <code>0</code> to switch it off everywhere</span><span data-l="fr">mets <code>0</code> pour l'éteindre partout</span></td></tr>
+    <tr><th><span data-l="en">Who counts as idle</span><span data-l="fr">Qui est inactif</span></th><td><span data-l="en">Quiet in the channel for the limit, opped for at least that long, and — with <code>cc(idledeop_whois)</code> on — idle on IRC for the limit according to a WHOIS on their own server. An op busy in another channel or in private keeps <code>@</code>. If the server hides the idle time, the channel idle decides.</span><span data-l="fr">Silencieux dans le canal pendant la limite, op depuis au moins ce temps, et — avec <code>cc(idledeop_whois)</code> — inactif sur IRC pendant la limite selon un WHOIS sur son propre serveur. Un op occupé dans un autre canal ou en privé garde son <code>@</code>. Si le serveur cache le temps d'inactivité, c'est le silence dans le canal qui décide.</span></td></tr>
     <tr><th><span data-l="en">Never deopped</span><span data-l="fr">Jamais deop</span></th><td><span data-l="en">Service bots (<code>X</code>, <code>W</code>), the bot itself, <code>+n</code> / <code>+m</code> users, and anyone in <code>cc(deop_exempt)</code> by nick or handle</span><span data-l="fr">Les services (<code>X</code>, <code>W</code>), le robot lui-même, les <code>+n</code> / <code>+m</code>, et toute personne dans <code>cc(deop_exempt)</code> par pseudo ou handle</span></td></tr>
   </table>
   </div>
@@ -1322,8 +1325,8 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 <!-- ================= GUARD ================= -->
 <section id="guard">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></span><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></h2>
-  <p class="sec-intro" data-l="en">The <code>guard</code> module watches every channel it is on for floods. One person flooding is kicked (and banned for a while). A real attack — the whole channel flooding, a wave of joins, a storm of nick changes — <strong>locks the channel</strong> with <code>+Dm</code> until it has been quiet for a few minutes.</p>
-  <p class="sec-intro" data-l="fr">Le module <code>guard</code> surveille les floods dans chaque canal. Une personne qui floode seule est expulsée (et bannie un moment). Une vraie attaque — le canal entier qui floode, une vague d'arrivées, une rafale de changements de pseudo — <strong>verrouille le canal</strong> en <code>+Dm</code> jusqu'à quelques minutes de calme.</p>
+  <p class="sec-intro" data-l="en">The <code>guard</code> module watches every channel where it is switched on (<code>!enable guard</code> — it ships <span class="off">OFF</span>) for floods. One person flooding is kicked (and banned for a while). A real attack — the whole channel flooding, a wave of joins, a storm of nick changes — <strong>locks the channel</strong> with <code>+Dm</code> until it has been quiet for a few minutes.</p>
+  <p class="sec-intro" data-l="fr">Le module <code>guard</code> surveille les floods dans chaque canal où il est activé (<code>!enable guard</code> — il est livré <span class="off">OFF</span>). Une personne qui floode seule est expulsée (et bannie un moment). Une vraie attaque — le canal entier qui floode, une vague d'arrivées, une rafale de changements de pseudo — <strong>verrouille le canal</strong> en <code>+Dm</code> jusqu'à quelques minutes de calme.</p>
 
   <div class="table-scroll">
   <table>
@@ -1507,8 +1510,8 @@ set cc(x_pass) "its-x-password"</pre></div>
 <section id="gotchas">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></span><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></h2>
   <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg>
-    <div data-l="en"><b>Memory only.</b> Module states, stored topics and chanlog destinations reset on <code>.rehash</code> or <code>.restart</code>.</div>
-    <div data-l="fr"><b>En mémoire seulement.</b> L'état des modules, les sujets gardés et les destinations du chanlog repartent à zéro au <code>.rehash</code> ou au <code>.restart</code>.</div></div>
+    <div data-l="en"><b>Memory only.</b> Stored topics and chanlog destinations reset on <code>.rehash</code> or <code>.restart</code>.</div>
+    <div data-l="fr"><b>En mémoire seulement.</b> Les sujets gardés et les destinations du chanlog repartent à zéro au <code>.rehash</code> ou au <code>.restart</code>.</div></div>
   <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>
     <div data-l="en"><b>A channel's <code>chanmode</code> setting wins over a lock.</b> If it enforces <code>-m</code> or <code>-D</code>, eggdrop undoes the guard's lock. Check it with <code>!chanset list</code>. <code>!uptime</code> is open to everyone (bound <code>n|-</code>).</div>
     <div data-l="fr"><b>Le réglage <code>chanmode</code> d'un canal l'emporte sur un verrou.</b> S'il impose <code>-m</code> ou <code>-D</code>, eggdrop défait le verrou de la garde. Vérifie-le avec <code>!chanset list</code>. <code>!uptime</code> est ouverte à tous (liée en <code>n|-</code>).</div></div>
@@ -1570,6 +1573,17 @@ set cc(x_pass) "its-x-password"</pre></div>
 <!-- ================= CHANGELOG ================= -->
 <section id="changelog">
   <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-history"/></svg></span><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
+
+  <h3 class="sub">6.8.2</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Everything off</span><span data-l="fr">Tout éteint</span></th><td><span data-l="en">Every module now ships <strong>off</strong>, <code>topic</code>, <code>activevoice</code>, <code>chanlog</code> and <code>guard</code> included. Switch on what you want, channel by channel, with <code>!enable</code>. Upgrading with a <code>.rehash</code> keeps what is running; after a <code>.restart</code>, enable your modules once and they stay.</span><span data-l="fr">Tous les modules sont maintenant livrés <strong>éteints</strong>, y compris <code>topic</code>, <code>activevoice</code>, <code>chanlog</code> et <code>guard</code>. Active ce que tu veux, canal par canal, avec <code>!enable</code>. Une mise à jour par <code>.rehash</code> garde ce qui tourne ; après un <code>.restart</code>, active tes modules une fois et ils restent.</span></td></tr>
+    <tr><th><span data-l="en">Modules are saved</span><span data-l="fr">Modules sauvegardés</span></th><td><span data-l="en">Module switches and idle deop limits are kept in <code>cc(module_file)</code> and survive a <code>.rehash</code> or <code>.restart</code>. Before, a restart silently put everything back to its default.</span><span data-l="fr">L'état des modules et les limites du deop des inactifs sont gardés dans <code>cc(module_file)</code> et survivent à un <code>.rehash</code> ou un <code>.restart</code>. Avant, un redémarrage remettait tout par défaut sans rien dire.</span></td></tr>
+    <tr><th><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></th><td><span data-l="en"><code>!enable idledeop</code> is now enough: a channel without its own limit uses <code>cc(idledeop_default_minutes)</code>. <code>!idledeop #channel</code> checks the module on the channel it names, <code>cc(idledeop_enabled)</code> really is the master switch, and the messages say minutes.</span><span data-l="fr"><code>!enable idledeop</code> suffit maintenant : un canal sans limite à lui prend <code>cc(idledeop_default_minutes)</code>. <code>!idledeop #canal</code> vérifie le module du canal nommé, <code>cc(idledeop_enabled)</code> est vraiment l'interrupteur général, et les messages parlent de minutes.</span></td></tr>
+    <tr><th><span data-l="en">Really idle</span><span data-l="fr">Vraiment inactif</span></th><td><span data-l="en">Idle deop now counts from the moment <code>@</code> was given, so a quiet user who was just opped is left alone, and it confirms with a WHOIS that the op is idle on IRC and not only quiet in the channel (<code>cc(idledeop_whois)</code>, on by default). One WHOIS per op, never repeated before they could have gone idle.</span><span data-l="fr">Le deop des inactifs compte maintenant à partir du moment où le <code>@</code> a été donné : un utilisateur silencieux qui vient de recevoir l'op est laissé tranquille. Il confirme aussi par un WHOIS que l'op est inactif sur IRC, et pas seulement silencieux dans le canal (<code>cc(idledeop_whois)</code>, activé par défaut). Un seul WHOIS par op, jamais répété avant qu'il ait pu devenir inactif.</span></td></tr>
+    <tr><th><span data-l="en">Channel case</span><span data-l="fr">Casse des canaux</span></th><td><span data-l="en">Module switches no longer depend on how the channel name was typed: <code>#Canada</code> and <code>#canada</code> are the same channel.</span><span data-l="fr">L'état des modules ne dépend plus de la façon d'écrire le nom du canal : <code>#Canada</code> et <code>#canada</code> sont le même canal.</span></td></tr>
+  </table>
+  </div>
 
   <h3 class="sub">6.8.1</h3>
   <div class="table-scroll">
@@ -1733,7 +1747,7 @@ set cc(x_pass) "its-x-password"</pre></div>
     "-lmao- Quick Help: Type !help <command> for details",
     "-lmao- Access Info for maple: Level: Voice (v)",
     "-lmao- [OK] newguy moves up from Voice to Mod on #canada",
-    "-lmao- lmao.tcl 6.8.1 - https://github.com/lmao-tcl/lmao-tcl.github.io",
+    "-lmao- lmao.tcl 6.8.2 - https://github.com/lmao-tcl/lmao-tcl.github.io",
     "[SANCTION] #canada boss banned troll (*!*@troll.host) - spam",
     "[ACCESS] #canada boss opped chanop",
     "[REGISTER] newguy registered as newguy",

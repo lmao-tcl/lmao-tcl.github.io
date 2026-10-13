@@ -36,10 +36,17 @@ set cc(away_enabled) 0
 set cc(away_message) "Powered by lmao.tcl - https://lmao-tcl.github.io/"
 set cc(away_file) "lmao-away.txt"
 
-# Idle deop configuration
+# Idle deop configuration. idledeop_enabled is the master switch: 0 stops idle
+# deop everywhere, whatever the per-channel idledeop module says.
 set cc(idledeop_enabled) 1
 set cc(idledeop_default_minutes) 180
 set cc(idledeop_check_interval) 5
+# 1 = before deopping, WHOIS the op for their real idle time on IRC: an op who
+# is quiet here but busy in another channel or in private keeps @.
+# 0 = being quiet in the channel is enough.
+set cc(idledeop_whois) 1
+# Module on/off switches and idle deop timers are kept here across restarts
+set cc(module_file) "lmao-modules.txt"
 
 # ActiveVoice configuration
 set cc(activevoice_idle_minutes) 180
@@ -126,7 +133,7 @@ set cc(x_hide_host) 1
 set cc(x_rescue) 1
 
 # Version info
-set cc(version_number) "6.8.1"
+set cc(version_number) "6.8.2"
 set cc(version) "\002\[lmao.tcl $cc(version_number)\]\002"
 set cc(www) "https://lmao-tcl.github.io/"
 
@@ -134,23 +141,28 @@ set cc(www) "https://lmao-tcl.github.io/"
 # MODULE ENABLE/DISABLE SYSTEM
 ###########################################################################
 
-# Per-channel module settings (default: all ON)
+# Per-channel module settings (default: all OFF)
 array set module_settings {}
 
-# Default module state (1 = enabled, 0 = disabled)
-set module_defaults(topic) 1
-set module_defaults(activevoice) 1
+# Default module state (1 = enabled, 0 = disabled). Every module ships off:
+# nothing runs on a channel until somebody turns it on there with !enable.
+set module_defaults(topic) 0
+set module_defaults(activevoice) 0
 set module_defaults(idledeop) 0
 set module_defaults(idledevoice) 0
-set module_defaults(chanlog) 1
-set module_defaults(guard) 1
+set module_defaults(chanlog) 0
+set module_defaults(guard) 0
 set module_defaults(delayjoin) 0
 set module_defaults(dnsbl) 0
 set module_defaults(badchan) 0
 
+# Settings are keyed by the lower-case channel name, so #Canada typed in a
+# /msg and #canada from a channel bind are the same channel.
 proc init_channel_modules {chan} {
 	global module_defaults module_settings
-	
+
+	set chan [string tolower $chan]
+
 	# Initialize all modules for this channel if not already done
 	foreach {module enabled} [array get module_defaults] {
 		if {![info exists module_settings($chan:$module)]} {
@@ -161,7 +173,8 @@ proc init_channel_modules {chan} {
 
 proc module_enabled {chan module} {
 	global module_settings
-	
+
+	set chan [string tolower $chan]
 	if {![info exists module_settings($chan:$module)]} {
 		init_channel_modules $chan
 	}
@@ -171,11 +184,65 @@ proc module_enabled {chan module} {
 
 proc toggle_module {chan module state} {
 	global module_settings
-	
+
+	set chan [string tolower $chan]
 	if {$state eq "on"} {
 		set module_settings($chan:$module) 1
 	} else {
 		set module_settings($chan:$module) 0
+	}
+	module:save
+}
+
+# One line per setting: "module <#chan> <module> <1|0>" or "idledeop <#chan> <minutes>"
+proc module:save {} {
+	global cc module_settings idledeop_config
+	if {[catch {
+		set fh [open $cc(module_file) w]
+		foreach key [lsort [array names module_settings]] {
+			set at [string last ":" $key]
+			puts $fh "module [string range $key 0 [expr {$at - 1}]] [string range $key [expr {$at + 1}] end] $module_settings($key)"
+		}
+		foreach chan [lsort [array names idledeop_config]] {
+			puts $fh "idledeop $chan $idledeop_config($chan)"
+		}
+		close $fh
+	} err]} {
+		putlog "lmao modules: could not save $cc(module_file): $err"
+		return 0
+	}
+	return 1
+}
+
+# Without this every restart put the modules back to their defaults, which
+# silently switched idledeop (default off) back off and forgot its timers.
+proc module:load {} {
+	global cc module_defaults module_settings idledeop_config
+	if {![file exists $cc(module_file)]} { return }
+	if {[catch {
+		set fh [open $cc(module_file) r]
+		set data [split [read $fh] "\n"]
+		close $fh
+	} err]} {
+		putlog "lmao modules: could not read $cc(module_file): $err"
+		return
+	}
+	foreach line $data {
+		set f [split [string trim $line]]
+		switch -- [lindex $f 0] {
+			module {
+				lassign $f - chan module state
+				if {[info exists module_defaults($module)] && ($state eq "1" || $state eq "0")} {
+					set module_settings([string tolower $chan]:$module) $state
+				}
+			}
+			idledeop {
+				lassign $f - chan minutes
+				if {[string is integer -strict $minutes] && $minutes >= 1} {
+					set idledeop_config($chan) $minutes
+				}
+			}
+		}
 	}
 }
 
@@ -197,6 +264,11 @@ set cc(deop_exempt) [list "You" "Bot1" "Bot2"]
 
 # Store idle deop settings per channel
 array set idledeop_config {}
+# idledeop_opsince(<#chan>,<nick>) when they got @; idledeop_wait(<nick>) the
+# channels waiting on a WHOIS; idledeop_recheck(<nick>) no new WHOIS before then
+array set idledeop_opsince {}
+array set idledeop_wait {}
+array set idledeop_recheck {}
 
 # Store topic per channel
 array set topic_storage {}
@@ -345,6 +417,13 @@ bind dcc fn|fn undokeepalive undobinddcckeepalive
 # gets op back). It never kicks back - whoever deopped it may be staff, or X.
 set hopondeop 1
 bind mode - * hop:mode
+
+# Idle deop: when somebody got @, and the WHOIS answers for the real idle time
+bind mode - "* +o" idledeop:opped
+bind nick - * idledeop:nick
+bind raw - 317 idledeop:raw317
+bind raw - 318 idledeop:raw318
+bind raw - 401 idledeop:raw318
 
 # CTCP Replies
 set replyctcp "[string trim $cc(version)] Get it from: $cc(www)"
@@ -1669,12 +1748,7 @@ proc pub_do_devoice {nick host handle channel args} {
 
 proc idledeop:pub {nick uhost hand chan arg} {
 	global cc idledeop_config
-	
-	if {![module_enabled $chan "idledeop"]} {
-		putserv "NOTICE $nick :Idle deop module is disabled"
-		return
-	}
-	
+
 	set target_chan [lindex $arg 0]
 	set minutes [lindex $arg 1]
 	
@@ -1689,10 +1763,7 @@ proc idledeop:pub {nick uhost hand chan arg} {
 		return
 	}
 
-	# Resolve to the exact case eggdrop tracks the channel under. module_enabled
-	# keys module_settings by the real bind-context casing (e.g. #Canada); if
-	# target_chan is stored as typed (e.g. #canada) the two never match and
-	# idledeop:timer silently no-ops for the channel. See idledeop:timer.
+	# Resolve to the exact case eggdrop tracks the channel under
 	set real_chan ""
 	foreach c [channels] {
 		if {[string equal -nocase $c $target_chan]} {
@@ -1706,24 +1777,30 @@ proc idledeop:pub {nick uhost hand chan arg} {
 	}
 	set target_chan $real_chan
 
+	if {![module_enabled $target_chan "idledeop"]} {
+		putserv "NOTICE $nick :The idledeop module is off on $target_chan - turn it on there with [string trim $cc(cmdchar)]enable idledeop"
+		return
+	}
+
 	# Set default if not specified
 	if {$minutes eq ""} {
 		set minutes $cc(idledeop_default_minutes)
 	}
-	
-	# Validate hour input
+
+	# Validate the minutes
 	if {![string is integer -strict $minutes]} {
-		putserv "NOTICE $nick :Hours must be a number"
+		putserv "NOTICE $nick :Minutes must be a number"
 		return
 	}
-	
+
 	if {$minutes < 1 || $minutes > 2880} {
-		putserv "NOTICE $nick :Hours must be between 1 and 48"
+		putserv "NOTICE $nick :Minutes must be between 1 and 2880 (48 hours)"
 		return
 	}
 	
 	# Store configuration
 	set idledeop_config($target_chan) $minutes
+	module:save
 	
 	putserv "NOTICE $nick :Idle deop set for $target_chan: $minutes minutes"
 	putserv "PRIVMSG $cc(backchan) :\[IDLEDEOP\] $nick configured idle deop for $target_chan: $minutes minutes"
@@ -1731,31 +1808,54 @@ proc idledeop:pub {nick uhost hand chan arg} {
 	chanlog $chan "MODULE" "$nick set idle deop for $target_chan to $minutes minutes"
 }
 
+# The sweep. An op is a candidate once they have been quiet in the channel for
+# the limit AND have held @ that long: somebody opped a minute ago is not
+# idle, however long they sat there without talking. With idledeop_whois on,
+# a candidate is not deopped on the spot: "WHOIS nick nick" asks their own
+# server for the real idle time, so an op who is busy in another channel or in
+# private keeps @. If the server hides the idle time, the channel idle decides.
+# (The WHOIS check comes from the #help bot on UnderNet, where it was proven.)
 proc idledeop:timer {min hour day weekday year} {
-	global botnick cc idledeop_config
+	global botnick cc idledeop_config idledeop_opsince idledeop_wait idledeop_recheck
 	
-	# Check all channels with idledeop configured
-	foreach chan [array names idledeop_config] {
-		set minutes $idledeop_config($chan)
-		
+	if {!$cc(idledeop_enabled)} {
+		return
+	}
+	
+	set now [clock seconds]
+	
+	# Check every channel that has the module on. This used to walk only the
+	# channels in idledeop_config, so "!enable idledeop" on its own did nothing
+	# until somebody also ran !idledeop <#channel>. Now the module switch is
+	# enough and a channel without its own timer gets the default.
+	foreach chan [channels] {
 		if {![module_enabled $chan "idledeop"]} {
 			continue
 		}
 		
+		set minutes $cc(idledeop_default_minutes)
+		foreach c [array names idledeop_config] {
+			if {[string equal -nocase $c $chan]} {
+				set minutes $idledeop_config($c)
+				break
+			}
+		}
+		
 		# Check if bot is in channel and op'd
-		if {![onchan $botnick $chan]} {
+		if {![onchan $botnick $chan] || ![botisop $chan]} {
 			continue
 		}
 		
-		if {![botisop $chan]} {
-			continue
+		set lchan [string tolower $chan]
+		
+		# Forget the op times of people who left or lost @
+		foreach key [array names idledeop_opsince "$lchan,*"] {
+			set who [string range $key [string length "$lchan,"] end]
+			if {![onchan $who $chan] || ![isop $who $chan]} {
+				unset idledeop_opsince($key)
+			}
 		}
 		
-		# Get current time
-		set current_time [clock seconds]
-		set idle_threshold $minutes
-		
-		# Get list of all users in channel
 		foreach user [chanlist $chan] {
 			# Skip service bots
 			if {[is_protected_bot $user]} {
@@ -1783,18 +1883,140 @@ proc idledeop:timer {min hour day weekday year} {
 				continue
 			}
 			
-			# Get user's idle time
+			# Quiet in the channel, and opped, for at least the limit
+			set luser [string tolower $user]
 			set user_idle [getchanidle $user $chan]
-			
-			if {$user_idle >= $idle_threshold} {
-				# User is idle, deop them
-				putserv "MODE $chan -o $user"
-				putserv "PRIVMSG $chan :$user has been deopped for idleness ($minutes minutes)"
-				putlog "Idle deop: $user deopped from $chan (idle: $user_idle seconds)"
-				chanlog $chan "SANCTION" "auto: deopped \002$user\002 after $user_idle minutes idle"
+			if {[info exists idledeop_opsince($lchan,$luser)]} {
+				set since_op [expr {($now - $idledeop_opsince($lchan,$luser)) / 60}]
+				if {$since_op < $user_idle} {
+					set user_idle $since_op
+				}
 			}
+			if {$user_idle < $minutes} {
+				continue
+			}
+			
+			if {!$cc(idledeop_whois)} {
+				idledeop:now $chan $user $user_idle $minutes
+				continue
+			}
+			
+			# A WHOIS already said this nick is active elsewhere: not yet
+			if {[info exists idledeop_recheck($luser)] && $now < $idledeop_recheck($luser)} {
+				continue
+			}
+			
+			# One WHOIS per nick, however many channels are waiting on it. An
+			# answer that never came is asked for again after a minute.
+			if {[info exists idledeop_wait($luser)]} {
+				lassign $idledeop_wait($luser) asked waiting
+				dict set waiting $chan [list $user_idle $minutes]
+				if {$now - $asked < 60} {
+					set idledeop_wait($luser) [list $asked $waiting]
+					continue
+				}
+			} else {
+				set waiting [dict create $chan [list $user_idle $minutes]]
+			}
+			set idledeop_wait($luser) [list $now $waiting]
+			putserv "WHOIS $user $user"
 		}
 	}
+}
+
+# Take @ from an idle op, if it is all still true when the answer is in
+proc idledeop:now {chan user user_idle minutes} {
+	global idledeop_opsince
+	
+	if {![validchan $chan] || ![botisop $chan] || ![onchan $user $chan] || ![isop $user $chan]} {
+		return
+	}
+	
+	putserv "MODE $chan -o $user"
+	putserv "PRIVMSG $chan :$user has been deopped for idleness ($minutes minutes)"
+	putlog "Idle deop: $user deopped from $chan (idle: $user_idle minutes)"
+	chanlog $chan "SANCTION" "auto: deopped \002$user\002 after $user_idle minutes idle"
+	unset -nocomplain idledeop_opsince([string tolower $chan],[string tolower $user])
+}
+
+# Remember when somebody got @, so the limit starts counting from there
+proc idledeop:opped {nick uhost hand chan mode target} {
+	global idledeop_opsince idledeop_recheck
+	
+	set idledeop_opsince([string tolower $chan],[string tolower $target]) [clock seconds]
+	unset -nocomplain idledeop_recheck([string tolower $target])
+}
+
+proc idledeop:nick {nick uhost hand chan newnick} {
+	global idledeop_opsince idledeop_wait idledeop_recheck
+	
+	set old [string tolower $nick]
+	set new [string tolower $newnick]
+	set lchan [string tolower $chan]
+	if {$old eq $new} {
+		return
+	}
+	if {[info exists idledeop_opsince($lchan,$old)]} {
+		set idledeop_opsince($lchan,$new) $idledeop_opsince($lchan,$old)
+		unset idledeop_opsince($lchan,$old)
+	}
+	if {[info exists idledeop_recheck($old)]} {
+		set idledeop_recheck($new) $idledeop_recheck($old)
+		unset idledeop_recheck($old)
+	}
+	# A WHOIS on the old nick answers for nobody: drop it, the next sweep asks again
+	unset -nocomplain idledeop_wait($old)
+}
+
+# 317: "<me> <nick> <idle secs> <signon> :seconds idle, signon time"
+proc idledeop:raw317 {from keyword text} {
+	global idledeop_wait idledeop_recheck
+	
+	lassign [split $text] - nick secs
+	set ln [string tolower $nick]
+	if {![info exists idledeop_wait($ln)] || ![string is integer -strict $secs]} {
+		return 0
+	}
+	set waiting [lindex $idledeop_wait($ln) 1]
+	unset idledeop_wait($ln)
+	
+	set real_idle [expr {$secs / 60}]
+	set left ""
+	dict for {chan info} $waiting {
+		lassign $info chan_idle minutes
+		if {$real_idle >= $minutes} {
+			idledeop:now $chan $nick $real_idle $minutes
+		} elseif {$left eq "" || $minutes * 60 - $secs < $left} {
+			set left [expr {$minutes * 60 - $secs}]
+		}
+	}
+	# Active somewhere else: no new WHOIS before they could have gone idle
+	if {$left ne ""} {
+		set idledeop_recheck($ln) [expr {[clock seconds] + ($left < 300 ? 300 : $left)}]
+	}
+	return 0
+}
+
+# 318 (end of WHOIS) with no 317 before it: the idle time is hidden, so the
+# channel idle decides. 401: the nick is gone.
+proc idledeop:raw318 {from keyword text} {
+	global idledeop_wait
+	
+	set nick [lindex [split $text] 1]
+	set ln [string tolower $nick]
+	if {![info exists idledeop_wait($ln)]} {
+		return 0
+	}
+	set waiting [lindex $idledeop_wait($ln) 1]
+	unset idledeop_wait($ln)
+	
+	if {$keyword eq "318"} {
+		dict for {chan info} $waiting {
+			lassign $info chan_idle minutes
+			idledeop:now $chan $nick $chan_idle $minutes
+		}
+	}
+	return 0
 }
 
 ###########################################################################
@@ -4829,6 +5051,24 @@ proc activevoice:timer_check {} {
 ###########################################################################
 # INITIALIZATION
 ###########################################################################
+
+# Rehashing over a version that kept the channel's case in the key: fold what
+# is in memory to lower case, so the switches set before the rehash carry over
+foreach lmao_key [array names module_settings] {
+	set lmao_low [string tolower $lmao_key]
+	if {$lmao_low ne $lmao_key} {
+		if {![info exists module_settings($lmao_low)]} {
+			set module_settings($lmao_low) $module_settings($lmao_key)
+		}
+		unset module_settings($lmao_key)
+	}
+}
+unset -nocomplain lmao_key lmao_low
+
+# Module switches and idle deop timers from disk, then written straight back
+# so whatever was set before a rehash is on disk too
+module:load
+module:save
 
 # Initialize module system for main channel
 init_channel_modules $cc(mainchan)
