@@ -2,7 +2,7 @@
 
 **Channel management for eggdrop, built for UnderNet.**
 
-[![Version](https://img.shields.io/badge/version-6.8.3-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
+[![Version](https://img.shields.io/badge/version-6.9.0-orange.svg)](https://github.com/lmao-tcl/lmao-tcl.github.io)
 [![Eggdrop](https://img.shields.io/badge/eggdrop-1.8%2B-green.svg)](https://www.eggheads.org/)
 [![Tcl](https://img.shields.io/badge/tcl-8.5%2B-blue.svg)](https://www.tcl.tk/)
 [![License](https://img.shields.io/badge/license-GPLv3-lightgrey.svg)](LICENSE)
@@ -70,7 +70,7 @@ source scripts/lmao.tcl
 Then `.rehash` on the partyline. You should see:
 
 ```
-[lmao.tcl 6.8.3] - Complete production ready version
+[lmao.tcl 6.9.0] - Complete production ready version
 Loaded successfully - ready to serve!
 ```
 
@@ -179,6 +179,9 @@ Access is a **position**, not a pile of flags. Every user sits on exactly one ru
 | `!delvoice` / `!delmod` / `!delop` / `!delmaster` | Same as the matching `add` |
 | `!delaccess <nick\|handle>` | Op and up — removes whichever level they hold |
 | `!access [level]` | Mod and up — lists everyone with access here |
+| `!aop [-]<nick\|handle>` | Master and up — auto-op: at least Op, opped on join (`a`), never idle-deopped |
+| `!avoice [-]<nick\|handle>` | Mod and up — auto-voice: at least Voice, voiced on join (`g`) |
+| `!bot [-]<nick>` | Master and up — another bot: auto-op and flag `B`, treated like X and W here |
 
 - **One level at a time.** Granting a level strips every other level first, so `!addop` on
   someone who was only voiced *moves* them up, and `!addvoice` on an op moves them down.
@@ -206,11 +209,11 @@ has every command with its syntax.
 | Who | Commands |
 | --- | --- |
 | Everyone | `!help` `!showcommands` `!verify` `!version` · `/msg <bot> register` |
-| Registered | `!bot` `!info` `!whois` `!ops` |
+| Registered | `!bot` (no nick) `!info` `!whois` `!ops` |
 | Voice+ | `!voice` `!devoice` |
-| Mod+ | `!kick` `!ban` `!unban` `!bans` `!invite` `!addvoice` `!access` |
+| Mod+ | `!kick` `!ban` `!unban` `!bans` `!invite` `!addvoice` `!avoice` `!access` |
 | Op+ | `!op` `!deop` `!topic` `!topicsync` `!addmod` `!delaccess` `!lockdown` `!unlock` `!guard` `!dnsbl` `!badchan` |
-| Master+ | `!mode` `!blacklist` `!whitelist` `!chattr` `!adduser` `!deluser` `!say` `!act` `!idledeop` `!module` `!enable` `!disable` `!chanlog` `!addop` `!chanset` |
+| Master+ | `!mode` `!blacklist` `!whitelist` `!chattr` `!adduser` `!deluser` `!say` `!act` `!idledeop` `!module` `!enable` `!disable` `!chanlog` `!addop` `!aop` `!bot <nick>` `!chanset` |
 | Owner | `!addchan` `!delchan` `!suschan` `!unsuschan` `!join` `!part` `!comeback` `!botnick` `!away` `!back` `!global` `!rehash` `!restart` `!jump` `!save` `!addmaster` `!xlogin` |
 | Anyone (bound `n\|-`) | `!uptime` |
 

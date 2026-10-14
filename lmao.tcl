@@ -133,7 +133,7 @@ set cc(x_hide_host) 1
 set cc(x_rescue) 1
 
 # Version info
-set cc(version_number) "6.8.3"
+set cc(version_number) "6.9.0"
 set cc(version) "\002\[lmao.tcl $cc(version_number)\]\002"
 set cc(www) "https://lmao-tcl.github.io/"
 
@@ -392,7 +392,7 @@ bind notc - * x:notc
 bind raw - 005 lmao:raw005
 
 # Flag - (registered users)
-bind pub - [string trim $cc(cmdchar)]bot pub_do_bot
+bind pub - [string trim $cc(cmdchar)]bot bot:pub
 bind pub - [string trim $cc(cmdchar)]info pub_info
 bind pub - [string trim $cc(cmdchar)]whois pub_whois
 bind pub - [string trim $cc(cmdchar)]ops pub:alert
@@ -472,11 +472,19 @@ proc is_deop_exempt {nick chan} {
 	return 0
 }
 
-# Check if nick is a protected bot
-proc is_protected_bot {nick} {
+# Check if nick is a protected bot: a service in cc(protected_bots), or, when
+# the channel is given, a bot added there with !bot
+proc is_protected_bot {nick {chan ""}} {
 	global cc
 	foreach bot $cc(protected_bots) {
 		if {[string tolower $nick] eq [string tolower $bot]} {
+			return 1
+		}
+	}
+	# A bot added on this channel with !bot (channel flag B)
+	if {$chan ne "" && [validchan $chan]} {
+		set hand [nick2hand $nick $chan]
+		if {$hand ne "" && $hand ne "*" && [matchattr $hand |B $chan]} {
 			return 1
 		}
 	}
@@ -701,7 +709,9 @@ array set helpdb {
 	jump		{{%C%jump} {Makes the bot jump to another IRC server (owner only)} {%C%jump} {/msg %B% jump}}
 	save		{{%C%save} {Writes the userfile and channel file to disk (owner only)} {%C%save} {/msg %B% save}}
 	version		{{%C%version} {Shows the bot version number and GitHub repository link} {%C%version} {}}
-	bot		{{%C%bot} {Shows basic bot information (trigger character, support channel)} {%C%bot} {}}
+	bot		{{%C%bot [nick]} {Alone: shows basic bot information. With a nick: makes that bot an auto-op and flags it as a bot (B) on this channel, so it is treated like X and W. -nick takes the flags off. Master or above for a nick} {%C%bot OtherBot} {}}
+	aop		{{%C%aop [-]<nick|handle>} {Makes someone an auto-op here: at least Op level, opped on join (flag a), never deopped by idle deop. -nick takes the auto-op off and keeps the level. Master or above} {%C%aop bob} {}}
+	avoice		{{%C%avoice [-]<nick|handle>} {Makes someone an auto-voice here: at least Voice level, voiced on join (flag g), never devoiced for idling. -nick takes the auto-voice off and keeps the level. Mod or above} {%C%avoice bob} {}}
 }
 
 # Comma separated list of every module, substituted for %M%
@@ -726,7 +736,7 @@ proc help:send {nick text} {
 	if {$htext eq ""} {
 		puthelp "NOTICE $nick :\002Quick Help:\002 Type ${c}help <command> for details - (To prevent spam, you can use /msg $botnick help <command>)"
 		puthelp "NOTICE $nick :\002Common:\002 op deop voice devoice invite kick ban unban bans topic mode verify whois info ops"
-		puthelp "NOTICE $nick :\002Access:\002 ${c}access - ${c}addvoice ${c}addmod ${c}addop ${c}addmaster - ${c}delvoice ${c}delmod ${c}delop ${c}delmaster ${c}delaccess"
+		puthelp "NOTICE $nick :\002Access:\002 ${c}access - ${c}addvoice ${c}addmod ${c}addop ${c}addmaster - ${c}delvoice ${c}delmod ${c}delop ${c}delmaster ${c}delaccess - ${c}aop ${c}avoice ${c}bot"
 		puthelp "NOTICE $nick :\002Guard:\002 ${c}guard - ${c}lockdown \[minutes\] - ${c}unlock (flood protection, locks the channel +Dm under attack) - ${c}dnsbl <nick|ip> - ${c}badchan list"
 		puthelp "NOTICE $nick :\002Modules:\002 ${c}module list - ${c}enable <module> - ${c}disable <module> (available: [help:modules])"
 		puthelp "NOTICE $nick :Or try ${c}showcommands for the full list"
@@ -1417,7 +1427,7 @@ proc activevoice:track {nick host hand chan text} {
 	}
 
 	# Skip service bots
-	if {[is_protected_bot $nick]} {
+	if {[is_protected_bot $nick $chan]} {
 		return
 	}
 
@@ -1489,7 +1499,7 @@ proc activevoice:devoice_idle {min hour day weekday year} {
 			}
 
 			# Skip service bots
-			if {[is_protected_bot $user]} {
+			if {[is_protected_bot $user $chan]} {
 				continue
 			}
 
@@ -1639,7 +1649,7 @@ proc pub_do_deop {nick host handle channel args} {
 	}
 
 	# Protect service bots
-	if {[is_protected_bot $who]} {
+	if {[is_protected_bot $who $channel]} {
 		putserv "NOTICE $nick :Cannot deop protected service bot $who"
 		return
 	}
@@ -1705,7 +1715,7 @@ proc pub_do_devoice {nick host handle channel args} {
 	}
 
 	# Protect service bots
-	if {[is_protected_bot $who]} {
+	if {[is_protected_bot $who $channel]} {
 		putserv "NOTICE $nick :Cannot devoice protected service bot $who"
 		return
 	}
@@ -1857,7 +1867,7 @@ proc idledeop:timer {min hour day weekday year} {
 		
 		foreach user [chanlist $chan] {
 			# Skip service bots
-			if {[is_protected_bot $user]} {
+			if {[is_protected_bot $user $chan]} {
 				continue
 			}
 			
@@ -1876,9 +1886,9 @@ proc idledeop:timer {min hour day weekday year} {
 				continue
 			}
 
-			# Check if user has protected flags
+			# Check if user has protected flags, or is an auto-op (!aop)
 			set user_hand [nick2hand $user $chan]
-			if {$user_hand ne "*" && [has_protected_flags $user_hand $chan]} {
+			if {$user_hand ne "*" && ([has_protected_flags $user_hand $chan] || [matchattr $user_hand |a $chan])} {
 				continue
 			}
 			
@@ -3207,7 +3217,7 @@ proc access:sync_modes {nick handle chan rank} {
 		return
 	}
 
-	if {[is_protected_bot $who] || [string equal -nocase $who $botnick]} {
+	if {[is_protected_bot $who $chan] || [string equal -nocase $who $botnick]} {
 		return
 	}
 
@@ -3495,6 +3505,106 @@ proc delmaster:pub {nick uhost hand chan arg} { access:del $nick $hand $chan $ar
 
 proc delaccess:pub {nick uhost hand chan arg} { access:del $nick $hand $chan $arg "" }
 
+# !aop / !avoice / !bot: auto-op, auto-voice and channel bots, on top of the
+# access levels. "!aop bob" makes sure bob is at least Op, then adds the
+# channel flag a: eggdrop ops him on join and idle deop leaves him alone.
+# "!avoice bob" does the same with Voice and g (Voice is already exempt from
+# idle devoice). "!bot otherbot" is an auto-op flagged B, so the script treats
+# it like X and W on this channel. A leading "-" takes the flags back off and
+# leaves the level as it is.
+#   kind   level  flags  label
+set cc(auto_kinds) {
+	aop    op     a      "auto-op"
+	avoice voice  g      "auto-voice"
+	bot    op     aB     "bot"
+}
+
+proc access:auto {nick hand chan arg kind} {
+	global cc
+
+	set c [string trim $cc(cmdchar)]
+	foreach {k level flags label} $cc(auto_kinds) {
+		if {$k eq $kind} { break }
+	}
+	set rank [access:rank_of $level]
+
+	set target [lindex [split [string trim $arg]] 0]
+	set remove [string match "-*" $target]
+	set target [string trimleft $target "-"]
+	if {$target eq ""} {
+		puthelp "NOTICE $nick :Usage: ${c}$kind <nick|handle> - or ${c}$kind -<nick|handle> to take it away"
+		return
+	}
+
+	set my_rank [access:caller_rank $nick $hand $chan]
+	if {$my_rank < 0} {
+		return
+	}
+	if {$my_rank <= $rank} {
+		puthelp "NOTICE $nick :You have to be above \002[access:label $rank]\002 yourself before you can manage \002$label\002 on $chan."
+		chanlog $chan "DENIED" "$nick tried to change \002$label\002 for \002$target\002"
+		return
+	}
+
+	set target_hand [access:handle $nick $chan $target [expr {!$remove}]]
+	if {$target_hand eq ""} {
+		return
+	}
+	if {[string equal -nocase $target_hand $hand]} {
+		puthelp "NOTICE $nick :You cannot change your own access."
+		return
+	}
+	set old_rank [access:rank $target_hand $chan]
+	if {$old_rank >= $my_rank} {
+		puthelp "NOTICE $nick :\002$target_hand\002 is \002[access:label $old_rank]\002 - that is not below your own level, so I left it alone."
+		chanlog $chan "DENIED" "$nick tried to change \002$label\002 for \002$target_hand\002 ([access:label $old_rank])"
+		return
+	}
+
+	if {$remove} {
+		if {![matchattr $target_hand |$flags $chan]} {
+			puthelp "NOTICE $nick :\002$target_hand\002 is not $label on $chan."
+			return
+		}
+		chattr $target_hand |-$flags $chan
+		save
+		puthelp "NOTICE $nick :\[OK\] \002$target_hand\002 is no longer $label on $chan (flags: [chattr $target_hand $chan])"
+		putlog "ACCESS: $nick removed $label from $target_hand on $chan"
+		chanlog $chan "ACCESS" "$nick removed \002$label\002 from \002$target_hand\002"
+		return
+	}
+
+	if {[matchattr $target_hand |$flags $chan] && $old_rank >= $rank} {
+		puthelp "NOTICE $nick :\002$target_hand\002 is already $label on $chan."
+		return
+	}
+
+	# Raise to the level first if needed - never lower anyone
+	if {$old_rank < $rank} {
+		access:apply $target_hand $chan $rank
+	}
+	chattr $target_hand |+$flags $chan
+	save
+	access:sync_modes $nick $target_hand $chan [expr {max($old_rank, $rank)}]
+
+	puthelp "NOTICE $nick :\[OK\] \002$target_hand\002 is now $label on $chan (flags: [chattr $target_hand $chan])"
+	access:tell $target_hand $chan "You are now $label on $chan - set by $nick."
+	putlog "ACCESS: $nick made $target_hand $label on $chan"
+	chanlog $chan "ACCESS" "$nick made \002$target_hand\002 $label"
+}
+
+proc aop:pub {nick uhost hand chan arg}    { access:auto $nick $hand $chan $arg aop }
+proc avoice:pub {nick uhost hand chan arg} { access:auto $nick $hand $chan $arg avoice }
+
+# !bot alone still shows the bot information; !bot <nick> adds a bot
+proc bot:pub {nick uhost hand chan arg} {
+	if {[string trim $arg] eq ""} {
+		pub_do_bot $nick $uhost $hand $chan $arg
+		return
+	}
+	access:auto $nick $hand $chan $arg bot
+}
+
 proc access:pub {nick uhost hand chan arg} { access:list $nick $chan $arg }
 
 # Bound open, for the same reason as !op and friends: access:add and
@@ -3510,6 +3620,8 @@ bind pub - [string trim $cc(cmdchar)]delop delop:pub
 bind pub - [string trim $cc(cmdchar)]addmaster addmaster:pub
 bind pub - [string trim $cc(cmdchar)]delmaster delmaster:pub
 bind pub - [string trim $cc(cmdchar)]delaccess delaccess:pub
+bind pub - [string trim $cc(cmdchar)]aop aop:pub
+bind pub - [string trim $cc(cmdchar)]avoice avoice:pub
 bind pub nmMo|nmMo [string trim $cc(cmdchar)]access access:pub
 
 proc pub_whois {nick uhost handle chan text} {
@@ -3733,7 +3845,7 @@ proc guard:active {chan} {
 }
 
 proc guard:trusted {nick chan} {
-	if {[isbotnick $nick] || [is_protected_bot $nick]} {
+	if {[isbotnick $nick] || [is_protected_bot $nick $chan]} {
 		return 1
 	}
 	if {[onchan $nick $chan] && [isop $nick $chan]} {
@@ -4286,7 +4398,7 @@ proc dj:check {chan nick uhost account} {
 
 	set authed [expr {$account ne "" && $account ne "0"}]
 	set hand [finduser "$nick!$uhost"]
-	set trusted [expr {[is_protected_bot $nick] || ($hand ne "*" && [matchattr $hand nmoMv|nmoMv $chan])}]
+	set trusted [expr {[is_protected_bot $nick $chan] || ($hand ne "*" && [matchattr $hand nmoMv|nmoMv $chan])}]
 
 	# Banned here: leave them hidden and silent (re-checked in 10 minutes)
 	if {[matchban "$nick!$uhost" $chan]} {

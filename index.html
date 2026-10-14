@@ -306,7 +306,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/><path d="M14 30q-3 4 0 7M50 30q3 4 0 7" stroke="#4cc3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <b>lmao<span>.tcl</span></b>
     </a>
-    <span class="ver">v6.8.3</span>
+    <span class="ver">v6.9.0</span>
     <div class="nav-right">
       <a class="nbtn" href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-git"/></svg><span class="lbl">GitHub</span><span class="sr-only">GitHub</span></a>
       <a class="nbtn cta" href="https://lmao-tcl.github.io/lmao.tcl" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span class="lbl"><span data-l="en">Download</span><span data-l="fr">Télécharger</span></span><span class="sr-only">lmao.tcl</span></a>
@@ -386,7 +386,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <p class="tip-day"><b data-l="en">Tip:</b><b data-l="fr">Astuce :</b> <span id="tip"></span> <button type="button" id="tip-next"><span data-l="en">another</span><span data-l="fr">une autre</span></button></p>
 
   <dl class="facts">
-    <div><dt>Version</dt><dd>6.8.3</dd></div>
+    <div><dt>Version</dt><dd>6.9.0</dd></div>
     <div><dt><span data-l="en">Requires</span><span data-l="fr">Requis</span></dt><dd>eggdrop 1.8+, Tcl 8.5+</dd></div>
     <div><dt><span data-l="en">Network</span><span data-l="fr">Réseau</span></dt><dd>UnderNet</dd></div>
     <div><dt><span data-l="en">Commands</span><span data-l="fr">Commandes</span></dt><dd>66</dd></div>
@@ -504,7 +504,7 @@ source scripts/lmao.tcl</pre></div>
 
   <p data-l="en">You should see this in the partyline and the log:</p>
   <p data-l="fr">Tu devrais voir ceci dans la partyline et le journal :</p>
-  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.3] - Complete production ready version</span>
+  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.9.0] - Complete production ready version</span>
 <span class="n">Loaded successfully - ready to serve!</span></pre></div>
 
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
@@ -680,6 +680,15 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
     <p data-l="en">Puts someone on the Master rung (<code>+mov</code>) and ops them. Owner is deliberately not grantable by command — that stays a <code>.chattr</code> job on the party line.</p>
     <p data-l="fr">Met quelqu'un à l'échelon Maître (<code>+mov</code>) et lui donne l'op. Le niveau Propriétaire ne se donne volontairement pas par commande — ça reste un <code>.chattr</code> sur la partyline.</p>
     <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!addmaster</span> <span class="a">&lt;nick|handle&gt;</span></pre></div>
+  </div>
+
+  <div class="cmd" data-k="aop autoop auto-op avoice autovoice auto-voice bot">
+    <div class="cmd-head"><h4><span class="amp">!</span>aop <span class="amp">!</span>avoice <span class="amp">!</span>bot</h4><span class="lvl master"><span data-l="en">Mod+ / Master+</span><span data-l="fr">Mod+ / Maître+</span></span></div>
+    <p data-l="en"><code>!aop</code> (Master+) makes someone an auto-op: at least Op level, opped by eggdrop when they join (channel flag <code>a</code>), and never deopped by <a href="#idledeop">idle deop</a>. <code>!avoice</code> (Mod+) does the same with Voice and flag <code>g</code>. <code>!bot &lt;nick&gt;</code> (Master+) adds another bot: auto-op plus flag <code>B</code>, so on this channel it is treated like X and W. Nobody is lowered, and a leading <code>-</code> takes the flags off and keeps the level. <code>!bot</code> on its own still shows the bot information.</p>
+    <p data-l="fr"><code>!aop</code> (Maître+) fait de quelqu'un un auto-op : au moins le niveau Op, op donné par eggdrop à son arrivée (drapeau de canal <code>a</code>), et jamais retiré par le <a href="#idledeop">deop des inactifs</a>. <code>!avoice</code> (Mod+) fait pareil avec Voice et le drapeau <code>g</code>. <code>!bot &lt;pseudo&gt;</code> (Maître+) ajoute un autre robot : auto-op plus le drapeau <code>B</code>, il est donc traité comme X et W dans ce canal. Personne n'est rétrogradé, et un <code>-</code> devant enlève les drapeaux en gardant le niveau. <code>!bot</code> seul affiche toujours l'info du robot.</p>
+    <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">!aop</span> <span class="a">[-]&lt;nick|handle&gt;</span>
+<span class="t">!avoice</span> <span class="a">[-]&lt;nick|handle&gt;</span>
+<span class="t">!bot</span> <span class="a">[-]&lt;nick&gt;</span></pre></div>
   </div>
 
   <div class="cmd" data-k="delvoice delmod delop delmaster remove access level retirer">
@@ -1172,7 +1181,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
     <tr><th><span data-l="en">Set the limit</span><span data-l="fr">Régler la limite</span></th><td><code>!idledeop #channel 120</code> — <span data-l="en">minutes, per channel</span><span data-l="fr">minutes, par canal</span></td></tr>
     <tr><th><span data-l="en">Master switch</span><span data-l="fr">Interrupteur général</span></th><td><code>cc(idledeop_enabled)</code> — <code>1</code> · <span data-l="en">set <code>0</code> to switch it off everywhere</span><span data-l="fr">mets <code>0</code> pour l'éteindre partout</span></td></tr>
     <tr><th><span data-l="en">Who counts as idle</span><span data-l="fr">Qui est inactif</span></th><td><span data-l="en">Quiet in the channel for the limit, opped for at least that long, and — with <code>cc(idledeop_whois)</code> on — idle on IRC for the limit according to a WHOIS on their own server. An op busy in another channel or in private keeps <code>@</code>. If the server hides the idle time, the channel idle decides.</span><span data-l="fr">Silencieux dans le canal pendant la limite, op depuis au moins ce temps, et — avec <code>cc(idledeop_whois)</code> — inactif sur IRC pendant la limite selon un WHOIS sur son propre serveur. Un op occupé dans un autre canal ou en privé garde son <code>@</code>. Si le serveur cache le temps d'inactivité, c'est le silence dans le canal qui décide.</span></td></tr>
-    <tr><th><span data-l="en">Never deopped</span><span data-l="fr">Jamais deop</span></th><td><span data-l="en">Service bots (<code>X</code>, <code>W</code>), the bot itself, <code>+n</code> / <code>+m</code> users, and anyone in <code>cc(deop_exempt)</code> by nick or handle</span><span data-l="fr">Les services (<code>X</code>, <code>W</code>), le robot lui-même, les <code>+n</code> / <code>+m</code>, et toute personne dans <code>cc(deop_exempt)</code> par pseudo ou handle</span></td></tr>
+    <tr><th><span data-l="en">Never deopped</span><span data-l="fr">Jamais deop</span></th><td><span data-l="en">Auto-ops (<code>!aop</code>) and bots added with <code>!bot</code>, service bots (<code>X</code>, <code>W</code>), the bot itself, <code>+n</code> / <code>+m</code> users, and anyone in <code>cc(deop_exempt)</code> by nick or handle</span><span data-l="fr">Les auto-ops (<code>!aop</code>) et les robots ajoutés avec <code>!bot</code>, les services (<code>X</code>, <code>W</code>), le robot lui-même, les <code>+n</code> / <code>+m</code>, et toute personne dans <code>cc(deop_exempt)</code> par pseudo ou handle</span></td></tr>
   </table>
   </div>
   <div class="code"><span class="tag">config</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre>set cc(deop_exempt) [list "You" "Bot1" "Bot2"]</pre></div>
@@ -1351,7 +1360,7 @@ set cc(x_pass) "its-x-password"</pre></div>
   <h2>CTCP &amp; DCC</h2>
   <p class="sec-intro" data-l="en">The bot answers the usual CTCP queries and has a few partyline extras. A CTCP VERSION gets the script, its version and where to find it.</p>
   <p class="sec-intro" data-l="fr">Le robot répond aux requêtes CTCP habituelles et a quelques extras sur la partyline. Un CTCP VERSION donne le script, sa version et où le trouver.</p>
-  <div class="code reply"><span class="tag">ctcp reply</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">VERSION lmao.tcl v.6.8.3 Get it from: https://lmao-tcl.github.io/</span></pre></div>
+  <div class="code reply"><span class="tag">ctcp reply</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">VERSION lmao.tcl v.6.9.0 Get it from: https://lmao-tcl.github.io/</span></pre></div>
   <div class="pill-row"><span class="pill">CTCP VERSION</span><span class="pill">CTCP PING</span><span class="pill">CTCP TIME</span><span class="pill">CTCP FINGER</span></div>
   <div class="table-scroll">
   <table>
@@ -1430,6 +1439,13 @@ set cc(x_pass) "its-x-password"</pre></div>
 <!-- ================= CHANGELOG ================= -->
 <section id="changelog">
   <h2><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
+
+  <h3 class="sub">6.9.0</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th><span data-l="en">Auto-op, auto-voice, bots</span><span data-l="fr">Auto-op, auto-voice, robots</span></th><td><span data-l="en">New <code>!aop</code>, <code>!avoice</code> and <code>!bot &lt;nick&gt;</code>. Auto-ops and added bots are never deopped by idle deop, and added bots are treated like X and W on their channel. See <a href="#cmd-access">Access &amp; users</a>.</span><span data-l="fr">Nouvelles commandes <code>!aop</code>, <code>!avoice</code> et <code>!bot &lt;pseudo&gt;</code>. Les auto-ops et les robots ajoutés ne sont jamais deop par le deop des inactifs, et les robots ajoutés sont traités comme X et W dans leur canal. Voir <a href="#cmd-access">Accès et utilisateurs</a>.</span></td></tr>
+  </table>
+  </div>
 
   <h3 class="sub">6.8.3</h3>
   <div class="table-scroll">
