@@ -144,12 +144,12 @@ body::before {
 .nav a.active .ico { opacity: 1; }
 
 /* ---------- hero ---------- */
-.hero { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 44px; align-items: start; padding: 56px 0 44px; }
-.hero h1 { font: 800 clamp(40px, 6vw, 64px)/1 var(--mono); letter-spacing: -1.5px; }
+.hero { padding: 72px 0 48px; }
+.hero h1 { font: 800 clamp(44px, 8vw, 88px)/1 var(--mono); letter-spacing: -2.5px; }
 .hero h1 span { color: var(--orange); }
-.hero .tagline { color: var(--muted); font-size: 18px; margin-top: 16px; max-width: 34em; }
+.hero .tagline { color: var(--muted); font-size: clamp(18px, 2.2vw, 22px); line-height: 1.5; margin-top: 22px; max-width: 30em; }
 .hero .tagline em { color: var(--ink); font-style: normal; font-weight: 600; }
-.install { margin-top: 24px; display: flex; align-items: center; gap: 10px; background: var(--code-bg); border: 1px solid var(--line2); border-radius: 10px; padding: 10px 10px 10px 16px; font: 13px var(--mono); max-width: 600px; }
+.install { margin-top: 32px; display: flex; align-items: center; gap: 10px; background: var(--code-bg); border: 1px solid var(--line2); border-radius: 10px; padding: 10px 10px 10px 16px; font: 13px var(--mono); max-width: 520px; }
 .install .p { color: var(--green); }
 .install code { all: unset; flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; color: #c9d1d9; scrollbar-width: none; cursor: text; }
 .hero-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
@@ -162,13 +162,10 @@ body::before {
 .tip-day button { background: none; border: 0; color: var(--faint); font: inherit; text-decoration: underline dotted; }
 .tip-day button:hover { color: var(--ink); }
 
-/* ---------- hero: at a glance ---------- */
-.facts { margin: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--panel); padding: 6px 20px; }
-.facts div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); }
-.facts div:first-child { border-top: 0; }
-.facts dt { color: var(--faint); font-size: 13px; }
-.facts dd { margin: 0; font-size: 14px; color: var(--ink); line-height: 1.5; }
-.facts dd small { display: block; color: var(--muted); font-size: 12.5px; }
+/* ---------- hero: the facts, on one quiet line ---------- */
+.facts { margin: 44px 0 0; padding-top: 22px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 20px 44px; }
+.facts dt { color: var(--faint); font-size: 12.5px; }
+.facts dd { margin: 2px 0 0; font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; }
 
 /* ---------- features ---------- */
 .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 56px; }
@@ -263,8 +260,6 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
   .navlinks .opt { display: none; }
 }
 @media (max-width: 1180px) {
-  .hero { grid-template-columns: minmax(0, 1fr); gap: 28px; }
-  .facts { max-width: 560px; }
 }
 @media (max-width: 1040px) {
   .navlinks { display: none; }
@@ -279,7 +274,8 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
   .top-in { padding: 0 12px; gap: 8px; }
   .ver, .nbtn .lbl { display: none; }
   .features { grid-template-columns: 1fr; }
-  .hero { padding-top: 30px; }
+  .hero { padding: 34px 0 36px; }
+  .facts { gap: 16px 32px; margin-top: 32px; }
   .code pre { padding-right: 15px; padding-top: 34px; }
   .foot-grid { grid-template-columns: 1fr 1fr; }
   .foot-brand { grid-column: 1 / -1; }
@@ -415,7 +411,6 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
 <main class="main" id="main" tabindex="-1"><div class="wrap">
 
 <div class="hero">
-  <div>
     <h1>lmao<span>.tcl</span></h1>
     <p class="tagline" data-l="en">Channel management for eggdrop, built for UnderNet. <em>Every reply by notice, never in your channel.</em></p>
     <p class="tagline" data-l="fr">La gestion de canal pour eggdrop, pensée pour UnderNet. <em>Chaque réponse par notice, jamais dans ton canal.</em></p>
@@ -430,15 +425,13 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <a class="btn" href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-git"/></svg><span data-l="en">Source</span><span data-l="fr">Code source</span></a>
     </div>
     <p class="tip-day"><b data-l="en">Tip:</b><b data-l="fr">Astuce :</b> <span id="tip"></span> <button type="button" id="tip-next"><span data-l="en">another</span><span data-l="fr">une autre</span></button></p>
-  </div>
 
   <dl class="facts">
-    <div><dt><span data-l="en">Version</span><span data-l="fr">Version</span></dt><dd>6.8.2<small><span data-l="en">October 2026</span><span data-l="fr">Octobre 2026</span></small></dd></div>
-    <div><dt><span data-l="en">Requires</span><span data-l="fr">Requis</span></dt><dd><span data-l="en">eggdrop 1.8 or newer, Tcl 8.5 or newer</span><span data-l="fr">eggdrop 1.8 ou plus récent, Tcl 8.5 ou plus récent</span></dd></div>
-    <div><dt><span data-l="en">Network</span><span data-l="fr">Réseau</span></dt><dd>UnderNet<small><span data-l="en">ircu and the X channel service</span><span data-l="fr">ircu et le service de canaux X</span></small></dd></div>
-    <div><dt><span data-l="en">Install</span><span data-l="fr">Installation</span></dt><dd><span data-l="en">One file, nothing else to install</span><span data-l="fr">Un seul fichier, rien d'autre à installer</span></dd></div>
-    <div><dt><span data-l="en">Commands</span><span data-l="fr">Commandes</span></dt><dd>66<small><span data-l="en">all answered by notice, from one help table</span><span data-l="fr">toutes répondues par notice, depuis une seule table d'aide</span></small></dd></div>
-    <div><dt>Modules</dt><dd>9<small><span data-l="en">per channel, off until you enable them</span><span data-l="fr">par canal, éteints tant que tu ne les actives pas</span></small></dd></div>
+    <div><dt>Version</dt><dd>6.8.2</dd></div>
+    <div><dt><span data-l="en">Requires</span><span data-l="fr">Requis</span></dt><dd>eggdrop 1.8+, Tcl 8.5+</dd></div>
+    <div><dt><span data-l="en">Network</span><span data-l="fr">Réseau</span></dt><dd>UnderNet</dd></div>
+    <div><dt><span data-l="en">Commands</span><span data-l="fr">Commandes</span></dt><dd>66</dd></div>
+    <div><dt>Modules</dt><dd><span data-l="en">9, per channel</span><span data-l="fr">9, par canal</span></dd></div>
     <div><dt><span data-l="en">License</span><span data-l="fr">Licence</span></dt><dd>GPLv3</dd></div>
   </dl>
 </div>
