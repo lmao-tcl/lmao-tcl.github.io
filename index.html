@@ -306,7 +306,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 10h48a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6H28l-12 10v-10H8a6 6 0 0 1-6-6V16a6 6 0 0 1 6-6z" fill="#ff7a1a"/><path d="M18 24q4-5 8 0M38 24q4-5 8 0" stroke="#140800" stroke-width="3.5" fill="none" stroke-linecap="round"/><path d="M18 31h28q-2 10-14 10t-14-10z" fill="#140800"/><path d="M14 30q-3 4 0 7M50 30q3 4 0 7" stroke="#4cc3ff" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>
       <b>lmao<span>.tcl</span></b>
     </a>
-    <span class="ver">v6.8.2</span>
+    <span class="ver">v6.8.3</span>
     <div class="nav-right">
       <a class="nbtn" href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-git"/></svg><span class="lbl">GitHub</span><span class="sr-only">GitHub</span></a>
       <a class="nbtn cta" href="https://lmao-tcl.github.io/lmao.tcl" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span class="lbl"><span data-l="en">Download</span><span data-l="fr">Télécharger</span></span><span class="sr-only">lmao.tcl</span></a>
@@ -386,7 +386,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     <p class="tip-day"><b data-l="en">Tip:</b><b data-l="fr">Astuce :</b> <span id="tip"></span> <button type="button" id="tip-next"><span data-l="en">another</span><span data-l="fr">une autre</span></button></p>
 
   <dl class="facts">
-    <div><dt>Version</dt><dd>6.8.2</dd></div>
+    <div><dt>Version</dt><dd>6.8.3</dd></div>
     <div><dt><span data-l="en">Requires</span><span data-l="fr">Requis</span></dt><dd>eggdrop 1.8+, Tcl 8.5+</dd></div>
     <div><dt><span data-l="en">Network</span><span data-l="fr">Réseau</span></dt><dd>UnderNet</dd></div>
     <div><dt><span data-l="en">Commands</span><span data-l="fr">Commandes</span></dt><dd>66</dd></div>
@@ -504,7 +504,7 @@ source scripts/lmao.tcl</pre></div>
 
   <p data-l="en">You should see this in the partyline and the log:</p>
   <p data-l="fr">Tu devrais voir ceci dans la partyline et le journal :</p>
-  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.2] - Complete production ready version</span>
+  <div class="code reply"><span class="tag">output</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">[lmao.tcl 6.8.3] - Complete production ready version</span>
 <span class="n">Loaded successfully - ready to serve!</span></pre></div>
 
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>
@@ -1349,8 +1349,9 @@ set cc(x_pass) "its-x-password"</pre></div>
 <!-- ================= CTCP ================= -->
 <section id="ctcp">
   <h2>CTCP &amp; DCC</h2>
-  <p class="sec-intro" data-l="en">The bot answers the usual CTCP queries and has a few partyline extras.</p>
-  <p class="sec-intro" data-l="fr">Le robot répond aux requêtes CTCP habituelles et a quelques extras sur la partyline.</p>
+  <p class="sec-intro" data-l="en">The bot answers the usual CTCP queries and has a few partyline extras. A CTCP VERSION gets the script, its version and where to find it.</p>
+  <p class="sec-intro" data-l="fr">Le robot répond aux requêtes CTCP habituelles et a quelques extras sur la partyline. Un CTCP VERSION donne le script, sa version et où le trouver.</p>
+  <div class="code reply"><span class="tag">ctcp reply</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="n">VERSION lmao.tcl v.6.8.3 Get it from: https://lmao-tcl.github.io/</span></pre></div>
   <div class="pill-row"><span class="pill">CTCP VERSION</span><span class="pill">CTCP PING</span><span class="pill">CTCP TIME</span><span class="pill">CTCP FINGER</span></div>
   <div class="table-scroll">
   <table>
@@ -1429,6 +1430,13 @@ set cc(x_pass) "its-x-password"</pre></div>
 <!-- ================= CHANGELOG ================= -->
 <section id="changelog">
   <h2><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
+
+  <h3 class="sub">6.8.3</h3>
+  <div class="table-scroll">
+  <table class="kv">
+    <tr><th>CTCP VERSION</th><td><span data-l="en">The bot now answers with a real CTCP reply, <code>lmao.tcl v.6.8.3 Get it from: https://lmao-tcl.github.io/</code>, built from <code>cc(version_number)</code> so it always matches the running script. Eggdrop no longer adds its own version line.</span><span data-l="fr">Le robot répond maintenant par une vraie réponse CTCP, <code>lmao.tcl v.6.8.3 Get it from: https://lmao-tcl.github.io/</code>, construite à partir de <code>cc(version_number)</code> : elle correspond toujours au script qui tourne. Eggdrop n'ajoute plus sa propre ligne de version.</span></td></tr>
+  </table>
+  </div>
 
   <h3 class="sub">6.8.2</h3>
   <div class="table-scroll">

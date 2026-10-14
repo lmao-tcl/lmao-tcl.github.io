@@ -133,7 +133,7 @@ set cc(x_hide_host) 1
 set cc(x_rescue) 1
 
 # Version info
-set cc(version_number) "6.8.2"
+set cc(version_number) "6.8.3"
 set cc(version) "\002\[lmao.tcl $cc(version_number)\]\002"
 set cc(www) "https://lmao-tcl.github.io/"
 
@@ -426,8 +426,7 @@ bind raw - 318 idledeop:raw318
 bind raw - 401 idledeop:raw318
 
 # CTCP Replies
-set replyctcp "[string trim $cc(version)] Get it from: $cc(www)"
-bind ctcp - "VERSION" ctcp:reply
+bind ctcp - "VERSION" ctcp:version
 bind ctcp - "PING" ctcp:reply
 bind ctcp - "TIME" ctcp:reply
 bind ctcp - "FINGER" ctcp:reply
@@ -2804,6 +2803,15 @@ proc botnick:pub {mynick uhost hand chan text} {
 	putlog "Changing botnick to $newnick"
 	chanlog "" "BOT" "$mynick changed my nick to \002$newnick\002"
 	putserv "NICK $newnick"
+}
+
+# CTCP VERSION: "lmao.tcl v.<version> Get it from: <site>". The number comes
+# from cc(version_number), the one place the version is written, so the reply
+# can never fall behind. Returning 1 keeps eggdrop from adding its own answer.
+proc ctcp:version {nick host hand dest key text} {
+	global cc
+	putserv "NOTICE $nick :\001VERSION lmao.tcl v.$cc(version_number) Get it from: $cc(www)\001"
+	return 1
 }
 
 proc ctcp:reply {nick host hand dest key text} {
