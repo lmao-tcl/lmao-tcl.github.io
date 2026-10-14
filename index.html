@@ -58,24 +58,16 @@ body { background: var(--bg); color: var(--ink); font: 15px/1.65 var(--sans); ov
 a, button, summary { cursor: pointer; }
 input, pre, code { cursor: text; }
 ::selection { background: rgba(255, 122, 26, 0.35); }
-:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; border-radius: 4px; }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; border-radius: 4px; }
 a { color: var(--blue); text-decoration: none; }
 a:hover { text-decoration: underline; }
 code { font-family: var(--mono); font-size: 0.86em; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); padding: 1px 6px; border-radius: 5px; color: var(--orange-soft); }
 kbd { font: 11px var(--mono); color: var(--muted); border: 1px solid var(--line2); border-bottom-width: 2px; border-radius: 5px; padding: 0 6px; }
 .ico { width: 18px; height: 18px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--amber); color: #0b0e13; font-weight: 700; padding: 9px 14px; border-radius: 8px; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; background: var(--orange); color: #0b0e13; font-weight: 700; padding: 9px 14px; border-radius: 8px; }
 .skip:focus { top: 10px; text-decoration: none; }
 main:focus { outline: none; }
-
-/* ---------- page background: two soft, still glows ---------- */
-body::before {
-  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255, 122, 26, 0.07), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 100% 100%, rgba(76, 195, 255, 0.05), transparent 70%);
-}
 
 /* ---------- navbar ---------- */
 .top {
@@ -87,29 +79,19 @@ body::before {
 .top-in { height: 100%; max-width: 1360px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 0 20px; }
 .logo { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 700; font-size: 18px; }
 .logo:hover { text-decoration: none; }
-.logo svg { width: 32px; height: 32px; filter: drop-shadow(0 0 10px rgba(255, 122, 26, 0.5)); transition: transform 0.3s ease; }
-.logo:hover svg { transform: rotate(-8deg) scale(1.08); }
+.logo svg { width: 30px; height: 30px; }
 .logo b { font-family: var(--mono); }
 .logo b span { color: var(--orange); }
-.ver { font: 600 11px var(--mono); color: var(--green); background: rgba(126, 217, 87, 0.1); border: 1px solid rgba(126, 217, 87, 0.3); padding: 2px 8px; border-radius: 99px; }
-.navlinks { display: flex; align-items: center; gap: 2px; margin-left: 18px; }
-.navlinks a {
-  display: inline-flex; align-items: center; gap: 7px;
-  color: var(--muted); font-size: 13.5px; font-weight: 600;
-  padding: 8px 11px; border-radius: 8px;
-}
-.navlinks a .ico { width: 15px; height: 15px; opacity: 0.8; }
-.navlinks a:hover { color: var(--ink); background: var(--panel2); text-decoration: none; }
-.navlinks a.active { color: var(--orange-soft); background: rgba(255, 122, 26, 0.09); }
+.ver { font: 500 12px var(--mono); color: var(--faint); }
 .nav-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .nbtn {
   display: inline-flex; align-items: center; gap: 7px;
   font: 600 13.5px var(--sans); padding: 8px 13px; border-radius: 9px;
   border: 1px solid var(--line2); color: var(--ink); background: var(--panel-solid);
-  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
-.nbtn:hover { text-decoration: none; border-color: var(--faint); transform: translateY(-1px); }
-.nbtn.cta { color: #140800; background: var(--orange); border-color: transparent; box-shadow: 0 6px 20px rgba(255, 122, 26, 0.3); }
+.nbtn:hover { text-decoration: none; border-color: var(--faint); }
+.nbtn.cta { color: #140800; background: var(--orange); border-color: transparent; }
 .nbtn.cta:hover { background: var(--orange-soft); }
 .lang { display: inline-flex; border: 1px solid var(--line2); background: var(--panel-solid); border-radius: 9px; padding: 3px; }
 .lang button { font: 700 12px var(--mono); color: var(--faint); background: none; border: 0; padding: 5px 10px; border-radius: 6px; letter-spacing: 0.5px; }
@@ -136,12 +118,11 @@ body::before {
 #search::placeholder { color: var(--faint); }
 .search kbd { position: absolute; right: 9px; top: 50%; transform: translateY(-50%); }
 .search-hint { font-size: 11.5px; color: var(--orange-soft); padding: 4px 6px 6px; min-height: 22px; font-weight: 600; }
-.nav h2 { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.4px; color: var(--faint); margin: 14px 10px 6px; }
-.nav a { display: flex; align-items: center; gap: 10px; padding: 5px 10px; border-radius: 7px; color: var(--muted); font-size: 13.5px; border-left: 2px solid transparent; }
-.nav a .ico { width: 15px; height: 15px; opacity: 0.7; }
+.nav h2 { font-size: 12.5px; font-weight: 600; color: var(--ink); margin: 20px 10px 6px; }
+.nav h2:first-child { margin-top: 10px; }
+.nav a { display: block; padding: 4px 10px; border-radius: 6px; color: var(--muted); font-size: 13.5px; border-left: 2px solid transparent; }
 .nav a:hover { color: var(--ink); background: var(--panel2); text-decoration: none; }
-.nav a.active { color: var(--orange-soft); background: rgba(255, 122, 26, 0.08); border-left-color: var(--orange); }
-.nav a.active .ico { opacity: 1; }
+.nav a.active { color: var(--orange-soft); border-left-color: var(--orange); border-radius: 0 6px 6px 0; }
 
 /* ---------- hero ---------- */
 .hero { padding: 72px 0 48px; }
@@ -153,12 +134,12 @@ body::before {
 .install .p { color: var(--green); }
 .install code { all: unset; flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; color: #c9d1d9; scrollbar-width: none; cursor: text; }
 .hero-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
-.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--sans); padding: 10px 18px; border-radius: 10px; border: 1px solid var(--line2); color: var(--ink); background: var(--panel); transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
-.btn:hover { text-decoration: none; transform: translateY(-1px); border-color: var(--faint); }
-.btn.primary { background: linear-gradient(135deg, #ff7a1a, #ff5236); border-color: transparent; color: #140800; box-shadow: 0 8px 26px rgba(255, 122, 26, 0.3); }
-.btn.primary:hover { box-shadow: 0 10px 32px rgba(255, 122, 26, 0.45); }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--sans); padding: 10px 18px; border-radius: 8px; border: 1px solid var(--line2); color: var(--ink); background: transparent; transition: border-color 0.15s ease, background 0.15s ease; }
+.btn:hover { text-decoration: none; border-color: var(--faint); }
+.btn.primary { background: var(--orange); border-color: transparent; color: #140800; }
+.btn.primary:hover { background: var(--orange-soft); }
 .tip-day { margin-top: 18px; font-size: 13px; color: var(--faint); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
-.tip-day b { color: var(--amber); font-weight: 600; }
+.tip-day b { color: var(--muted); font-weight: 600; }
 .tip-day button { background: none; border: 0; color: var(--faint); font: inherit; text-decoration: underline dotted; }
 .tip-day button:hover { color: var(--ink); }
 
@@ -168,46 +149,39 @@ body::before {
 .facts dd { margin: 2px 0 0; font-size: 15px; font-weight: 600; color: var(--ink); white-space: nowrap; }
 
 /* ---------- features ---------- */
-.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 56px; }
-.feat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; transition: border-color 0.2s ease, transform 0.2s ease; }
-.feat:hover { border-color: color-mix(in srgb, var(--c) 45%, transparent); transform: translateY(-2px); }
-.feat .fi { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); margin-bottom: 12px; }
-.feat .ft { font-size: 15px; margin-bottom: 4px; }
-.feat p { font-size: 13.5px; color: var(--muted); line-height: 1.55; margin: 0; }
+.features { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px 56px; margin-bottom: 72px; }
+.feat .ft { font-size: 15.5px; margin-bottom: 3px; }
+.feat p { font-size: 14px; color: var(--muted); line-height: 1.6; margin: 0; max-width: 44ch; }
 .credits { margin: 18px 0; }
 .credits .ft { font-size: 16px; margin-bottom: 2px; }
-.credits .credit-role { font: 600 11.5px var(--mono); color: var(--c); margin-bottom: 8px; }
+.credits .credit-role { font: 500 12px var(--mono); color: var(--faint); margin-bottom: 8px; }
+.credits .feat p { max-width: none; }
 .credits .credit-link { margin-top: 10px; font-size: 13px; }
 
 /* ---------- sections ---------- */
 section { margin-bottom: 64px; }
-section > h2 { display: flex; align-items: center; gap: 12px; font-size: 26px; letter-spacing: -0.3px; padding-bottom: 12px; margin-bottom: 10px; border-bottom: 1px solid var(--line); }
-section > h2 .hi { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--orange); background: rgba(255, 122, 26, 0.1); border: 1px solid rgba(255, 122, 26, 0.28); }
-section > h2 .hi .ico { width: 19px; height: 19px; }
+section > h2 { font-size: 26px; letter-spacing: -0.3px; padding-bottom: 12px; margin-bottom: 14px; border-bottom: 1px solid var(--line); }
 .sec-intro { color: var(--muted); margin-bottom: 22px; max-width: 74ch; }
 .sec-intro strong { color: var(--ink); }
-h3.sub { font-size: 17px; margin: 32px 0 12px; color: var(--amber); display: flex; align-items: center; gap: 8px; }
+h3.sub { font-size: 17px; margin: 34px 0 12px; color: var(--ink); display: flex; align-items: center; gap: 8px; }
 h3.sub::before { content: "#"; color: var(--faint); font-family: var(--mono); }
 p { margin-bottom: 10px; }
-.note, .warn, .tip { display: flex; gap: 12px; border-radius: 10px; padding: 12px 16px; margin: 16px 0; font-size: 14px; background: color-mix(in srgb, var(--c) 6%, var(--panel-solid)); border: 1px solid color-mix(in srgb, var(--c) 28%, transparent); border-left: 3px solid var(--c); }
-.note { --c: var(--blue); } .warn { --c: var(--amber); } .tip { --c: var(--green); }
+.note, .warn, .tip { display: flex; gap: 12px; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-size: 14px; background: var(--panel-solid); border: 1px solid var(--line); }
+.note { --c: var(--blue); } .warn { --c: var(--orange); } .tip { --c: var(--green); }
 .note > .ico, .warn > .ico, .tip > .ico { color: var(--c); margin-top: 2px; }
 .note b, .warn b, .tip b { color: var(--ink); }
-.cmd { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 20px 14px; margin: 12px 0; transition: border-color 0.15s ease; }
-.cmd:hover { border-color: var(--line2); }
+.cmd { border-top: 1px solid var(--line); padding: 20px 0 12px; }
 .cmd.hidden { display: none; }
 .cmd-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
 .cmd-head h4 { font: 600 16px var(--mono); color: #fff; margin-right: 4px; }
 .cmd-head h4 .amp { color: var(--orange); }
 .cmd p { color: var(--muted); font-size: 14px; max-width: 80ch; }
 .cmd p strong { color: var(--ink); }
-.lvl { font: 700 10px var(--sans); letter-spacing: 0.8px; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; color: var(--c); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 9%, transparent); white-space: nowrap; }
-.lvl.owner { --c: var(--red); } .lvl.master { --c: var(--orange); } .lvl.op { --c: var(--blue); } .lvl.mod { --c: var(--amber); }
-.lvl.voice { --c: var(--green); } .lvl.user { --c: var(--steel); } .lvl.all { --c: var(--muted); } .lvl.msg { --c: #5ee0d0; }
+.lvl { font: 500 12px var(--mono); padding: 1px 8px; border-radius: 5px; color: var(--muted); border: 1px solid var(--line2); white-space: nowrap; }
+.lvl.owner, .lvl.master { color: var(--orange-soft); border-color: rgba(255, 122, 26, 0.35); }
 .code { position: relative; margin: 10px 0; }
-.code pre { background: var(--code-bg); border: 1px solid var(--line); border-left: 3px solid var(--c, var(--line2)); border-radius: 9px; padding: 12px 96px 12px 15px; overflow-x: auto; font: 13px/1.75 var(--mono); color: #c9d1d9; scrollbar-width: thin; }
-.code.syntax { --c: var(--orange); } .code.example { --c: var(--green); } .code.reply { --c: var(--blue); }
-.code .tag { position: absolute; top: 10px; right: 44px; font: 700 9.5px var(--sans); letter-spacing: 1px; text-transform: uppercase; color: var(--faint); user-select: none; }
+.code pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px 96px 12px 15px; overflow-x: auto; font: 13px/1.75 var(--mono); color: #c9d1d9; scrollbar-width: thin; }
+.code .tag { position: absolute; top: 9px; right: 44px; font: 11px var(--mono); color: var(--faint); user-select: none; }
 .copy { position: absolute; top: 6px; right: 8px; display: grid; place-items: center; background: var(--panel2); border: 1px solid var(--line2); border-radius: 7px; color: var(--muted); width: 28px; height: 26px; }
 .copy .ico { width: 14px; height: 14px; }
 .copy:hover { color: var(--ink); border-color: var(--faint); }
@@ -219,33 +193,33 @@ pre .a { color: #79c0ff; }
 pre .o { color: #9aa7b8; }
 pre .n { color: var(--green); }
 pre .r { color: var(--red); font-weight: 600; }
-.table-scroll { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.table-scroll { overflow-x: auto; margin: 14px 0; border: 1px solid var(--line); border-radius: 8px; }
 table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-th { text-align: left; padding: 9px 14px; background: rgba(255, 255, 255, 0.025); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--line); }
+th { text-align: left; padding: 9px 14px; color: var(--muted); font-size: 12.5px; font-weight: 600; border-bottom: 1px solid var(--line); }
 td { padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
 tr:last-child td, tr:last-child th { border-bottom: 0; }
 td code { white-space: nowrap; }
-.kv th { width: 230px; text-transform: none; letter-spacing: 0; font-size: 13.5px; color: var(--ink); font-weight: 600; background: rgba(255, 255, 255, 0.02); vertical-align: top; }
+.kv th { width: 230px; font-size: 13.5px; color: var(--ink); font-weight: 600; vertical-align: top; }
 .pill-row { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
 .pill { font: 12px var(--mono); background: var(--panel2); border: 1px solid var(--line); padding: 3px 10px; border-radius: 6px; color: var(--muted); }
 .on { color: var(--green); font-weight: 700; font-family: var(--mono); }
 .off { color: var(--red); font-weight: 700; font-family: var(--mono); }
-.steps { counter-reset: s; display: grid; gap: 10px; margin: 14px 0; padding: 0; list-style: none; }
-.steps li { counter-increment: s; display: flex; gap: 14px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; font-size: 14px; }
-.steps li::before { content: counter(s); flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 700 12px var(--mono); color: #140800; background: var(--orange); }
+.steps { counter-reset: s; display: grid; gap: 8px; margin: 14px 0; padding: 0; list-style: none; }
+.steps li { counter-increment: s; display: flex; gap: 12px; align-items: baseline; font-size: 14.5px; }
+.steps li::before { content: counter(s) "."; flex-shrink: 0; width: 18px; font: 600 13px var(--mono); color: var(--faint); }
 
 /* ---------- footer ---------- */
 footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9); margin-top: 20px; }
 .foot-in { max-width: 1360px; margin: 0 auto; padding: 36px 20px 28px; }
 .foot-grid { display: grid; grid-template-columns: 1.4fr repeat(4, 1fr); gap: 26px; }
-.foot-grid h2 { font-size: 11px; letter-spacing: 1.3px; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; }
+.foot-grid h2 { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
 .foot-grid a { display: block; color: var(--muted); font-size: 13.5px; padding: 3px 0; }
 .foot-grid a:hover { color: var(--orange-soft); }
 .foot-brand p { color: var(--faint); font-size: 13px; margin-top: 10px; max-width: 30ch; }
 .foot-bottom { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 20px; margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--faint); font-size: 12.5px; }
 
 /* ---------- notice + misc ---------- */
-.notice-bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 80; width: min(680px, calc(100% - 24px)); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--panel-solid); border: 1px solid var(--line2); border-left: 3px solid var(--green); border-radius: 12px; padding: 14px 16px; box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6); font-size: 14px; }
+.notice-bar { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 80; width: min(680px, calc(100% - 24px)); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: var(--panel-solid); border: 1px solid var(--line2); border-radius: 10px; padding: 14px 16px; box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6); font-size: 14px; }
 .notice-bar p { margin: 0; flex: 1; min-width: 220px; color: var(--muted); }
 .notice-bar p b { color: var(--ink); }
 .notice-bar .acts { display: flex; align-items: center; gap: 12px; }
@@ -256,24 +230,17 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* ---------- responsive ---------- */
-@media (max-width: 1240px) {
-  .navlinks .opt { display: none; }
-}
-@media (max-width: 1180px) {
-}
 @media (max-width: 1040px) {
-  .navlinks { display: none; }
   .menu-btn { display: inline-flex; }
   .sidebar { position: fixed; left: 0; top: var(--nav-h); z-index: 45; background: var(--bg2); transform: translateX(-100%); visibility: hidden; transition: transform 0.25s ease, visibility 0.25s; }
   body.nav-open .sidebar { transform: none; visibility: visible; box-shadow: 20px 0 60px rgba(0, 0, 0, 0.6); }
   .main { padding: 0 16px 50px; }
-  .features { grid-template-columns: repeat(2, 1fr); }
   .foot-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 640px) {
   .top-in { padding: 0 12px; gap: 8px; }
   .ver, .nbtn .lbl { display: none; }
-  .features { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr; gap: 22px; }
   .hero { padding: 34px 0 36px; }
   .facts { gap: 16px 32px; margin-top: 32px; }
   .code pre { padding-right: 15px; padding-top: 34px; }
@@ -340,14 +307,6 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
       <b>lmao<span>.tcl</span></b>
     </a>
     <span class="ver">v6.8.2</span>
-    <nav class="navlinks" aria-label="Main">
-      <a href="#features"><svg class="ico" aria-hidden="true"><use href="#i-home"/></svg><span data-l="en">Features</span><span data-l="fr">Fonctions</span></a>
-      <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span data-l="en">Install</span><span data-l="fr">Installer</span></a>
-      <a href="#levels"><svg class="ico" aria-hidden="true"><use href="#i-ladder"/></svg><span data-l="en">Access</span><span data-l="fr">Accès</span></a>
-      <a href="#cmd-access"><svg class="ico" aria-hidden="true"><use href="#i-list"/></svg><span data-l="en">Commands</span><span data-l="fr">Commandes</span></a>
-      <a class="opt" href="#modules"><svg class="ico" aria-hidden="true"><use href="#i-puzzle"/></svg>Modules</a>
-      <a class="opt" href="#changelog"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg><span data-l="en">Changelog</span><span data-l="fr">Versions</span></a>
-    </nav>
     <div class="nav-right">
       <a class="nbtn" href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-git"/></svg><span class="lbl">GitHub</span><span class="sr-only">GitHub</span></a>
       <a class="nbtn cta" href="https://lmao-tcl.github.io/lmao.tcl" target="_blank" rel="noopener noreferrer"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg><span class="lbl"><span data-l="en">Download</span><span data-l="fr">Télécharger</span></span><span class="sr-only">lmao.tcl</span></a>
@@ -372,38 +331,38 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
   <div class="search-hint" id="search-count" role="status" aria-live="polite"></div>
   <nav class="nav" id="nav" aria-label="Documentation">
     <h2><span data-l="en">Start here</span><span data-l="fr">Pour commencer</span></h2>
-    <a href="#overview"><svg class="ico" aria-hidden="true"><use href="#i-book"/></svg><span data-l="en">Overview</span><span data-l="fr">Aperçu</span></a>
-    <a href="#install"><svg class="ico" aria-hidden="true"><use href="#i-download"/></svg>Installation</a>
-    <a href="#config"><svg class="ico" aria-hidden="true"><use href="#i-gear"/></svg>Configuration</a>
-    <a href="#levels"><svg class="ico" aria-hidden="true"><use href="#i-ladder"/></svg><span data-l="en">Access levels</span><span data-l="fr">Niveaux d'accès</span></a>
-    <a href="#help"><svg class="ico" aria-hidden="true"><use href="#i-help"/></svg><span data-l="en">The help system</span><span data-l="fr">L'aide</span></a>
+    <a href="#overview"><span data-l="en">Overview</span><span data-l="fr">Aperçu</span></a>
+    <a href="#install">Installation</a>
+    <a href="#config">Configuration</a>
+    <a href="#levels"><span data-l="en">Access levels</span><span data-l="fr">Niveaux d'accès</span></a>
+    <a href="#help"><span data-l="en">The help system</span><span data-l="fr">L'aide</span></a>
     <h2><span data-l="en">Commands</span><span data-l="fr">Commandes</span></h2>
-    <a href="#cmd-access"><svg class="ico" aria-hidden="true"><use href="#i-key"/></svg><span data-l="en">Access &amp; users</span><span data-l="fr">Accès et utilisateurs</span></a>
-    <a href="#cmd-everyone"><svg class="ico" aria-hidden="true"><use href="#i-globe"/></svg><span data-l="en">Everyone</span><span data-l="fr">Tout le monde</span></a>
-    <a href="#cmd-users"><svg class="ico" aria-hidden="true"><use href="#i-user"/></svg><span data-l="en">Registered users</span><span data-l="fr">Utilisateurs inscrits</span></a>
-    <a href="#cmd-ops"><svg class="ico" aria-hidden="true"><use href="#i-hammer"/></svg><span data-l="en">Mods &amp; ops</span><span data-l="fr">Mods et ops</span></a>
-    <a href="#cmd-master"><svg class="ico" aria-hidden="true"><use href="#i-bolt"/></svg><span data-l="en">Masters</span><span data-l="fr">Maîtres</span></a>
-    <a href="#cmd-owner"><svg class="ico" aria-hidden="true"><use href="#i-crown"/></svg><span data-l="en">Bot owner</span><span data-l="fr">Propriétaire</span></a>
-    <a href="#cmd-msg"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg><span data-l="en">Private messages</span><span data-l="fr">Messages privés</span></a>
+    <a href="#cmd-access"><span data-l="en">Access &amp; users</span><span data-l="fr">Accès et utilisateurs</span></a>
+    <a href="#cmd-everyone"><span data-l="en">Everyone</span><span data-l="fr">Tout le monde</span></a>
+    <a href="#cmd-users"><span data-l="en">Registered users</span><span data-l="fr">Utilisateurs inscrits</span></a>
+    <a href="#cmd-ops"><span data-l="en">Mods &amp; ops</span><span data-l="fr">Mods et ops</span></a>
+    <a href="#cmd-master"><span data-l="en">Masters</span><span data-l="fr">Maîtres</span></a>
+    <a href="#cmd-owner"><span data-l="en">Bot owner</span><span data-l="fr">Propriétaire</span></a>
+    <a href="#cmd-msg"><span data-l="en">Private messages</span><span data-l="fr">Messages privés</span></a>
     <h2><span data-l="en">Users &amp; logging</span><span data-l="fr">Utilisateurs et journal</span></h2>
-    <a href="#register"><svg class="ico" aria-hidden="true"><use href="#i-badge"/></svg><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></a>
-    <a href="#chanlog"><svg class="ico" aria-hidden="true"><use href="#i-log"/></svg><span data-l="en">Channel logging</span><span data-l="fr">Journal du canal</span></a>
+    <a href="#register"><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></a>
+    <a href="#chanlog"><span data-l="en">Channel logging</span><span data-l="fr">Journal du canal</span></a>
     <h2><span data-l="en">Features</span><span data-l="fr">Fonctions</span></h2>
-    <a href="#modules"><svg class="ico" aria-hidden="true"><use href="#i-puzzle"/></svg>Modules</a>
-    <a href="#activevoice"><svg class="ico" aria-hidden="true"><use href="#i-mic"/></svg>ActiveVoice</a>
-    <a href="#idledeop"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></a>
-    <a href="#guard"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></a>
-    <a href="#xservice"><svg class="ico" aria-hidden="true"><use href="#i-key"/></svg><span data-l="en">X service</span><span data-l="fr">Service X</span></a>
-    <a href="#delayjoin"><svg class="ico" aria-hidden="true"><use href="#i-hidden"/></svg><span data-l="en">Delayed join (+Dm)</span><span data-l="fr">Arrivées différées (+Dm)</span></a>
-    <a href="#dnsbl"><svg class="ico" aria-hidden="true"><use href="#i-radar"/></svg><span data-l="en">Drone blacklists</span><span data-l="fr">Listes noires</span></a>
-    <a href="#badchan"><svg class="ico" aria-hidden="true"><use href="#i-ban"/></svg><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></a>
-    <a href="#topicsys"><svg class="ico" aria-hidden="true"><use href="#i-hash"/></svg><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></a>
-    <a href="#protections"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>Protections</a>
+    <a href="#modules">Modules</a>
+    <a href="#activevoice">ActiveVoice</a>
+    <a href="#idledeop"><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></a>
+    <a href="#guard"><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></a>
+    <a href="#xservice"><span data-l="en">X service</span><span data-l="fr">Service X</span></a>
+    <a href="#delayjoin"><span data-l="en">Delayed join (+Dm)</span><span data-l="fr">Arrivées différées (+Dm)</span></a>
+    <a href="#dnsbl"><span data-l="en">Drone blacklists</span><span data-l="fr">Listes noires</span></a>
+    <a href="#badchan"><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></a>
+    <a href="#topicsys"><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></a>
+    <a href="#protections">Protections</a>
     <h2><span data-l="en">Reference</span><span data-l="fr">Référence</span></h2>
-    <a href="#ctcp"><svg class="ico" aria-hidden="true"><use href="#i-plug"/></svg>CTCP &amp; DCC</a>
-    <a href="#gotchas"><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></a>
-    <a href="#credits"><svg class="ico" aria-hidden="true"><use href="#i-heart"/></svg><span data-l="en">Credits</span><span data-l="fr">Remerciements</span></a>
-    <a href="#changelog"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></a>
+    <a href="#ctcp">CTCP &amp; DCC</a>
+    <a href="#gotchas"><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></a>
+    <a href="#credits"><span data-l="en">Credits</span><span data-l="fr">Remerciements</span></a>
+    <a href="#changelog"><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></a>
   </nav>
 </aside>
 
@@ -437,63 +396,63 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
 </div>
 
 <div class="features" id="features">
-  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-mute"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">No channel spam</span><span data-l="fr">Aucun spam dans le canal</span></h2>
     <p data-l="en">Every reply is a notice to whoever asked. The bot only talks in the channel when you tell it to.</p>
     <p data-l="fr">Chaque réponse est une notice à la personne qui a demandé. Le robot ne parle dans le canal que si tu le lui demandes.</p></div>
-  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-help"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">One help table</span><span data-l="fr">Une seule table d'aide</span></h2>
     <p data-l="en"><code>!help</code> and <code>/msg bot help</code> read the same source, so docs never drift from the commands.</p>
     <p data-l="fr"><code>!help</code> et <code>/msg bot help</code> lisent la même source : l'aide ne peut jamais contredire les commandes.</p></div>
-  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-puzzle"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Per-channel modules</span><span data-l="fr">Modules par canal</span></h2>
     <p data-l="en">Flip features with <code>!enable</code> / <code>!disable</code>, live, without touching the config.</p>
     <p data-l="fr">Active ou désactive des fonctions avec <code>!enable</code> / <code>!disable</code>, en direct, sans toucher à la config.</p></div>
-  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-ladder"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Real access levels</span><span data-l="fr">De vrais niveaux d'accès</span></h2>
     <p data-l="en">Voice, Mod, Op, Master, Owner. One rung at a time, and you can only reach below yourself.</p>
     <p data-l="fr">Voice, Mod, Op, Maître, Propriétaire. Un échelon à la fois, et tu n'agis que sur ceux en dessous de toi.</p></div>
-  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-mic"/></svg></div>
+  <div class="feat">
     <h2 class="ft">ActiveVoice</h2>
     <p data-l="en">Voices people who actually talk, takes it back when they go idle. Regulars are never touched.</p>
     <p data-l="fr">Donne le voice à ceux qui parlent vraiment et le reprend quand ils deviennent inactifs. Les habitués ne sont jamais touchés.</p></div>
-  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-log"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">One audit trail</span><span data-l="fr">Un seul journal</span></h2>
     <p data-l="en">Access changes, sanctions, registrations and refused attempts land in your ops channel.</p>
     <p data-l="fr">Changements d'accès, sanctions, inscriptions et tentatives refusées arrivent dans ton canal d'ops.</p></div>
-  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-badge"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></h2>
     <p data-l="en">Typed-back confirmation code, every check run twice, and a nudge to hide your host with X first.</p>
     <p data-l="fr">Un code de confirmation à retaper, chaque vérification faite deux fois, et un rappel de cacher ton hôte avec X d'abord.</p></div>
-  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-shield"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Flag protection</span><span data-l="fr">Protection par drapeaux</span></h2>
     <p data-l="en">Owners, masters and the X / W services can't be deopped, kicked or banned through the bot.</p>
     <p data-l="fr">Les propriétaires, les maîtres et les services X / W ne peuvent pas être deop, expulsés ou bannis par le robot.</p></div>
-  <div class="feat" style="--c:var(--steel)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-palette"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">No colour codes</span><span data-l="fr">Aucun code de couleur</span></h2>
     <p data-l="en">Plain text reads the same in every client and on every theme. Tags like <code>[OK]</code> carry the meaning.</p>
     <p data-l="fr">Le texte brut se lit pareil dans tous les clients et avec tous les thèmes. Des étiquettes comme <code>[OK]</code> portent le sens.</p></div>
-  <div class="feat" style="--c:var(--red)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></h2>
     <p data-l="en">Kicks a lone flooder and locks the channel <code>+Dm</code> when a drone wave hits, then opens it again by itself.</p>
     <p data-l="fr">Expulse un flooder isolé et verrouille le canal en <code>+Dm</code> quand une vague de drones frappe, puis le rouvre tout seul.</p></div>
-  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-key"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Works with X</span><span data-l="fr">Travaille avec X</span></h2>
     <p data-l="en">Logs in to X, hides its host, and asks X for op, unban or invite when it gets locked out.</p>
     <p data-l="fr">Se connecte à X, cache son hôte, et demande à X l'op, un unban ou une invitation quand on le bloque.</p></div>
-  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-gear"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Any channel setting</span><span data-l="fr">Tous les réglages</span></h2>
     <p data-l="en"><code>!chanset</code> lists and changes every eggdrop channel setting, even ones other scripts add.</p>
     <p data-l="fr"><code>!chanset</code> liste et change tous les réglages de canal d'eggdrop, même ceux d'autres scripts.</p></div>
-  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-hidden"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Delayed join</span><span data-l="fr">Arrivées différées</span></h2>
     <p data-l="en">Keeps a channel <code>+Dm</code> and lets newcomers in by voice: X users first, everyone else once they check out.</p>
     <p data-l="fr">Garde un canal en <code>+Dm</code> et fait entrer les nouveaux par le voice : les comptes X d'abord, les autres une fois vérifiés.</p></div>
-  <div class="feat" style="--c:var(--red)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-radar"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Drone blacklists</span><span data-l="fr">Listes noires de drones</span></h2>
     <p data-l="en">Checks IPs against DroneBL and EFnet RBL and bans drones while they are still hidden by <code>+D</code>.</p>
     <p data-l="fr">Vérifie les IP auprès de DroneBL et d'EFnet RBL et bannit les drones pendant qu'ils sont encore cachés par <code>+D</code>.</p></div>
-  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-ban"/></svg></div>
+  <div class="feat">
     <h2 class="ft"><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></h2>
     <p data-l="en">Bans people who sit in channels you list, per channel or everywhere.</p>
     <p data-l="fr">Bannit les gens présents dans les canaux que tu listes, par canal ou partout.</p></div>
@@ -503,7 +462,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
 
 <!-- ================= OVERVIEW ================= -->
 <section id="overview">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-book"/></svg></span><span data-l="en">Overview</span><span data-l="fr">Aperçu</span></h2>
+  <h2><span data-l="en">Overview</span><span data-l="fr">Aperçu</span></h2>
   <p class="sec-intro" data-l="en">lmao.tcl gives your eggdrop the public commands people actually expect in a channel —
     ops, voices, bans, topic and user management — plus an <strong>auto-voice system</strong>
     for people who talk and <strong>idle cleanup</strong> for ops and voices who don't.
@@ -516,14 +475,10 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
     le robot n'inonde jamais le canal qu'il est censé protéger.</p>
   <div class="table-scroll">
   <table class="kv">
-    <tr><th>Script</th><td>lmao.tcl v6.8.2</td></tr>
     <tr><th><span data-l="en">Repository</span><span data-l="fr">Dépôt</span></th><td><a href="https://github.com/lmao-tcl/lmao-tcl.github.io" target="_blank" rel="noopener noreferrer">github.com/lmao-tcl/lmao-tcl.github.io</a></td></tr>
     <tr><th><span data-l="en">Requirements</span><span data-l="fr">Prérequis</span></th><td><span data-l="en">Eggdrop 1.8 or newer (tested on 1.10.1) · Tcl 8.5 or newer</span><span data-l="fr">Eggdrop 1.8 ou plus récent (testé sur 1.10.1) · Tcl 8.5 ou plus récent</span></td></tr>
-    <tr><th><span data-l="en">Network</span><span data-l="fr">Réseau</span></th><td><span data-l="en">Written for UnderNet ircu — aware of the <code>X</code> and <code>W</code> services</span><span data-l="fr">Écrit pour ircu d'UnderNet — tient compte des services <code>X</code> et <code>W</code></span></td></tr>
     <tr><th><span data-l="en">Trigger</span><span data-l="fr">Déclencheur</span></th><td><code>!</code> <span data-l="en">by default</span><span data-l="fr">par défaut</span> — <code>cc(cmdchar)</code></td></tr>
-    <tr><th><span data-l="en">Commands</span><span data-l="fr">Commandes</span></th><td><span data-l="en">66, documented in one shared help table</span><span data-l="fr">66, documentées dans une seule table d'aide partagée</span></td></tr>
     <tr><th>Modules</th><td><code>topic</code> · <code>activevoice</code> · <code>idledevoice</code> · <code>idledeop</code> · <code>chanlog</code> · <code>guard</code> · <code>delayjoin</code> · <code>dnsbl</code> · <code>badchan</code></td></tr>
-    <tr><th><span data-l="en">License</span><span data-l="fr">Licence</span></th><td>GPLv3</td></tr>
   </table>
   </div>
   <div class="tip"><svg class="ico" aria-hidden="true"><use href="#i-help"/></svg>
@@ -533,7 +488,7 @@ footer.site { border-top: 1px solid var(--line); background: rgba(9, 12, 17, 0.9
 
 <!-- ================= INSTALL ================= -->
 <section id="install">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-download"/></svg></span>Installation</h2>
+  <h2>Installation</h2>
   <p class="sec-intro" data-l="en">Drop the script in, source it, rehash. No data files, no dependencies.</p>
   <p class="sec-intro" data-l="fr">Dépose le script, ajoute-le à la config, recharge. Aucun fichier de données, aucune dépendance.</p>
 
@@ -559,7 +514,7 @@ source scripts/lmao.tcl</pre></div>
 
 <!-- ================= CONFIG ================= -->
 <section id="config">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-gear"/></svg></span>Configuration</h2>
+  <h2>Configuration</h2>
   <p class="sec-intro" data-l="en">Everything lives in the <code>CONFIGURATION SECTION</code> at the top of the script. Change it, then <code>.rehash</code>.</p>
   <p class="sec-intro" data-l="fr">Tout se trouve dans la <code>CONFIGURATION SECTION</code> en haut du script. Modifie, puis fais <code>.rehash</code>.</p>
   <div class="table-scroll">
@@ -621,7 +576,7 @@ source scripts/lmao.tcl</pre></div>
 
 <!-- ================= LEVELS ================= -->
 <section id="levels">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-ladder"/></svg></span><span data-l="en">Access levels</span><span data-l="fr">Niveaux d'accès</span></h2>
+  <h2><span data-l="en">Access levels</span><span data-l="fr">Niveaux d'accès</span></h2>
   <p class="sec-intro" data-l="en">Access is a <strong>position</strong>, not a pile of flags: every user sits on exactly one rung. The
     <code>!add…</code> and <code>!del…</code> commands move people between rungs and clear whatever they held before.
     Underneath it is still plain eggdrop flags, global or set on a single channel. Bind masks read
@@ -649,7 +604,7 @@ source scripts/lmao.tcl</pre></div>
 
 <!-- ================= HELP SYSTEM ================= -->
 <section id="help">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-help"/></svg></span><span data-l="en">The help system</span><span data-l="fr">L'aide</span></h2>
+  <h2><span data-l="en">The help system</span><span data-l="fr">L'aide</span></h2>
   <p class="sec-intro" data-l="en">Help is driven by a single table inside the script, so <code>!help</code> in the channel and <code>/msg &lt;bot&gt; help</code> always say the same thing. <strong>Both reply by notice</strong> — nothing is ever printed into the channel.</p>
   <p class="sec-intro" data-l="fr">L'aide vient d'une seule table dans le script : <code>!help</code> dans le canal et <code>/msg &lt;robot&gt; help</code> disent toujours la même chose. <strong>Les deux répondent par notice</strong> — rien n'est jamais écrit dans le canal.</p>
 
@@ -678,7 +633,7 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 
 <!-- ================= ACCESS COMMANDS ================= -->
 <section id="cmd-access">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-key"/></svg></span><span data-l="en">Access &amp; users</span><span data-l="fr">Accès et utilisateurs</span></h2>
+  <h2><span data-l="en">Access &amp; users</span><span data-l="fr">Accès et utilisateurs</span></h2>
   <p class="sec-intro" data-l="en">One command per rung. Granting a level <strong>replaces</strong> whatever the user had, globally and on the channel, so nothing is ever left behind: <code>!addop</code> on someone who was only voiced moves them up, and <code>!addvoice</code> on an op moves them back down. The bot always says which way it went, and sets the matching mode in the channel.</p>
   <p class="sec-intro" data-l="fr">Une commande par échelon. Donner un niveau <strong>remplace</strong> ce que la personne avait, globalement et dans le canal : rien ne reste derrière. <code>!addop</code> sur quelqu'un qui n'avait que le voice le fait monter, et <code>!addvoice</code> sur un op le fait redescendre. Le robot dit toujours dans quel sens ça s'est fait, et applique le mode correspondant dans le canal.</p>
 
@@ -756,7 +711,7 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 
 <!-- ================= EVERYONE ================= -->
 <section id="cmd-everyone">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-globe"/></svg></span><span data-l="en">Everyone</span><span data-l="fr">Tout le monde</span></h2>
+  <h2><span data-l="en">Everyone</span><span data-l="fr">Tout le monde</span></h2>
   <p class="sec-intro" data-l="en">No flags required — anyone in the channel can use these.</p>
   <p class="sec-intro" data-l="fr">Aucun drapeau requis — n'importe qui dans le canal peut les utiliser.</p>
 
@@ -793,7 +748,7 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 
 <!-- ================= REGISTERED ================= -->
 <section id="cmd-users">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-user"/></svg></span><span data-l="en">Registered users</span><span data-l="fr">Utilisateurs inscrits</span></h2>
+  <h2><span data-l="en">Registered users</span><span data-l="fr">Utilisateurs inscrits</span></h2>
   <p class="sec-intro" data-l="en">For anyone with a user record in the bot.</p>
   <p class="sec-intro" data-l="fr">Pour toute personne qui a une fiche dans le robot.</p>
 
@@ -829,7 +784,7 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 
 <!-- ================= MODS & OPS ================= -->
 <section id="cmd-ops">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hammer"/></svg></span><span data-l="en">Mods &amp; ops</span><span data-l="fr">Mods et ops</span></h2>
+  <h2><span data-l="en">Mods &amp; ops</span><span data-l="fr">Mods et ops</span></h2>
   <p class="sec-intro" data-l="en">Kick, ban, unban, bans and invite are open to <span class="lvl mod">Mod</span> (<code>+M</code>) and up — a mod does all of that without ever holding channel <code>+o</code>. Op, deop and topic need <span class="lvl op">Op</span>. The bot has to be opped for any of these to take effect, and if your level is too low it tells you which one you are.</p>
   <p class="sec-intro" data-l="fr">Kick, ban, unban, bans et invite sont ouverts aux <span class="lvl mod">Mod</span> (<code>+M</code>) et plus — un mod fait tout ça sans jamais avoir le <code>+o</code>. Op, deop et sujet demandent <span class="lvl op">Op</span>. Le robot doit être op pour que ça marche, et si ton niveau est trop bas, il te dit lequel tu as.</p>
 
@@ -896,7 +851,7 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 
 <!-- ================= MASTER ================= -->
 <section id="cmd-master">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-bolt"/></svg></span><span data-l="en">Masters</span><span data-l="fr">Maîtres</span></h2>
+  <h2><span data-l="en">Masters</span><span data-l="fr">Maîtres</span></h2>
   <p class="sec-intro" data-l="en">Flag <code>m</code> on the channel or globally, or global <code>n</code>.</p>
   <p class="sec-intro" data-l="fr">Drapeau <code>m</code> dans le canal ou global, ou <code>n</code> global.</p>
 
@@ -977,7 +932,7 @@ Bans and kicks a user (mask: *!*@host). Protects +n/+m flags and service bots
 
 <!-- ================= OWNER ================= -->
 <section id="cmd-owner">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-crown"/></svg></span><span data-l="en">Bot owner</span><span data-l="fr">Propriétaire du robot</span></h2>
+  <h2><span data-l="en">Bot owner</span><span data-l="fr">Propriétaire du robot</span></h2>
   <p class="sec-intro" data-l="en">Global flag <code>n</code> only. Commands marked <span class="lvl msg">/msg</span> also work by private message — the owner flag is re-checked there.</p>
   <p class="sec-intro" data-l="fr">Drapeau <code>n</code> global seulement. Les commandes marquées <span class="lvl msg">/msg</span> marchent aussi en privé — le drapeau propriétaire y est revérifié.</p>
 
@@ -1059,7 +1014,7 @@ Could not set <span class="t">+flood-chan</span> on #canada: illegal channel opt
 
 <!-- ================= MSG ================= -->
 <section id="cmd-msg">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-msg"/></svg></span><span data-l="en">Private messages</span><span data-l="fr">Messages privés</span></h2>
+  <h2><span data-l="en">Private messages</span><span data-l="fr">Messages privés</span></h2>
   <p class="sec-intro" data-l="en">Anything that needs a channel takes it as the <strong>first argument</strong>. Access is checked against the channel you name, so channel-only ops and masters work by <code>/msg</code> too — not just global owners.</p>
   <p class="sec-intro" data-l="fr">Tout ce qui a besoin d'un canal le prend en <strong>premier argument</strong>. L'accès est vérifié sur le canal nommé : les ops et maîtres d'un seul canal peuvent aussi utiliser <code>/msg</code> — pas seulement les propriétaires globaux.</p>
   <div class="code syntax"><span class="tag">syntax</span><button class="copy"><svg class="ico" aria-hidden="true"><use href="#i-copy"/></svg><span class="sr-only">Copy</span></button><pre><span class="t">/msg BotNick help</span> <span class="o">[command]</span>
@@ -1081,7 +1036,7 @@ Could not set <span class="t">+flood-chan</span> on #canada: illegal channel opt
 
 <!-- ================= REGISTRATION ================= -->
 <section id="register">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-badge"/></svg></span><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></h2>
+  <h2><span data-l="en">Self-registration</span><span data-l="fr">Auto-inscription</span></h2>
   <p class="sec-intro" data-l="en">People can add themselves to the userfile without an op doing it by hand. It takes two steps on purpose, and the bot is pointed at the one thing that actually decides whether host-based identification is safe: <strong>which host gets stored</strong>.</p>
   <p class="sec-intro" data-l="fr">Les gens peuvent s'ajouter eux-mêmes au userfile sans qu'un op le fasse à la main. Ça se fait en deux étapes exprès, et le robot vise la seule chose qui rend l'identification par hôte sûre : <strong>quel hôte est enregistré</strong>.</p>
 
@@ -1127,7 +1082,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 
 <!-- ================= CHANLOG ================= -->
 <section id="chanlog">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-log"/></svg></span><span data-l="en">Channel logging</span><span data-l="fr">Journal du canal</span></h2>
+  <h2><span data-l="en">Channel logging</span><span data-l="fr">Journal du canal</span></h2>
   <p class="sec-intro" data-l="en">One audit trail for the channel staff: who got access, who got sanctioned, who registered, who was refused. The <code>chanlog</code> module ships <span class="off">OFF</span> — <code>!enable chanlog</code> starts it. It is pointed at <code>cc(backchan)</code>, and each channel keeps its own destination.</p>
   <p class="sec-intro" data-l="fr">Un seul journal pour l'équipe du canal : qui a reçu un accès, qui a été sanctionné, qui s'est inscrit, qui a été refusé. Le module <code>chanlog</code> est livré <span class="off">OFF</span> — <code>!enable chanlog</code> le démarre. Il est dirigé vers <code>cc(backchan)</code>, et chaque canal garde sa propre destination.</p>
   <div class="note"><svg class="ico" aria-hidden="true"><use href="#i-msg"/></svg>
@@ -1159,7 +1114,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 
 <!-- ================= MODULES ================= -->
 <section id="modules">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-puzzle"/></svg></span>Modules</h2>
+  <h2>Modules</h2>
   <p class="sec-intro" data-l="en">Nine features can be switched on and off <strong>per channel</strong>, live, without editing the config. All nine start <span class="off">OFF</span>: the bot does nothing on a channel until you switch a module on there with <code>!enable</code>.</p>
   <p class="sec-intro" data-l="fr">Neuf fonctions s'allument et s'éteignent <strong>canal par canal</strong>, en direct, sans toucher à la config. Les neuf partent <span class="off">OFF</span> : le robot ne fait rien dans un canal tant que tu n'y actives pas un module avec <code>!enable</code>.</p>
   <div class="table-scroll">
@@ -1183,7 +1138,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 
 <!-- ================= ACTIVEVOICE ================= -->
 <section id="activevoice">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-mic"/></svg></span>ActiveVoice</h2>
+  <h2>ActiveVoice</h2>
   <p class="sec-intro" data-l="en">ActiveVoice rewards people who actually talk. It exists for <strong>non-regulars</strong> — anyone who isn't a registered user with voice-worthy flags. The module ships <span class="off">OFF</span>: <code>!enable activevoice</code> starts it on a channel.</p>
   <p class="sec-intro" data-l="fr">ActiveVoice récompense ceux qui parlent vraiment. Il existe pour les <strong>non-habitués</strong> — toute personne qui n'est pas inscrite avec des drapeaux qui méritent le voice. Le module est livré <span class="off">OFF</span> : <code>!enable activevoice</code> le démarre dans un canal.</p>
   <ol class="steps" data-l="en">
@@ -1208,7 +1163,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 
 <!-- ================= IDLEDEOP ================= -->
 <section id="idledeop">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-clock"/></svg></span><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></h2>
+  <h2><span data-l="en">Idle deop</span><span data-l="fr">Deop des inactifs</span></h2>
   <p class="sec-intro" data-l="en">Ops who sit idle for too long lose <code>+o</code> until they come back and ask for it again. The module ships <span class="off">OFF</span> on every channel — switch it on where you want it.</p>
   <p class="sec-intro" data-l="fr">Les ops inactifs trop longtemps perdent leur <code>+o</code> jusqu'à ce qu'ils reviennent le demander. Le module est livré <span class="off">OFF</span> dans chaque canal — active-le là où tu le veux.</p>
   <div class="table-scroll">
@@ -1225,7 +1180,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 
 <!-- ================= GUARD ================= -->
 <section id="guard">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></span><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></h2>
+  <h2><span data-l="en">Flood guard</span><span data-l="fr">Garde anti-flood</span></h2>
   <p class="sec-intro" data-l="en">The <code>guard</code> module watches every channel where it is switched on (<code>!enable guard</code> — it ships <span class="off">OFF</span>) for floods. One person flooding is kicked (and banned for a while). A real attack — the whole channel flooding, a wave of joins, a storm of nick changes — <strong>locks the channel</strong> with <code>+Dm</code> until it has been quiet for a few minutes.</p>
   <p class="sec-intro" data-l="fr">Le module <code>guard</code> surveille les floods dans chaque canal où il est activé (<code>!enable guard</code> — il est livré <span class="off">OFF</span>). Une personne qui floode seule est expulsée (et bannie un moment). Une vraie attaque — le canal entier qui floode, une vague d'arrivées, une rafale de changements de pseudo — <strong>verrouille le canal</strong> en <code>+Dm</code> jusqu'à quelques minutes de calme.</p>
 
@@ -1275,7 +1230,7 @@ That code is good for 5 minutes. If you did not ask for this, ignore it - nothin
 
 <!-- ================= X ================= -->
 <section id="xservice">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-key"/></svg></span><span data-l="en">X service</span><span data-l="fr">Service X</span></h2>
+  <h2><span data-l="en">X service</span><span data-l="fr">Service X</span></h2>
   <p class="sec-intro" data-l="en">X is UnderNet's channel service. Give the bot its own X account and it can get itself out of trouble. Everything here stays <strong>off</strong> until <code>cc(x_user)</code> and <code>cc(x_pass)</code> are set.</p>
   <p class="sec-intro" data-l="fr">X est le service de canaux d'UnderNet. Donne au robot son propre compte X et il pourra se sortir d'affaire tout seul. Tout ici reste <strong>éteint</strong> tant que <code>cc(x_user)</code> et <code>cc(x_pass)</code> sont vides.</p>
   <div class="table-scroll">
@@ -1304,7 +1259,7 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= DELAYJOIN ================= -->
 <section id="delayjoin">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hidden"/></svg></span><span data-l="en">Delayed join (+Dm)</span><span data-l="fr">Arrivées différées (+Dm)</span></h2>
+  <h2><span data-l="en">Delayed join (+Dm)</span><span data-l="fr">Arrivées différées (+Dm)</span></h2>
   <p class="sec-intro" data-l="en">The <code>delayjoin</code> module turns a channel into a waiting room. It keeps <code>+Dm</code> on: with <code>+D</code> nobody sees a join, with <code>+m</code> nobody without voice can talk. The bot then lets people in one by one by voicing them, which is also the moment they appear in the nick list. A drone wave lands in an empty room and never shows up.</p>
   <p class="sec-intro" data-l="fr">Le module <code>delayjoin</code> fait du canal une salle d'attente. Il garde <code>+Dm</code> : avec <code>+D</code> personne ne voit les arrivées, avec <code>+m</code> personne sans voice ne peut parler. Le robot fait ensuite entrer les gens un par un en leur donnant le voice, c'est aussi à ce moment qu'ils apparaissent dans la liste. Une vague de drones arrive dans une salle vide et ne se montre jamais.</p>
   <ol class="steps">
@@ -1322,7 +1277,7 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= DNSBL ================= -->
 <section id="dnsbl">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-radar"/></svg></span><span data-l="en">Drone blacklists (DNSBL)</span><span data-l="fr">Listes noires de drones (DNSBL)</span></h2>
+  <h2><span data-l="en">Drone blacklists (DNSBL)</span><span data-l="fr">Listes noires de drones (DNSBL)</span></h2>
   <p class="sec-intro" data-l="en">The <code>dnsbl</code> module checks the IP of people who join against public blacklists of drones, proxies and compromised machines. On a <code>+D</code> channel it checks the hidden members too, so a listed drone is banned and kicked <strong>before anyone in the channel ever sees it</strong>.</p>
   <p class="sec-intro" data-l="fr">Le module <code>dnsbl</code> vérifie l'IP des arrivants auprès de listes noires publiques de drones, de proxys et de machines compromises. Sur un canal en <code>+D</code>, il vérifie aussi les membres cachés : un drone inscrit est banni et expulsé <strong>avant que quiconque dans le canal ne le voie</strong>.</p>
   <div class="table-scroll">
@@ -1350,7 +1305,7 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= BADCHAN ================= -->
 <section id="badchan">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-ban"/></svg></span><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></h2>
+  <h2><span data-l="en">Bad channels</span><span data-l="fr">Canaux interdits</span></h2>
   <p class="sec-intro" data-l="en">The <code>badchan</code> module looks at the channels a newcomer is in (with a WHOIS) and bans them if one matches your list. Lists are per channel, plus a global list used everywhere, and they are saved to disk.</p>
   <p class="sec-intro" data-l="fr">Le module <code>badchan</code> regarde dans quels canaux se trouve un nouvel arrivant (avec un WHOIS) et le bannit si l'un d'eux correspond à ta liste. Les listes sont par canal, plus une liste globale utilisée partout, et elles sont enregistrées sur le disque.</p>
   <div class="cmd" data-k="badchan bad channel list add del mask ban">
@@ -1370,14 +1325,14 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= TOPIC ================= -->
 <section id="topicsys">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-hash"/></svg></span><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></h2>
+  <h2><span data-l="en">Topic system</span><span data-l="fr">Sujet du canal</span></h2>
   <p class="sec-intro" data-l="en">The bot remembers the topic you set through it, per channel, and puts it back with <code>!topicsync</code> when someone mangles it. The stored topic lives in memory and is lost on restart.</p>
   <p class="sec-intro" data-l="fr">Le robot retient le sujet que tu fixes par lui, canal par canal, et le remet avec <code>!topicsync</code> quand quelqu'un l'abîme. Le sujet est gardé en mémoire et perdu au redémarrage.</p>
 </section>
 
 <!-- ================= PROTECTIONS ================= -->
 <section id="protections">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-shield"/></svg></span>Protections</h2>
+  <h2>Protections</h2>
   <p class="sec-intro" data-l="en">The bot refuses to be turned against the people running it.</p>
   <p class="sec-intro" data-l="fr">Le robot refuse d'être retourné contre ceux qui le gèrent.</p>
   <div class="table-scroll">
@@ -1393,7 +1348,7 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= CTCP ================= -->
 <section id="ctcp">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-plug"/></svg></span>CTCP &amp; DCC</h2>
+  <h2>CTCP &amp; DCC</h2>
   <p class="sec-intro" data-l="en">The bot answers the usual CTCP queries and has a few partyline extras.</p>
   <p class="sec-intro" data-l="fr">Le robot répond aux requêtes CTCP habituelles et a quelques extras sur la partyline.</p>
   <div class="pill-row"><span class="pill">CTCP VERSION</span><span class="pill">CTCP PING</span><span class="pill">CTCP TIME</span><span class="pill">CTCP FINGER</span></div>
@@ -1409,7 +1364,7 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= GOTCHAS ================= -->
 <section id="gotchas">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-alert"/></svg></span><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></h2>
+  <h2><span data-l="en">Known limits</span><span data-l="fr">Limites connues</span></h2>
   <div class="warn"><svg class="ico" aria-hidden="true"><use href="#i-history"/></svg>
     <div data-l="en"><b>Memory only.</b> Stored topics and chanlog destinations reset on <code>.rehash</code> or <code>.restart</code>.</div>
     <div data-l="fr"><b>En mémoire seulement.</b> Les sujets gardés et les destinations du chanlog repartent à zéro au <code>.rehash</code> ou au <code>.restart</code>.</div></div>
@@ -1423,43 +1378,43 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= CREDITS ================= -->
 <section id="credits">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-heart"/></svg></span><span data-l="en">Credits & thanks</span><span data-l="fr">Remerciements</span></h2>
+  <h2><span data-l="en">Credits & thanks</span><span data-l="fr">Remerciements</span></h2>
   <p class="sec-intro" data-l="en">lmao.tcl stands on the work of people who wrote scripts for UnderNet and gave them to the community, often years ago and asking nothing back. The modules below are written fresh for lmao.tcl, but the ideas, the protocol know-how and a fair share of the inspiration are theirs. <strong>Thank you.</strong></p>
   <p class="sec-intro" data-l="fr">lmao.tcl repose sur le travail de gens qui ont écrit des scripts pour UnderNet et les ont offerts à la communauté, souvent il y a des années et sans rien demander en retour. Les modules ci-dessous sont écrits à neuf pour lmao.tcl, mais les idées, le savoir-faire du protocole et une bonne part de l'inspiration leur reviennent. <strong>Merci.</strong></p>
   <div class="features credits">
-  <div class="feat" style="--c:var(--orange)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-hidden"/></svg></div>
+  <div class="feat">
     <h3 class="ft">^The_law^ &amp; #Ayuda</h3>
     <p class="credit-role"><span data-l="en">eafs.tcl · UnderNet</span><span data-l="fr">eafs.tcl · UnderNet</span></p>
     <p data-l="en">Showed how to run a channel behind <code>+Dm</code>: find the hidden members with <code>NAMES -d</code>, sort them with WHOX by X login, and voice them in tiers. The <a href="#delayjoin">delayed join</a> module is built on that design.</p>
     <p data-l="fr">A montré comment faire vivre un canal derrière <code>+Dm</code> : trouver les membres cachés avec <code>NAMES -d</code>, les trier avec WHOX selon leur connexion à X, et leur donner le voice par paliers. Le module <a href="#delayjoin">arrivées différées</a> repose sur cette conception.</p></div>
 
-  <div class="feat" style="--c:var(--green)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-mic"/></svg></div>
+  <div class="feat">
     <h3 class="ft">xplorer &amp; OUTsider</h3>
     <p class="credit-role"><span data-l="en">Dm.tcl · #mircscripting</span><span data-l="fr">Dm.tcl · #mircscripting</span></p>
     <p data-l="en">xplorer wrote the first <code>+Dm</code> delay-voice script, and OUTsider made it work across many channels. Their per-channel approach shaped how delayjoin is switched on and off.</p>
     <p data-l="fr">xplorer a écrit le premier script de voice différé en <code>+Dm</code>, et OUTsider l'a fait fonctionner sur plusieurs canaux. Leur approche canal par canal a guidé la façon d'activer et désactiver delayjoin.</p></div>
 
-  <div class="feat" style="--c:var(--red)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-radar"/></svg></div>
+  <div class="feat">
     <h3 class="ft">Stefan Wold (Ratler)</h3>
     <p class="credit-role"><span data-l="en">zapdnsbl.tcl</span><span data-l="fr">zapdnsbl.tcl</span></p>
     <p data-l="en">ZAP DNS Blacklist checked joining users against DNS blacklists, with reply codes mapped to reasons and a trick to read the real IP behind Mibbit and KiwiIRC. The <a href="#dnsbl">drone blacklist</a> module follows the same approach.</p>
     <p data-l="fr">ZAP DNS Blacklist vérifiait les arrivants auprès des listes noires DNS, avec des codes de réponse traduits en raisons et une astuce pour lire la vraie IP derrière Mibbit et KiwiIRC. Le module <a href="#dnsbl">listes noires</a> suit la même approche.</p>
     <p class="credit-link"><a href="https://github.com/Ratler/zapdnsbl" target="_blank" rel="noopener noreferrer">github.com/Ratler/zapdnsbl ↗</a></p></div>
 
-  <div class="feat" style="--c:var(--amber)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-ban"/></svg></div>
+  <div class="feat">
     <h3 class="ft">Bass</h3>
     <p class="credit-role"><span data-l="en">badchan.tcl · #eggdrop on UnderNet</span><span data-l="fr">badchan.tcl · #eggdrop sur UnderNet</span></p>
     <p data-l="en">A simple, sturdy idea: WHOIS newcomers and ban them if they sit in a listed channel, without letting a join flood turn into a WHOIS flood. The <a href="#badchan">bad channel</a> module keeps both.</p>
     <p data-l="fr">Une idée simple et solide : faire un WHOIS des nouveaux et les bannir s'ils sont dans un canal listé, sans qu'un flood d'arrivées devienne un flood de WHOIS. Le module <a href="#badchan">canaux interdits</a> garde les deux.</p></div>
 
-  <div class="feat" style="--c:var(--blue)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-globe"/></svg></div>
+  <div class="feat">
     <h3 class="ft">UnderNet coder-com</h3>
     <p class="credit-role"><span data-l="en">ircu · gnuworld · X</span><span data-l="fr">ircu · gnuworld · X</span></p>
     <p data-l="en">The IRC server and services this script is written for. Their source and documentation are where the modes, numerics and X commands used here come from.</p>
     <p data-l="fr">Le serveur IRC et les services pour lesquels ce script est écrit. Leur code source et leur documentation sont la source des modes, des numériques et des commandes X utilisés ici.</p>
     <p class="credit-link"><a href="https://github.com/UndernetIRC" target="_blank" rel="noopener noreferrer">github.com/UndernetIRC ↗</a></p></div>
 
-  <div class="feat" style="--c:var(--steel)"><div class="fi" aria-hidden="true"><svg class="ico"><use href="#i-book"/></svg></div>
+  <div class="feat">
     <h3 class="ft">Eggheads</h3>
     <p class="credit-role"><span data-l="en">eggdrop</span><span data-l="fr">eggdrop</span></p>
     <p data-l="en">Decades of eggdrop, the bot lmao.tcl runs on, and the Tcl documentation that makes scripts like this possible.</p>
@@ -1473,7 +1428,7 @@ set cc(x_pass) "its-x-password"</pre></div>
 
 <!-- ================= CHANGELOG ================= -->
 <section id="changelog">
-  <h2><span class="hi" aria-hidden="true"><svg class="ico"><use href="#i-history"/></svg></span><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
+  <h2><span data-l="en">Changelog</span><span data-l="fr">Historique des versions</span></h2>
 
   <h3 class="sub">6.8.2</h3>
   <div class="table-scroll">
@@ -1721,7 +1676,7 @@ set cc(x_pass) "its-x-password"</pre></div>
   });
 
   // ---------- Scrollspy (sidebar + navbar) + back to top ----------
-  const spyLinks = $$(".nav a, .navlinks a");
+  const spyLinks = $$(".nav a");
   const ids = [...new Set(spyLinks.map(a => a.getAttribute("href").slice(1)))];
   const secs = ids.map(id => document.getElementById(id)).filter(Boolean).sort((a, b) => a.offsetTop - b.offsetTop);
   const topBtn = $("#top-btn");
